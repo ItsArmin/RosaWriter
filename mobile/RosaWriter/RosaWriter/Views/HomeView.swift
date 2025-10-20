@@ -5,76 +5,84 @@
 //  Created by Armin on 10/19/25.
 //
 
-import SwiftData
 import SwiftUI
 
 struct HomeView: View {
-  @Environment(\.modelContext) private var modelContext
-  @Query private var items: [Item]
-  @Query private var books: [Book]
-  @State private var sampleBook: Book?
+  @State private var books: [Book] = []
 
   var body: some View {
-    NavigationSplitView {
+    NavigationStack {
       List {
         ForEach(books) { book in
           NavigationLink {
-            BookView(book: sampleBook ?? book)
+            BookView(book: book)
           } label: {
-            VStack(alignment: .leading) {
-              Text(book.title)
-                .font(.headline)
-              Text("\(book.pages.count) pages")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+            HStack(spacing: 16) {
+              // Book icon
+              ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                  .fill(
+                    LinearGradient(
+                      colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.6)],
+                      startPoint: .topLeading,
+                      endPoint: .bottomTrailing
+                    )
+                  )
+                  .frame(width: 50, height: 70)
+                  .shadow(color: .black.opacity(0.2), radius: 4, x: 2, y: 2)
+
+                Image(systemName: "book.fill")
+                  .font(.system(size: 24))
+                  .foregroundColor(.white)
+              }
+
+              // Book info
+              VStack(alignment: .leading, spacing: 4) {
+                Text(book.title)
+                  .font(.headline)
+                Text("\(book.pages.count) pages")
+                  .font(.subheadline)
+                  .foregroundColor(.secondary)
+              }
             }
+            .padding(.vertical, 4)
           }
         }
         .onDelete(perform: deleteBooks)
       }
+      .navigationTitle("My Books")
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
           EditButton()
         }
-        ToolbarItem {
+        ToolbarItem(placement: .navigationBarTrailing) {
           Button(action: addBook) {
-            Label("Add Book", systemImage: "plus")
+            Image(systemName: "plus")
           }
         }
-      }
-    } detail: {
-      if let book = sampleBook ?? books.first {
-        BookView(book: book)
-      } else {
-        Text("Create a book to start reading")
       }
     }
     .onAppear {
       if books.isEmpty {
-        sampleBook = BookService.shared.createSampleBook(context: modelContext)
-      } else {
-        sampleBook = books.first
+        books.append(BookService.shared.createSampleBook())
       }
     }
   }
 
   private func addBook() {
     withAnimation {
-      let newBook = BookService.shared.createEmptyBook(title: "New Book", context: modelContext)
-      sampleBook = newBook
+      let newBook = BookService.shared.createEmptyBook(title: "New Book")
+      books.append(newBook)
     }
   }
 
   private func deleteBooks(offsets: IndexSet) {
     withAnimation {
-      for index in offsets {
-        BookService.shared.deleteBook(books[index], context: modelContext)
-      }
+      books.remove(atOffsets: offsets)
     }
   }
 }
 
 #Preview {
   HomeView()
-    .modelContainer(for: [Item.self, Book.self, BookPage.self], inMemory: true)
 }

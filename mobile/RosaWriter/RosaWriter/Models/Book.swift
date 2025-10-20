@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import SwiftData
 
-@Model
-final class Book {
+struct Book: Identifiable {
+  let id = UUID()
   var title: String
   var pages: [BookPage]
   var createdAt: Date
@@ -22,12 +21,12 @@ final class Book {
     self.updatedAt = Date()
   }
 
-  func addPage(_ page: BookPage) {
+  mutating func addPage(_ page: BookPage) {
     pages.append(page)
     updatedAt = Date()
   }
 
-  func removePage(at index: Int) {
+  mutating func removePage(at index: Int) {
     if index >= 0 && index < pages.count {
       pages.remove(at: index)
       updatedAt = Date()

@@ -9,161 +9,119 @@ import SwiftUI
 
 struct BookView: View {
   let book: Book
+  @Environment(\.dismiss) private var dismiss
   @State private var currentPageIndex = 0
-  @State private var isFlipping = false
-  @State private var flipDirection: FlipDirection = .next
-
-  enum FlipDirection {
-    case next, previous
-  }
+  @GestureState private var dragOffset: CGFloat = 0
 
   var body: some View {
-    VStack {
-      // Book title
-      Text(book.title)
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .padding()
-
-      // Page content area
-      ZStack {
-        // Current page
-        PageView(
-          page: book.pages[currentPageIndex],
-          isVisible: true,
-          isFlipping: isFlipping,
-          direction: flipDirection
-        )
-
-        // Previous page (for flip animation)
-        if currentPageIndex > 0 && isFlipping && flipDirection == .previous {
-          PageView(
-            page: book.pages[currentPageIndex - 1],
-            isVisible: false,
-            isFlipping: isFlipping,
-            direction: flipDirection
-          )
-          .rotation3DEffect(
-            .degrees(isFlipping ? -90 : 0),
-            axis: (x: 0, y: 1, z: 0)
-          )
+    GeometryReader { geometry in
+      ZStack(alignment: .top) {
+        // Page content - full screen
+        TabView(selection: $currentPageIndex) {
+          ForEach(Array(book.pages.enumerated()), id: \.element.id) { index, page in
+            PageView(page: page, pageNumber: index + 1, totalPages: book.pages.count)
+              .tag(index)
+          }
         }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .ignoresSafeArea()
 
-        // Next page (for flip animation)
-        if currentPageIndex < book.pages.count - 1 && isFlipping && flipDirection == .next {
-          PageView(
-            page: book.pages[currentPageIndex + 1],
-            isVisible: false,
-            isFlipping: isFlipping,
-            direction: flipDirection
-          )
-          .rotation3DEffect(
-            .degrees(isFlipping ? 90 : 0),
-            axis: (x: 0, y: 1, z: 0)
-          )
+        // Top overlay with back button and page counter
+        VStack {
+          HStack {
+            Button(action: { dismiss() }) {
+              HStack(spacing: 4) {
+                Image(systemName: "chevron.left")
+                  .font(.system(size: 18, weight: .semibold))
+                Text("Books")
+                  .font(.system(size: 17))
+              }
+              .foregroundColor(.blue)
+              .padding(.horizontal, 16)
+              .padding(.vertical, 8)
+            }
+
+            Spacer()
+
+            Text("\(currentPageIndex + 1) / \(book.pages.count)")
+              .font(.system(size: 14, weight: .medium))
+              .foregroundColor(.secondary)
+              .padding(.horizontal, 12)
+              .padding(.vertical, 6)
+              .background(
+                Capsule()
+                  .fill(Color.black.opacity(0.05))
+              )
+              .padding(.trailing, 16)
+          }
+          .padding(.top, 8)
+
+          Spacer()
         }
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .background(Color.white)
-      .cornerRadius(8)
-      .shadow(radius: 4)
-      .padding()
-
-      // Navigation controls
-      HStack {
-        Button(action: goToPreviousPage) {
-          Image(systemName: "chevron.left")
-            .font(.title)
-            .padding()
-        }
-        .disabled(currentPageIndex == 0)
-
-        Spacer()
-
-        Text("\(currentPageIndex + 1) of \(book.pages.count)")
-          .font(.headline)
-
-        Spacer()
-
-        Button(action: goToNextPage) {
-          Image(systemName: "chevron.right")
-            .font(.title)
-            .padding()
-        }
-        .disabled(currentPageIndex >= book.pages.count - 1)
-      }
-      .padding()
     }
-    .background(Color.gray.opacity(0.1))
+    .navigationBarHidden(true)
   }
 
-  private func goToNextPage() {
-    guard currentPageIndex < book.pages.count - 1 else { return }
-    flipDirection = .next
-    withAnimation(.easeInOut(duration: 0.5)) {
-      isFlipping = true
-    }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-      currentPageIndex += 1
-      withAnimation(.easeInOut(duration: 0.5)) {
-        isFlipping = false
-      }
-    }
-  }
-
-  private func goToPreviousPage() {
-    guard currentPageIndex > 0 else { return }
-    flipDirection = .previous
-    withAnimation(.easeInOut(duration: 0.5)) {
-      isFlipping = true
-    }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-      currentPageIndex -= 1
-      withAnimation(.easeInOut(duration: 0.5)) {
-        isFlipping = false
-      }
-    }
-  }
 }
 
 struct PageView: View {
   let page: BookPage
-  let isVisible: Bool
-  let isFlipping: Bool
-  let direction: BookView.FlipDirection
+  let pageNumber: Int
+  let totalPages: Int
 
   var body: some View {
-    VStack {
+    ZStack {
+      // Background
+      Color(UIColor.systemBackground)
+        .ignoresSafeArea()
+
+      // Page content
       ScrollView {
-        Text(page.text)
-          .font(.body)
-          .padding()
-          .opacity(isVisible ? 1 : 0)
+        VStack(alignment: .leading, spacing: 0) {
+          Spacer()
+            .frame(height: 80)
+
+          Text(page.text)
+            .font(.system(size: 18, weight: .regular))
+            .lineSpacing(8)
+            .foregroundColor(.primary)
+            .padding(.horizontal, 32)
+            .padding(.bottom, 60)
+        }
+      }
+      .scrollIndicators(.hidden)
+
+      // Page number at bottom (subtle)
+      VStack {
+        Spacer()
+        Text("\(pageNumber)")
+          .font(.system(size: 12))
+          .foregroundColor(.secondary.opacity(0.5))
+          .padding(.bottom, 32)
       }
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.white)
   }
 }
 
 #Preview {
-  let sampleBook = Book(title: "Sample Book")
-  let page1 = BookPage(
-    text:
-      "This is the first page of the book. It contains some sample text to demonstrate how the book view works.",
-    pageNumber: 1)
-  let page2 = BookPage(
-    text:
-      "This is the second page. You can see how the page flipping animation works when you navigate between pages using the arrow buttons.",
-    pageNumber: 2)
-  let page3 = BookPage(
-    text:
-      "This is the third and final page. The book view provides a nice reading experience similar to iBooks with smooth page transitions.",
-    pageNumber: 3)
-
-  sampleBook.pages = [page1, page2, page3]
+  let sampleBook: Book = {
+    var book = Book(title: "Sample Book")
+    let page1 = BookPage(
+      text:
+        "This is the first page of the book. It contains some sample text to demonstrate how the book view works.",
+      pageNumber: 1)
+    let page2 = BookPage(
+      text:
+        "This is the second page. You can see how the page flipping animation works when you navigate between pages using the arrow buttons.",
+      pageNumber: 2)
+    let page3 = BookPage(
+      text:
+        "This is the third and final page. The book view provides a nice reading experience similar to iBooks with smooth page transitions.",
+      pageNumber: 3)
+    book.pages = [page1, page2, page3]
+    return book
+  }()
 
   return BookView(book: sampleBook)
 }

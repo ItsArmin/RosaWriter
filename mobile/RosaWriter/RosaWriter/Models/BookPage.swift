@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import SwiftData
 
-@Model
-final class BookPage {
+struct BookPage: Identifiable {
+  let id = UUID()
   var text: String
   var pageNumber: Int
   var createdAt: Date
@@ -22,7 +21,7 @@ final class BookPage {
     self.updatedAt = Date()
   }
 
-  func updateText(_ newText: String) {
+  mutating func updateText(_ newText: String) {
     self.text = newText
     self.updatedAt = Date()
   }

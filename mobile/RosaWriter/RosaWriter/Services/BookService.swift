@@ -6,15 +6,14 @@
 //
 
 import Foundation
-import SwiftData
 
 class BookService {
   static let shared = BookService()
 
   private init() {}
 
-  func createSampleBook(context: ModelContext) -> Book {
-    let book = Book(title: "Sample Story")
+  func createSampleBook() -> Book {
+    var book = Book(title: "Sample Story")
 
     let pages = [
       BookPage(
@@ -59,27 +58,16 @@ class BookService {
 
     pages.forEach { book.addPage($0) }
 
-    context.insert(book)
     return book
   }
 
-  func createEmptyBook(title: String, context: ModelContext) -> Book {
-    let book = Book(title: title)
-    context.insert(book)
-    return book
+  func createEmptyBook(title: String) -> Book {
+    return Book(title: title)
   }
 
-  func addPage(to book: Book, text: String, context: ModelContext) {
+  func addPage(to book: inout Book, text: String) {
     let pageNumber = book.pages.count + 1
     let page = BookPage(text: text, pageNumber: pageNumber)
     book.addPage(page)
-    context.insert(page)
-  }
-
-  func deleteBook(_ book: Book, context: ModelContext) {
-    // Delete all pages first
-    book.pages.forEach { context.delete($0) }
-    // Then delete the book
-    context.delete(book)
   }
 }
