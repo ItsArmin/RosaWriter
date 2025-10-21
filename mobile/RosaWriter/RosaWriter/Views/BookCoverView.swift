@@ -76,6 +76,12 @@ struct BookCoverView: View {
 }
 
 #Preview {
-  let sampleBook = Book(title: "My Amazing Story")
+  var sampleBook = Book(title: "My Amazing Story")
+  let page1 = BookPage(text: "Page 1", pageNumber: 1)
+  let page2 = BookPage(text: "Page 2", pageNumber: 2)
+  let page3 = BookPage(text: "Page 3", pageNumber: 3)
+  sampleBook.addPage(page1)
+  sampleBook.addPage(page2)
+  sampleBook.addPage(page3)
   return BookCoverView(book: sampleBook)
 }

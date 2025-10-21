@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
+  @StateObject private var themeManager = ThemeManager()
   @State private var books: [Book] = []
 
   var body: some View {
@@ -16,6 +17,7 @@ struct HomeView: View {
         ForEach(books) { book in
           NavigationLink {
             BookView(book: book)
+              .environmentObject(themeManager)
           } label: {
             HStack(spacing: 16) {
               // Book icon
@@ -52,6 +54,12 @@ struct HomeView: View {
       }
       .navigationTitle("My Books")
       .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button(action: { themeManager.toggleTheme() }) {
+            Image(systemName: themeManager.isDarkMode ? "sun.max.fill" : "moon.fill")
+              .foregroundColor(themeManager.isDarkMode ? .yellow : .blue)
+          }
+        }
         ToolbarItem(placement: .navigationBarTrailing) {
           EditButton()
         }
@@ -62,9 +70,11 @@ struct HomeView: View {
         }
       }
     }
+    .preferredColorScheme(themeManager.colorScheme)
+    .environmentObject(themeManager)
     .onAppear {
       if books.isEmpty {
-        books.append(BookService.shared.createSampleBook())
+        books = BookService.shared.loadAllSampleBooks()
       }
     }
   }

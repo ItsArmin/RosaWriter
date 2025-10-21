@@ -10,6 +10,7 @@ import SwiftUI
 struct BookView: View {
   let book: Book
   @Environment(\.dismiss) private var dismiss
+  @EnvironmentObject var themeManager: ThemeManager
   @State private var currentPageIndex = 0
 
   var body: some View {
@@ -42,7 +43,7 @@ struct BookView: View {
 
           Text("\(currentPageIndex + 1) / \(book.pages.count)")
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(.secondary)
+            .foregroundColor(.black)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(
@@ -59,6 +60,7 @@ struct BookView: View {
       }
     }
     .navigationBarHidden(true)
+    .preferredColorScheme(themeManager.colorScheme)
   }
 
 }
@@ -66,19 +68,23 @@ struct BookView: View {
 #Preview {
   var book = Book(title: "Sample Book")
   let page1 = BookPage(
-    text:
-      "This is the first page of the book. It contains some sample text to demonstrate how the book view works.",
-    pageNumber: 1
+    text: "Sample Book",
+    pageNumber: 1,
+    imageLayout: .single(imageName: "mario"),
+    isCover: true,
+    coverColor: .blue
   )
   let page2 = BookPage(
     text:
       "This is the second page. You can see how the page curling animation works when you navigate between pages.",
-    pageNumber: 2
+    pageNumber: 2,
+    imageLayout: .single(imageName: "luigi")
   )
   let page3 = BookPage(
     text:
       "This is the third and final page. The book view provides a nice reading experience similar to iBooks with smooth page curl transitions.",
-    pageNumber: 3
+    pageNumber: 3,
+    imageLayout: .staggered(topImage: "mario", bottomImage: "1up")
   )
 
   book.addPage(page1)
@@ -86,4 +92,5 @@ struct BookView: View {
   book.addPage(page3)
 
   return BookView(book: book)
+    .environmentObject(ThemeManager())
 }

@@ -134,24 +134,38 @@ struct PageContentView: View {
         .ignoresSafeArea()
 
       if page.isCover {
-        // Cover page design
-        VStack(spacing: 24) {
-          Spacer()
-
-          if case .single(let imageName) = page.imageLayout {
-            Image(imageName)
-              .resizable()
-              .scaledToFit()
-              .frame(maxWidth: 200, maxHeight: 200)
-              .shadow(radius: 8)
+        // Cover page design with book color
+        ZStack {
+          // Book cover background with gradient
+          if let coverColor = page.coverColor {
+            LinearGradient(
+              colors: [coverColor.lightColor, coverColor.darkColor],
+              startPoint: .topLeading,
+              endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
           }
 
-          Text(page.text)
-            .font(.system(size: 32, weight: .bold))
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 40)
+          VStack(spacing: 24) {
+            Spacer()
 
-          Spacer()
+            if case .single(let imageName) = page.imageLayout {
+              Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 200, maxHeight: 200)
+                .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
+            }
+
+            Text(page.text)
+              .font(.system(size: 32, weight: .bold))
+              .multilineTextAlignment(.center)
+              .foregroundColor(.white)
+              .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+              .padding(.horizontal, 40)
+
+            Spacer()
+          }
         }
       } else {
         // Regular page with images and text

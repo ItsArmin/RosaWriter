@@ -22,3 +22,18 @@ struct CustomButton: View {
     }
   }
 }
+
+#Preview {
+  VStack(spacing: 20) {
+    CustomButton(
+      title: "Click Me",
+      action: {
+        print("Button tapped!")
+      })
+
+    CustomButton(title: "Save", action: {})
+
+    CustomButton(title: "Cancel", action: {})
+  }
+  .padding()
+}
