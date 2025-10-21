@@ -13,47 +13,68 @@ class BookService {
   private init() {}
 
   func createSampleBook() -> Book {
-    var book = Book(title: "Sample Story")
+    var book = Book(title: "Mario's Big Adventure")
 
     let pages = [
+      // Page 1: Cover
+      BookPage(
+        text: "Mario's Big Adventure",
+        pageNumber: 1,
+        imageLayout: .single(imageName: "mario"),
+        isCover: true
+      ),
+
+      // Page 2: Mario and Luigi meet
       BookPage(
         text: """
-          Once upon a time, in a quiet little town, there lived a young writer named Rosa. She had always loved stories and dreamed of creating her own magical tales.
+          Mario was walking through the Mushroom Kingdom when he heard a familiar voice calling his name.
+          
+          "Mario! Wait for me!" It was Luigi, running to catch up with his brother.
+          
+          Together, they made the perfect team - Mario was brave and bold, while Luigi was clever and kind.
+          """,
+        pageNumber: 2,
+        imageLayout: .staggered(topImage: "mario", bottomImage: "luigi")
+      ),
 
-          Every morning, Rosa would sit by her window with a cup of tea and let her imagination run wild. She wrote about faraway lands, brave heroes, and mysterious creatures that only existed in the realm of dreams.
-          """, pageNumber: 1),
-
+      // Page 3: Finding the power-up
       BookPage(
         text: """
-          One sunny afternoon, Rosa discovered an old, dusty book in her grandmother's attic. As she opened it, strange things began to happen. The words on the pages started to glow, and before she knew it, Rosa found herself transported into the story itself!
+          As they walked along the path, something sparkly caught Mario's eye. There, floating in mid-air, was a magical 1-Up mushroom!
+          
+          "Look Luigi!" Mario exclaimed. "A 1-Up! This will give us an extra chance on our adventure!"
+          
+          The mushroom glowed with a soft green light, bouncing gently up and down.
+          """,
+        pageNumber: 3,
+        imageLayout: .single(imageName: "1up")
+      ),
 
-          She was now standing in the middle of an enchanted forest, surrounded by talking animals and sparkling fairies. "This is incredible!" Rosa exclaimed, her eyes wide with wonder.
-          """, pageNumber: 2),
-
+      // Page 4: The team is ready
       BookPage(
         text: """
-          As Rosa explored this magical world, she met a wise old owl named Oliver who became her guide. "Every great story needs a hero," Oliver said with a wink. "And you, my dear, are the hero of this tale."
+          With their new power-up safely collected, Mario and Luigi were ready for anything.
+          
+          "Whatever challenges come our way," said Mario, "we'll face them together!"
+          
+          Luigi nodded with determination. "Let's-a-go!" they shouted in unison.
+          """,
+        pageNumber: 4,
+        imageLayout: .staggered(topImage: "luigi", bottomImage: "mario")
+      ),
 
-          Together, they embarked on exciting adventures - they solved riddles, crossed treacherous rivers, and even outsmarted a mischievous dragon who guarded a treasure of golden ink.
-          """, pageNumber: 3),
-
+      // Page 5: The adventure continues
       BookPage(
         text: """
-          But as Rosa's adventure continued, she began to miss her own world. "I love this magical place," she told Oliver, "but I also love writing stories back home."
-
-          Oliver smiled wisely. "The best stories are those that are shared," he said. "Take what you've learned here and create your own magic in the real world."
-
-          With a wave of Oliver's wing, Rosa found herself back in her room, the old book glowing softly on her desk.
-          """, pageNumber: 4),
-
-      BookPage(
-        text: """
-          From that day forward, Rosa wrote the most amazing stories. Her books became famous around the world, inspiring countless readers to believe in magic and follow their dreams.
-
-          And whenever Rosa needed inspiration, she would open that special book from her grandmother's attic and remember her extraordinary adventure.
-
+          And so the brothers continued on their journey through the Mushroom Kingdom, jumping over pipes, collecting coins, and helping everyone they met along the way.
+          
+          Because that's what heroes do - they work together, stay brave, and never give up!
+          
           The End
-          """, pageNumber: 5),
+          """,
+        pageNumber: 5,
+        imageLayout: .single(imageName: "1up")
+      ),
     ]
 
     pages.forEach { book.addPage($0) }

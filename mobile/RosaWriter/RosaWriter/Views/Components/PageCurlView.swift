@@ -133,27 +133,91 @@ struct PageContentView: View {
       Color(UIColor.systemBackground)
         .ignoresSafeArea()
 
-      ScrollView {
-        VStack(alignment: .leading, spacing: 0) {
+      if page.isCover {
+        // Cover page design
+        VStack(spacing: 24) {
           Spacer()
-            .frame(height: 100)
+
+          if case .single(let imageName) = page.imageLayout {
+            Image(imageName)
+              .resizable()
+              .scaledToFit()
+              .frame(maxWidth: 200, maxHeight: 200)
+              .shadow(radius: 8)
+          }
 
           Text(page.text)
-            .font(.system(size: 18, weight: .regular))
-            .lineSpacing(8)
-            .foregroundColor(.primary)
+            .font(.system(size: 32, weight: .bold))
+            .multilineTextAlignment(.center)
             .padding(.horizontal, 40)
-            .padding(.bottom, 80)
-        }
-      }
-      .scrollIndicators(.hidden)
 
-      VStack {
-        Spacer()
-        Text("\(pageNumber)")
-          .font(.system(size: 12))
-          .foregroundColor(.secondary.opacity(0.5))
-          .padding(.bottom, 40)
+          Spacer()
+        }
+      } else {
+        // Regular page with images and text
+        ScrollView {
+          VStack(alignment: .center, spacing: 24) {
+            Spacer()
+              .frame(height: 100)
+
+            // Render images based on layout
+            switch page.imageLayout {
+            case .none:
+              EmptyView()
+
+            case .single(let imageName):
+              Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 250, maxHeight: 250)
+                .shadow(radius: 4)
+
+            case .staggered(let topImage, let bottomImage):
+              VStack(spacing: 16) {
+                HStack {
+                  Spacer()
+                    .frame(width: 40)
+                  Image(topImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 180, maxHeight: 180)
+                    .shadow(radius: 4)
+                  Spacer()
+                }
+
+                HStack {
+                  Spacer()
+                  Image(bottomImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 180, maxHeight: 180)
+                    .shadow(radius: 4)
+                  Spacer()
+                    .frame(width: 40)
+                }
+              }
+            }
+
+            // Text below images
+            Text(page.text)
+              .font(.system(size: 18, weight: .regular))
+              .lineSpacing(8)
+              .foregroundColor(.primary)
+              .padding(.horizontal, 40)
+              .padding(.bottom, 80)
+          }
+          .frame(maxWidth: .infinity)
+        }
+        .scrollIndicators(.hidden)
+
+        // Page number at bottom
+        VStack {
+          Spacer()
+          Text("\(pageNumber)")
+            .font(.system(size: 12))
+            .foregroundColor(.secondary.opacity(0.5))
+            .padding(.bottom, 40)
+        }
       }
     }
   }
