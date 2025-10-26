@@ -64,22 +64,37 @@ class AIStoryService: ObservableObject {
     )
     progress = 0.1
 
-    // Call Apple Intelligence API
-    // Note: This is where you'll integrate with Apple's Writing Tools or Intelligence API
-    // For now, we'll create a placeholder that simulates the process
+    // Retry logic for AI generation (sometimes first attempts fail)
+    var lastError: Error?
+    for attempt in 1...3 {
+      do {
+        print("📝 Generation attempt \(attempt)/3")
 
-    let response = try await callAppleIntelligence(prompt: prompt)
-    progress = 0.7
+        // Call Apple Intelligence API
+        let response = try await callAppleIntelligence(prompt: prompt)
+        progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-    // Parse the response
-    let aiStory = try parseAIResponse(response)
-    progress = 0.9
+        // Parse the response
+        let aiStory = try parseAIResponse(response)
+        progress = 0.9
 
-    // Convert to Book format
-    let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
-    progress = 1.0
+        // Convert to Book format
+        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        progress = 1.0
 
-    return book
+        return book
+      } catch {
+        lastError = error
+        print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
+        if attempt < 3 {
+          print("🔄 Retrying...")
+          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+        }
+      }
+    }
+
+    // All attempts failed
+    throw lastError ?? AIStoryError.generationFailed
   }
 
   /// Generate a story with specific characters and objects
@@ -105,17 +120,35 @@ class AIStoryService: ObservableObject {
     )
     progress = 0.1
 
-    let response = try await callAppleIntelligence(prompt: prompt)
-    progress = 0.7
+    // Retry logic for AI generation (sometimes first attempts fail)
+    var lastError: Error?
+    for attempt in 1...3 {
+      do {
+        print("📝 Generation attempt \(attempt)/3")
 
-    let aiStory = try parseAIResponse(response)
-    progress = 0.9
+        let response = try await callAppleIntelligence(prompt: prompt)
+        progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-    let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
-    progress = 1.0
+        let aiStory = try parseAIResponse(response)
+        progress = 0.9
 
-    return book
-  }
+        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        progress = 1.0
+
+        return book
+      } catch {
+        lastError = error
+        print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
+        if attempt < 3 {
+          print("🔄 Retrying...")
+          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+        }
+      }
+    }
+
+    // All attempts failed
+    throw lastError ?? AIStoryError.generationFailed
+    }
 
   // MARK: - Private Methods
 
@@ -158,6 +191,7 @@ class AIStoryService: ObservableObject {
 
   private func parseAIResponse(_ response: String) throws -> AIStoryResponse {
     print("📖 Parsing AI response...")
+    print("📏 Response length: \(response.count) characters")
 
     // Remove markdown code blocks if present
     var cleanedResponse =
@@ -165,6 +199,13 @@ class AIStoryService: ObservableObject {
       .replacingOccurrences(of: "```json", with: "")
       .replacingOccurrences(of: "```", with: "")
       .trimmingCharacters(in: .whitespacesAndNewlines)
+
+    // Try to extract JSON if there's extra text before/after
+    if let jsonStart = cleanedResponse.firstIndex(of: "{"),
+      let jsonEnd = cleanedResponse.lastIndex(of: "}")
+    {
+      cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
+    }
 
     // Parse JSON
     guard let data = cleanedResponse.data(using: .utf8) else {
@@ -179,10 +220,12 @@ class AIStoryService: ObservableObject {
       return aiStory
     } catch {
       print("❌ JSON parsing failed: \(error)")
-      print("📄 Response preview: \(cleanedResponse.prefix(200))...")
+      print("📄 Full response:")
+      print(cleanedResponse)
+      print("---")
       throw AIStoryError.parsingFailed
+        }
     }
-  }
 
   private func convertToBook(
     _ aiStory: AIStoryResponse,

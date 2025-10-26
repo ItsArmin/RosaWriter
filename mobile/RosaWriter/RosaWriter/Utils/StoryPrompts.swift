@@ -67,21 +67,32 @@ struct StoryPrompts {
 
 
             RESPONSE FORMAT:
-            Respond with a JSON object in this exact format:
+            You MUST respond with ONLY a valid JSON object, no additional text before or after.
+            Use proper JSON escaping for quotes and special characters in the text field.
+            
+            Format:
             {
               "title": "Story Title",
               "pages": [
                 {
                   "pageNumber": 1,
                   "text": "Once upon a time...",
-                  "suggestedImages": ["CHARACTER_ID or OBJECT_ID", "ANOTHER_ID"]
+                  "suggestedImages": ["MARIO", "COIN"]
                 },
-                // ... more pages
+                {
+                  "pageNumber": 2,
+                  "text": "The next day...",
+                  "suggestedImages": ["LUIGI"]
+                }
               ]
             }
 
-            For suggestedImages, use the character/object IDs: \(availableAssetIDs().joined(separator: ", "))
-            Each page can have 0-2 suggested images.
+            IMPORTANT:
+            - Respond with ONLY the JSON object, nothing else
+            - Use proper JSON string escaping (escape quotes with backslash)
+            - For suggestedImages, use these IDs: \(availableAssetIDs().joined(separator: ", "))
+            - Each page can have 0-2 suggested images
+            - Make sure all JSON is valid and properly closed
             """
 
         return prompt
