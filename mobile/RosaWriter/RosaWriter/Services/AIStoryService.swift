@@ -148,6 +148,64 @@ class AIStoryService: ObservableObject {
 
     // All attempts failed
     throw lastError ?? AIStoryError.generationFailed
+  }
+
+  /// Generate a custom story with user-selected options
+  func generateCustomStory(
+    mainCharacter: StoryCharacter,
+    mood: StoryMood,
+    spark: StorySpark,
+    pageCount: Int = 5,
+    coverColor: CoverColor? = nil
+  ) async throws -> Book {
+    isGenerating = true
+    progress = 0.0
+    defer {
+      isGenerating = false
+      progress = 0.0
+    }
+
+    print("🎨 Generating custom story...")
+    print("   Character: \(mainCharacter.displayName)")
+    print("   Mood: \(mood.rawValue)")
+    print("   Spark: \(spark.rawValue)")
+
+    let prompt = StoryPrompts.generateCustomStoryPrompt(
+      mainCharacter: mainCharacter,
+      mood: mood,
+      spark: spark,
+      pageCount: pageCount
+    )
+    progress = 0.1
+
+    // Retry logic for AI generation (sometimes first attempts fail)
+    var lastError: Error?
+    for attempt in 1...3 {
+      do {
+        print("📝 Generation attempt \(attempt)/3")
+
+        let response = try await callAppleIntelligence(prompt: prompt)
+        progress = 0.5 + (0.2 * Double(attempt) / 3.0)
+
+        let aiStory = try parseAIResponse(response)
+        progress = 0.9
+
+        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        progress = 1.0
+
+        return book
+      } catch {
+        lastError = error
+        print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
+        if attempt < 3 {
+          print("🔄 Retrying...")
+          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+        }
+      }
+    }
+
+    // All attempts failed
+    throw lastError ?? AIStoryError.generationFailed
     }
 
   // MARK: - Private Methods

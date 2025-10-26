@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Story Asset Models
 
-struct StoryCharacter {
+struct StoryCharacter: Equatable, Hashable {
     let id: String
     let imageName: String
     let displayName: String
@@ -173,4 +173,77 @@ struct StoryAssets {
     static var allImageNames: [String] {
         allCharacters.map { $0.imageName } + allObjects.map { $0.imageName }
     }
+}
+
+// MARK: - Story Configuration Options
+
+enum StoryMood: String, CaseIterable, Identifiable {
+  case fantasy = "Fantasy"
+  case silly = "Silly"
+  case learning = "Learning"
+  case courage = "Courage"
+  case friendship = "Friendship"
+  case adventure = "Adventure"
+  case mystery = "Mystery"
+  case kindness = "Kindness"
+
+  var id: String { rawValue }
+
+  var description: String {
+    switch self {
+    case .fantasy:
+      return "Magical and imaginative with wonder and enchantment"
+    case .silly:
+      return "Fun and playful with lots of laughs and surprises"
+    case .learning:
+      return "Educational and curious about discovering new things"
+    case .courage:
+      return "Brave and bold about facing challenges"
+    case .friendship:
+      return "Warm and heartfelt about friendship and togetherness"
+    case .adventure:
+      return "Exciting and action-packed with exploration"
+    case .mystery:
+      return "Curious and engaging with puzzles to solve"
+    case .kindness:
+      return "Gentle and caring about helping others"
+    }
+  }
+}
+
+enum StorySpark: String, CaseIterable, Identifiable {
+  case treasureHunt = "Treasure Hunt"
+  case findingFood = "Finding Something to Eat"
+  case helpingFriend = "Helping a Friend"
+  case lostAndFound = "Lost and Found"
+  case magicalDiscovery = "Magical Discovery"
+  case birthday = "Birthday Celebration"
+  case buildingSomething = "Building Something Together"
+  case solvingProblem = "Solving a Problem"
+  case random = "Surprise Me!"
+
+  var id: String { rawValue }
+
+  var promptText: String {
+    switch self {
+    case .treasureHunt:
+      return "The character discovers a map and goes on a treasure hunt"
+    case .findingFood:
+      return "The character is hungry and goes on a quest to find something delicious to eat"
+    case .helpingFriend:
+      return "The character's friend needs help with something important"
+    case .lostAndFound:
+      return "The character loses something precious and must find it"
+    case .magicalDiscovery:
+      return "The character discovers something magical that changes everything"
+    case .birthday:
+      return "The character is planning a special birthday celebration"
+    case .buildingSomething:
+      return "The character and friends work together to build or create something amazing"
+    case .solvingProblem:
+      return "The character faces a tricky problem that needs a clever solution"
+    case .random:
+      return "Choose any creative premise that would make an engaging children's story"
+    }
+  }
 }

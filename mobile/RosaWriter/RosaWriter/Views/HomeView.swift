@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var themeManager = ThemeManager()
     @State private var books: [Book] = []
+  @State private var showCreateStory = false
 
     var body: some View {
         NavigationStack {
@@ -88,15 +89,22 @@ struct HomeView: View {
 //                }
                 ToolbarItem() {
                     Button(action: {
-                        Task { await generateBook() }
+            showCreateStory = true
                     }) {
-                        Label("Generate", systemImage: "sparkles")
+            Label("Create Story", systemImage: "sparkles")
                     }
                 }
             }
         }
         .preferredColorScheme(themeManager.colorScheme)
         .environmentObject(themeManager)
+    .sheet(isPresented: $showCreateStory) {
+      CreateStoryView { newBook in
+        withAnimation {
+          books.append(newBook)
+        }
+      }
+    }
         .onAppear {
             if books.isEmpty {
                 books = BookService.shared.loadAllSampleBooks()
