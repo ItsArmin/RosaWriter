@@ -196,6 +196,7 @@ struct PageContentView: View {
                     .scaledToFit()
                     .frame(maxWidth: 180, maxHeight: 180)
                     .shadow(radius: 4)
+                    .scaleEffect(x: -1, y: 1)
                   Spacer()
                 }
 
