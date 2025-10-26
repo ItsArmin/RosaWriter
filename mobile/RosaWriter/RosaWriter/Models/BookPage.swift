@@ -19,6 +19,7 @@ enum CoverColor: String, CaseIterable {
     case blue
     case green
     case yellow
+    case pink
     case brown
 
     var lightColor: Color {
@@ -27,6 +28,7 @@ enum CoverColor: String, CaseIterable {
         case .blue: return Color(red: 0.3, green: 0.5, blue: 0.9)
         case .green: return Color(red: 0.3, green: 0.7, blue: 0.4)
         case .yellow: return Color(red: 0.95, green: 0.8, blue: 0.3)
+        case .pink: return Color(red: 0.95, green: 0.3, blue: 0.8)
         case .brown: return Color(red: 0.6, green: 0.4, blue: 0.2)
         }
     }
@@ -37,6 +39,7 @@ enum CoverColor: String, CaseIterable {
         case .blue: return Color(red: 0.2, green: 0.3, blue: 0.7)
         case .green: return Color(red: 0.2, green: 0.5, blue: 0.3)
         case .yellow: return Color(red: 0.8, green: 0.6, blue: 0.2)
+        case .pink: return Color(red: 0.8, green: 0.2, blue: 0.6)
         case .brown: return Color(red: 0.4, green: 0.2, blue: 0.1)
         }
     }
