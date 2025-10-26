@@ -29,4 +29,9 @@ class BookService {
     let page = BookPage(text: text, pageNumber: pageNumber)
     book.addPage(page)
   }
+
+  /// In the future, this will use AI to generate custom stories
+  func createNewBook() -> Book {
+    return SampleData.marioAdventure()
+  }
 }
