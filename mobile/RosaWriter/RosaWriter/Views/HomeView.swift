@@ -81,9 +81,16 @@ struct HomeView: View {
                         Image(systemName: "plus")
                     }
                 }
+//                ToolbarItem() {
+//                    Button(action: addSampleBook) {
+//                        Text("Add sample book")
+//                    }
+//                }
                 ToolbarItem() {
-                    Button(action: addSampleBook) {
-                        Text("Add sample book")
+                    Button(action: {
+                        Task { await generateBook() }
+                    }) {
+                        Label("Generate", systemImage: "sparkles")
                     }
                 }
             }
@@ -118,8 +125,17 @@ struct HomeView: View {
     }
     
     // TODO: add AI generation function here
+    @MainActor
+    private func generateBook() async {
+        // Await the async creation of a new book first; `withAnimation` must be synchronous
+        let newGeneratedBook = await BookService.shared.createNewBook()
+        withAnimation {
+            books.append(newGeneratedBook)
+        }
+    }
 }
 
 #Preview {
     HomeView()
 }
+
