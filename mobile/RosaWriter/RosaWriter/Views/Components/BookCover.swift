@@ -34,7 +34,7 @@ struct BookCover: View {
 
   var body: some View {
     Button(action: onTap) {
-      VStack(spacing: 4) {
+      VStack(spacing: 8) {
         // Book cover
         ZStack {
           // Background with gradient
@@ -61,7 +61,7 @@ struct BookCover: View {
           } else {
             // Book icon if no cover image
             Image(systemName: "book.fill")
-              .font(.system(size: 40))
+              .font(.system(size: 44))
               .foregroundColor(.white.opacity(0.8))
           }
 
@@ -80,20 +80,21 @@ struct BookCover: View {
             .frame(width: 8)
             .offset(x: -55)
         }
-        .frame(width: 110, height: 150)
+        .frame(width: 110, height: 165)
 
-        // Book title
+        // Book title - fixed height for 2 lines
         Text(book.title)
           .font(.caption)
           .fontWeight(.medium)
           .foregroundColor(.primary)
           .lineLimit(2)
           .multilineTextAlignment(.center)
-          .frame(width: 110)
-          .padding(.horizontal, 4)
+          .frame(width: 110, height: 32, alignment: .top)
+          .fixedSize(horizontal: false, vertical: true)
       }
     }
     .buttonStyle(PlainButtonStyle())
+    .frame(height: 205)  // Fixed total height: 165 (cover) + 8 (spacing) + 32 (title)
   }
 }
 
