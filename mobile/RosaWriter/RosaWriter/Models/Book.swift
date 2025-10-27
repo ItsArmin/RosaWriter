@@ -7,12 +7,21 @@
 
 import Foundation
 
-struct Book: Identifiable {
+struct Book: Identifiable, Hashable {
   let id = UUID()
   var title: String
   var pages: [BookPage]
   var createdAt: Date
   var updatedAt: Date
+  
+  // Hashable conformance
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+
+  static func == (lhs: Book, rhs: Book) -> Bool {
+    lhs.id == rhs.id
+  }
 
   init(title: String, pages: [BookPage] = []) {
     self.title = title

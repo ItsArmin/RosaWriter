@@ -11,7 +11,7 @@ import SwiftUI
 struct RosaWriterApp: App {
   var body: some Scene {
     WindowGroup {
-      HomeView()
+      BookshelfView()
     }
   }
 }
