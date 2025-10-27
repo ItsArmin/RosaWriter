@@ -18,6 +18,7 @@ struct BookshelfView: View {
   @State private var selectedBooks: Set<UUID> = []
   @State private var isSelectionMode = false
   @State private var hasLoadedInitialData = false
+  @State private var showDeleteConfirmation = false
 
   let columns = [
     GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
@@ -68,7 +69,7 @@ struct BookshelfView: View {
         ToolbarItem(placement: .topBarTrailing) {
           HStack(spacing: 16) {
             if isSelectionMode {
-              Button(action: deleteSelectedBooks) {
+              Button(action: { showDeleteConfirmation = true }) {
                 Image(systemName: "trash")
                   .foregroundColor(.red)
               }
@@ -124,6 +125,18 @@ struct BookshelfView: View {
       .navigationDestination(item: $selectedBook) { book in
         BookView(book: book)
           .environmentObject(themeManager)
+      }
+      .confirmationDialog(
+        deleteConfirmationTitle,
+        isPresented: $showDeleteConfirmation,
+        titleVisibility: .visible
+      ) {
+        Button("Delete", role: .destructive) {
+          confirmDelete()
+        }
+        Button("Cancel", role: .cancel) {}
+      } message: {
+        Text(deleteConfirmationMessage)
       }
       .task {
         await loadBooksOnAppear()
@@ -204,6 +217,26 @@ struct BookshelfView: View {
     .animation(.spring(response: 0.3), value: selectedBooks.contains(book.id))
   }
 
+  // MARK: - Computed Properties
+
+  private var deleteConfirmationTitle: String {
+    if selectedBooks.count == 1,
+      let book = books.first(where: { selectedBooks.contains($0.id) })
+    {
+      return "Delete \"\(book.title)\"?"
+    } else {
+      return "Delete \(selectedBooks.count) Stories?"
+    }
+  }
+
+  private var deleteConfirmationMessage: String {
+    if selectedBooks.count == 1 {
+      return "This story will be permanently deleted."
+    } else {
+      return "These stories will be permanently deleted."
+    }
+  }
+
   // MARK: - Actions
 
   private func toggleSelection(for book: Book) {
@@ -216,16 +249,16 @@ struct BookshelfView: View {
     }
   }
 
-  private func deleteSelectedBooks() {
+  private func confirmDelete() {
     do {
       // Delete from SwiftData
       for bookId in selectedBooks {
         try StorageService.shared.deleteStoryData(id: bookId, context: modelContext)
       }
-
+      
       // Reload books
       loadBooks()
-
+      
       // Clear selection
       withAnimation {
         selectedBooks.removeAll()

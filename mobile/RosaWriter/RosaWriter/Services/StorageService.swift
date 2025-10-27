@@ -181,13 +181,14 @@ private struct CodableBook: Codable {
   }
 
   func toBook() -> Book {
-    var book = Book(title: title, pages: [])
-    // Use reflection or a custom init to set the id and dates
-    // For now, we'll add pages and accept new dates
-    pages.forEach { page in
-      book.addPage(page.toBookPage())
-    }
-    return book
+    let bookPages = pages.map { $0.toBookPage() }
+    return Book(
+      id: id,
+      title: title,
+      pages: bookPages,
+      createdAt: createdAt,
+      updatedAt: updatedAt
+    )
   }
 }
 
@@ -214,11 +215,14 @@ private struct CodablePage: Codable {
 
   func toBookPage() -> BookPage {
     BookPage(
+      id: id,
       text: text,
       pageNumber: pageNumber,
       imageLayout: imageLayout.toPageImageLayout(),
       isCover: isCover,
-      coverColor: coverColor.flatMap { CoverColor(rawValue: $0) }
+      coverColor: coverColor.flatMap { CoverColor(rawValue: $0) },
+      createdAt: createdAt,
+      updatedAt: updatedAt
     )
   }
 }

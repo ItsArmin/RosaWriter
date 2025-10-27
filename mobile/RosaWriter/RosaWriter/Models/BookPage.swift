@@ -46,7 +46,7 @@ enum CoverColor: String, CaseIterable {
 }
 
 struct BookPage: Identifiable, Hashable {
-    let id = UUID()
+  let id: UUID
     var text: String
     var pageNumber: Int
     var imageLayout: PageImageLayout
@@ -71,6 +71,7 @@ struct BookPage: Identifiable, Hashable {
         isCover: Bool = false,
         coverColor: CoverColor? = nil
     ) {
+    self.id = UUID()
         self.text = text
         self.pageNumber = pageNumber
         self.imageLayout = imageLayout
@@ -79,6 +80,27 @@ struct BookPage: Identifiable, Hashable {
         self.createdAt = Date()
         self.updatedAt = Date()
     }
+    
+  // Internal init for deserialization that preserves ID and dates
+  init(
+    id: UUID,
+    text: String,
+    pageNumber: Int,
+    imageLayout: PageImageLayout,
+    isCover: Bool,
+    coverColor: CoverColor?,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    self.id = id
+    self.text = text
+    self.pageNumber = pageNumber
+    self.imageLayout = imageLayout
+    self.isCover = isCover
+    self.coverColor = coverColor
+    self.createdAt = createdAt
+    self.updatedAt = updatedAt
+  }
 
     mutating func updateText(_ newText: String) {
         self.text = newText
