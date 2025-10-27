@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum PageImageLayout {
+enum PageImageLayout: Hashable {
     case none
     case single(imageName: String)
     case staggered(topImage: String, bottomImage: String)
@@ -28,7 +28,7 @@ enum CoverColor: String, CaseIterable {
         case .blue: return Color(red: 0.3, green: 0.5, blue: 0.9)
         case .green: return Color(red: 0.3, green: 0.7, blue: 0.4)
         case .yellow: return Color(red: 0.95, green: 0.8, blue: 0.3)
-        case .pink: return Color(red: 0.95, green: 0.3, blue: 0.8)
+    case .pink: return Color(red: 0.95, green: 0.3, blue: 0.8)
         case .brown: return Color(red: 0.6, green: 0.4, blue: 0.2)
         }
     }
@@ -39,13 +39,13 @@ enum CoverColor: String, CaseIterable {
         case .blue: return Color(red: 0.2, green: 0.3, blue: 0.7)
         case .green: return Color(red: 0.2, green: 0.5, blue: 0.3)
         case .yellow: return Color(red: 0.8, green: 0.6, blue: 0.2)
-        case .pink: return Color(red: 0.8, green: 0.2, blue: 0.6)
+    case .pink: return Color(red: 0.8, green: 0.2, blue: 0.6)
         case .brown: return Color(red: 0.4, green: 0.2, blue: 0.1)
         }
     }
 }
 
-struct BookPage: Identifiable {
+struct BookPage: Identifiable, Hashable {
     let id = UUID()
     var text: String
     var pageNumber: Int
@@ -54,6 +54,15 @@ struct BookPage: Identifiable {
     var coverColor: CoverColor?
     var createdAt: Date
     var updatedAt: Date
+    
+  // Hashable conformance
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+
+  static func == (lhs: BookPage, rhs: BookPage) -> Bool {
+    lhs.id == rhs.id
+  }
 
     init(
         text: String,
