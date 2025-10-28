@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		C60F7E832EAEDD0E005E483D /* rosaWriterIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = C60F7E822EAEDD0E005E483D /* rosaWriterIcon.icon */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		C60F7CE32EA5B398005E483D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -31,7 +27,6 @@
 		C60F7CD32EA5B396005E483D /* RosaWriter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RosaWriter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C60F7CE22EA5B398005E483D /* RosaWriterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RosaWriterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C60F7CEC2EA5B398005E483D /* RosaWriterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RosaWriterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C60F7E822EAEDD0E005E483D /* rosaWriterIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = rosaWriterIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,7 +79,6 @@
 				C60F7CE52EA5B398005E483D /* RosaWriterTests */,
 				C60F7CEF2EA5B398005E483D /* RosaWriterUITests */,
 				C60F7CD42EA5B396005E483D /* Products */,
-				C60F7E822EAEDD0E005E483D /* rosaWriterIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -218,7 +212,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C60F7E832EAEDD0E005E483D /* rosaWriterIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

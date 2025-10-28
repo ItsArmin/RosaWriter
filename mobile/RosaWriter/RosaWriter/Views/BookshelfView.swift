@@ -95,6 +95,25 @@ struct BookshelfView: View {
       .navigationTitle(scrollOffset < -30 ? "My Library" : "Rosa Writer")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
+        // Custom title with logo
+        ToolbarItem(placement: .principal) {
+          if scrollOffset >= -30 {
+            HStack(spacing: 8) {
+              Text("Rosa Writer")
+                .font(.headline)
+                .fontWeight(.semibold)
+              Image("rosaWriterMinimal")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 24)
+            }
+          } else {
+            Text("My Library")
+              .font(.headline)
+              .fontWeight(.semibold)
+          }
+        }
+
         ToolbarItem(placement: .topBarLeading) {
           if isSelectionMode {
             Button("Cancel") {

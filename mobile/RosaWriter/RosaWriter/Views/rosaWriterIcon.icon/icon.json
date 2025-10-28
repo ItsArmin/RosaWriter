@@ -1,0 +1,108 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "extended-srgb:0.00000,0.75294,0.90980,1.00000",
+          "display-p3:0.02129,0.08262,0.46006,1.00000"
+        ]
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.01576,0.21354,0.77373,1.00000",
+          "display-p3:0.00471,0.02038,0.12186,1.00000"
+        ]
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.00000,0.77087,0.99183,1.00000"
+              }
+            }
+          ],
+          "image-name" : "rosaWriterFlatLine.png",
+          "name" : "rosaWriterFlatLine",
+          "position" : {
+            "scale" : 0.45,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "extended-srgb:1.00000,0.80000,0.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.00000,0.77087,0.99183,1.00000"
+              }
+            }
+          ],
+          "image-name" : "rosaWriterFlatLine3Partial2.svg",
+          "name" : "rosaWriterFlatLine3Partial2",
+          "position" : {
+            "scale" : 1.25,
+            "translation-in-points" : [
+              200,
+              -50
+            ]
+          }
+        },
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "extended-srgb:1.00000,0.80000,0.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.00000,0.77087,0.99183,1.00000"
+              }
+            }
+          ],
+          "image-name" : "rosaWriterFlatLine3Partial.png",
+          "name" : "rosaWriterFlatLine3Partial",
+          "position" : {
+            "scale" : 0.45,
+            "translation-in-points" : [
+              -190,
+              -50
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
