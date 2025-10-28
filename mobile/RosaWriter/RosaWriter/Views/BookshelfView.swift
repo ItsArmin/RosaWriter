@@ -28,6 +28,7 @@ struct BookshelfView: View {
   @State private var hasLoadedInitialData = false
   @State private var showDeleteConfirmation = false
   @State private var scrollOffset: CGFloat = 0
+  @State private var navigateToSettings = false
 
   let columns = [
     GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
@@ -114,17 +115,6 @@ struct BookshelfView: View {
               }
               .disabled(selectedBooks.isEmpty)
             } else {
-              // Theme toggle
-              Button(action: {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                  themeManager.toggleTheme()
-                }
-              }) {
-                Image(systemName: themeManager.colorScheme == .light ? "moon.fill" : "sun.max.fill")
-                  .font(.title3)
-                  .foregroundColor(themeManager.colorScheme == .light ? .primary : .yellow)
-              }
-
               // Create story button
               Button(action: {
                 showCreateStory = true
@@ -143,6 +133,14 @@ struct BookshelfView: View {
                   Text("Select")
                 }
               }
+              
+              // Settings button
+              Button(action: {
+                navigateToSettings = true
+              }) {
+                Image(systemName: "gear")
+                  .font(.title3)
+              }
             }
           }
         }
@@ -160,6 +158,10 @@ struct BookshelfView: View {
             print("Error saving book: \(error)")
           }
         }
+      }
+      .navigationDestination(isPresented: $navigateToSettings) {
+        SettingsView()
+          .environmentObject(themeManager)
       }
       .navigationDestination(item: $selectedBook) { book in
         BookView(book: book)
