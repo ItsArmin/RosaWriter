@@ -9,6 +9,14 @@ import Combine
 import SwiftUI
 import SwiftData
 
+// Preference key for tracking scroll offset
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+  static var defaultValue: CGFloat = 0
+  static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    value = nextValue()
+  }
+}
+
 struct BookshelfView: View {
   @Environment(\.modelContext) private var modelContext
   @StateObject private var themeManager = ThemeManager()
@@ -19,6 +27,7 @@ struct BookshelfView: View {
   @State private var isSelectionMode = false
   @State private var hasLoadedInitialData = false
   @State private var showDeleteConfirmation = false
+  @State private var scrollOffset: CGFloat = 0
 
   let columns = [
     GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
@@ -38,22 +47,52 @@ struct BookshelfView: View {
         )
         .ignoresSafeArea()
 
-        if books.isEmpty {
-          emptyStateView
-        } else {
-          ScrollView {
-            LazyVGrid(columns: columns, spacing: 30) {
-              ForEach(books) { book in
-                bookCoverView(for: book)
+        ScrollView {
+          VStack(spacing: 0) {
+            // Custom "My Library" header that scrolls away
+            VStack(alignment: .leading, spacing: 8) {
+              Text("My Library")
+                .font(.system(size: 34, weight: .bold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+              if !books.isEmpty {
+                Text("\(books.count) \(books.count == 1 ? "story" : "stories")")
+                  .font(.subheadline)
+                  .foregroundColor(.secondary)
               }
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 16)
+            .background(
+              GeometryReader { geometry in
+                Color.clear.preference(
+                  key: ScrollOffsetPreferenceKey.self,
+                  value: geometry.frame(in: .named("scroll")).minY
+                )
+              }
+            )
+
+            if books.isEmpty {
+              emptyStateContent
+            } else {
+              LazyVGrid(columns: columns, spacing: 30) {
+                ForEach(books) { book in
+                  bookCoverView(for: book)
+                }
+              }
+              .padding(.horizontal, 20)
+              .padding(.vertical, 20)
+            }
           }
         }
+        .coordinateSpace(name: "scroll")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+          scrollOffset = value
+        }
       }
-      .navigationTitle("My Library")
-      .navigationBarTitleDisplayMode(.large)
+      .navigationTitle(scrollOffset < -30 ? "My Library" : "Rosa Writer")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .topBarLeading) {
           if isSelectionMode {
@@ -146,8 +185,11 @@ struct BookshelfView: View {
 
   // MARK: - Views
 
-  private var emptyStateView: some View {
+  private var emptyStateContent: some View {
     VStack(spacing: 20) {
+      Spacer()
+        .frame(height: 40)
+
       Image(systemName: "books.vertical")
         .font(.system(size: 60))
         .foregroundColor(.secondary)
@@ -179,8 +221,11 @@ struct BookshelfView: View {
           .cornerRadius(12)
       }
       .padding(.top, 8)
+      
+      Spacer()
     }
     .padding()
+    .frame(minHeight: 350)
   }
 
   private func bookCoverView(for book: Book) -> some View {
