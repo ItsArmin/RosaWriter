@@ -8,7 +8,7 @@
 import Foundation
 
 struct Book: Identifiable, Hashable {
-  let id = UUID()
+  let id: UUID
   var title: String
   var pages: [BookPage]
   var createdAt: Date
@@ -24,10 +24,20 @@ struct Book: Identifiable, Hashable {
   }
 
   init(title: String, pages: [BookPage] = []) {
+    self.id = UUID()
     self.title = title
     self.pages = pages
     self.createdAt = Date()
     self.updatedAt = Date()
+  }
+  
+  // Internal init for deserialization that preserves ID and dates
+  init(id: UUID, title: String, pages: [BookPage], createdAt: Date, updatedAt: Date) {
+    self.id = id
+    self.title = title
+    self.pages = pages
+    self.createdAt = createdAt
+    self.updatedAt = updatedAt
   }
 
   mutating func addPage(_ page: BookPage) {

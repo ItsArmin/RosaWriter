@@ -7,14 +7,18 @@
 
 import Combine
 import SwiftUI
+import SwiftData
 
 struct BookshelfView: View {
+  @Environment(\.modelContext) private var modelContext
   @StateObject private var themeManager = ThemeManager()
   @State private var books: [Book] = []
   @State private var showCreateStory = false
   @State private var selectedBook: Book?
   @State private var selectedBooks: Set<UUID> = []
   @State private var isSelectionMode = false
+  @State private var hasLoadedInitialData = false
+  @State private var showDeleteConfirmation = false
 
   let columns = [
     GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
@@ -65,7 +69,7 @@ struct BookshelfView: View {
         ToolbarItem(placement: .topBarTrailing) {
           HStack(spacing: 16) {
             if isSelectionMode {
-              Button(action: deleteSelectedBooks) {
+              Button(action: { showDeleteConfirmation = true }) {
                 Image(systemName: "trash")
                   .foregroundColor(.red)
               }
@@ -108,8 +112,13 @@ struct BookshelfView: View {
       .environmentObject(themeManager)
       .sheet(isPresented: $showCreateStory) {
         CreateStoryView { newBook in
-          withAnimation {
-            books.append(newBook)
+          do {
+            // Save to SwiftData
+            try StorageService.shared.saveStoryData(newBook, context: modelContext)
+            // Reload books
+            loadBooks()
+          } catch {
+            print("Error saving book: \(error)")
           }
         }
       }
@@ -117,10 +126,20 @@ struct BookshelfView: View {
         BookView(book: book)
           .environmentObject(themeManager)
       }
-      .onAppear {
-        if books.isEmpty {
-          books = BookService.shared.loadAllSampleBooks()
+      .confirmationDialog(
+        deleteConfirmationTitle,
+        isPresented: $showDeleteConfirmation,
+        titleVisibility: .visible
+      ) {
+        Button("Delete", role: .destructive) {
+          confirmDelete()
         }
+        Button("Cancel", role: .cancel) {}
+      } message: {
+        Text(deleteConfirmationMessage)
+      }
+      .task {
+        await loadBooksOnAppear()
       }
     }
   }
@@ -198,6 +217,26 @@ struct BookshelfView: View {
     .animation(.spring(response: 0.3), value: selectedBooks.contains(book.id))
   }
 
+  // MARK: - Computed Properties
+
+  private var deleteConfirmationTitle: String {
+    if selectedBooks.count == 1,
+      let book = books.first(where: { selectedBooks.contains($0.id) })
+    {
+      return "Delete \"\(book.title)\"?"
+    } else {
+      return "Delete \(selectedBooks.count) Stories?"
+    }
+  }
+
+  private var deleteConfirmationMessage: String {
+    if selectedBooks.count == 1 {
+      return "This story will be permanently deleted."
+    } else {
+      return "These stories will be permanently deleted."
+    }
+  }
+
   // MARK: - Actions
 
   private func toggleSelection(for book: Book) {
@@ -210,11 +249,56 @@ struct BookshelfView: View {
     }
   }
 
-  private func deleteSelectedBooks() {
-    withAnimation {
-      books.removeAll { selectedBooks.contains($0.id) }
-      selectedBooks.removeAll()
-      isSelectionMode = false
+  private func confirmDelete() {
+    do {
+      // Delete from SwiftData
+      for bookId in selectedBooks {
+        try StorageService.shared.deleteStoryData(id: bookId, context: modelContext)
+      }
+      
+      // Reload books
+      loadBooks()
+      
+      // Clear selection
+      withAnimation {
+        selectedBooks.removeAll()
+        isSelectionMode = false
+      }
+    } catch {
+      print("Error deleting books: \(error)")
+    }
+  }
+
+  // MARK: - Data Loading
+
+  private func loadBooksOnAppear() async {
+    guard !hasLoadedInitialData else { return }
+    hasLoadedInitialData = true
+
+    do {
+      // Check if we have any stories
+      let storyData = try StorageService.shared.loadAllStoryData(context: modelContext)
+
+      if storyData.isEmpty {
+        // First launch - populate with sample data
+        try StorageService.shared.populateWithSampleData(context: modelContext)
+      }
+
+      // Load books
+      loadBooks()
+    } catch {
+      print("Error loading initial data: \(error)")
+    }
+  }
+
+  private func loadBooks() {
+    do {
+      let loadedBooks = try StorageService.shared.loadAllBooks(context: modelContext)
+      withAnimation {
+        books = loadedBooks
+      }
+    } catch {
+      print("Error loading books: \(error)")
     }
   }
 }
