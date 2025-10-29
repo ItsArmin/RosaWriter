@@ -193,29 +193,29 @@ struct PageContentView: View {
                   .shadow(radius: 4)
 
               case .staggered(let topImage, let bottomImage):
-                VStack(spacing: isLargeDevice ? 24 : 16) {
-                  HStack {
-                    Spacer()
-                      .frame(width: isLargeDevice ? 60 : 40)
-                    Image(topImage)
-                      .resizable()
-                      .scaledToFit()
-                      .frame(maxWidth: imageMaxSize * 0.7, maxHeight: imageMaxSize * 0.7)
-                      .shadow(radius: 4)
-                      .scaleEffect(x: -1, y: 1)
-                    Spacer()
-                  }
+                let isEvenPage = pageNumber % 2 == 0
 
-                  HStack {
-                    Spacer()
-                    Image(bottomImage)
-                      .resizable()
-                      .scaledToFit()
-                      .frame(maxWidth: imageMaxSize * 0.7, maxHeight: imageMaxSize * 0.7)
-                      .shadow(radius: 4)
-                    Spacer()
-                      .frame(width: isLargeDevice ? 60 : 40)
-                  }
+                VStack(spacing: isLargeDevice ? 24 : 8) {
+                  // Top image
+                  Image(topImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: imageMaxSize * 0.85, maxHeight: imageMaxSize * 0.85)
+                    .shadow(radius: 4)
+                    .scaleEffect(x: -1, y: 1)
+                    .frame(maxWidth: .infinity, alignment: isEvenPage ? .leading : .trailing)
+                    .padding(.leading, isEvenPage ? (isLargeDevice ? 60 : 40) : 0)
+                    .padding(.trailing, isEvenPage ? 0 : (isLargeDevice ? 60 : 40))
+
+                  // Bottom image
+                  Image(bottomImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: imageMaxSize * 0.85, maxHeight: imageMaxSize * 0.85)
+                    .shadow(radius: 4)
+                    .frame(maxWidth: .infinity, alignment: isEvenPage ? .trailing : .leading)
+                    .padding(.leading, isEvenPage ? 0 : (isLargeDevice ? 60 : 40))
+                    .padding(.trailing, isEvenPage ? (isLargeDevice ? 60 : 40) : 0)
                 }
               }
 
