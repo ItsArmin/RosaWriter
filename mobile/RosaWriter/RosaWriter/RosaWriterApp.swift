@@ -25,7 +25,7 @@ struct RosaWriterApp: App {
 
   var body: some Scene {
     WindowGroup {
-      SplashView()
+      BookshelfView()
     }
     .modelContainer(sharedModelContainer)
   }

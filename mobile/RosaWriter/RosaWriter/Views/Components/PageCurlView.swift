@@ -129,109 +129,114 @@ struct PageContentView: View {
   let totalPages: Int
 
   var body: some View {
-    ZStack {
-      Color(UIColor.systemBackground)
-        .ignoresSafeArea()
+    GeometryReader { geometry in
+      let isLargeDevice = geometry.size.width >= 700  // iPad Mini and larger (744pt in portrait)
+      let imageMaxSize =
+        isLargeDevice ? min(geometry.size.width * 0.8, 650) : min(geometry.size.width * 0.7, 250)
+      let horizontalPadding: CGFloat = isLargeDevice ? 80 : 40
+      let fontSize: CGFloat = isLargeDevice ? 26 : 18
 
-      if page.isCover {
-        // Cover page design with book color
-        ZStack {
-          // Book cover background with gradient
-          if let coverColor = page.coverColor {
-            LinearGradient(
-              colors: [coverColor.lightColor, coverColor.darkColor],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-          }
+      ZStack {
+        Color(UIColor.systemBackground)
+          .ignoresSafeArea()
 
-          VStack(spacing: 24) {
-            Spacer()
-
-            if case .single(let imageName) = page.imageLayout {
-              Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 200, maxHeight: 200)
-                .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
+        if page.isCover {
+          // Cover page design with book color
+          ZStack {
+            // Book cover background with gradient
+            if let coverColor = page.coverColor {
+              LinearGradient(
+                colors: [coverColor.lightColor, coverColor.darkColor],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              )
+              .ignoresSafeArea()
             }
 
-            Text(page.text)
-              .font(.system(size: 32, weight: .bold))
-              .multilineTextAlignment(.center)
-              .foregroundColor(.white)
-              .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
-              .padding(.horizontal, 40)
+            VStack(spacing: isLargeDevice ? 32 : 24) {
+              Spacer()
 
-            Spacer()
+              if case .single(let imageName) = page.imageLayout {
+                Image(imageName)
+                  .resizable()
+                  .scaledToFit()
+                  .frame(maxWidth: imageMaxSize, maxHeight: imageMaxSize)
+                  .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
+              }
+
+              Text(page.text)
+                .font(.system(size: isLargeDevice ? 52 : 32, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white)
+                .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+                .padding(.horizontal, horizontalPadding)
+
+              Spacer()
+            }
           }
-        }
-      } else {
-        // Regular page with images and text
-        ScrollView {
-          VStack(alignment: .center, spacing: 24) {
+        } else {
+          // Regular page with images and text - centered content
+          VStack {
             Spacer()
-              .frame(height: 100)
+            
+            VStack(alignment: .center, spacing: isLargeDevice ? 32 : 24) {
+              // Render images based on layout
+              switch page.imageLayout {
+              case .none:
+                EmptyView()
 
-            // Render images based on layout
-            switch page.imageLayout {
-            case .none:
-              EmptyView()
+              case .single(let imageName):
+                Image(imageName)
+                  .resizable()
+                  .scaledToFit()
+                  .frame(maxWidth: imageMaxSize, maxHeight: imageMaxSize)
+                  .shadow(radius: 4)
 
-            case .single(let imageName):
-              Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 250, maxHeight: 250)
-                .shadow(radius: 4)
+              case .staggered(let topImage, let bottomImage):
+                VStack(spacing: isLargeDevice ? 24 : 16) {
+                  HStack {
+                    Spacer()
+                      .frame(width: isLargeDevice ? 60 : 40)
+                    Image(topImage)
+                      .resizable()
+                      .scaledToFit()
+                      .frame(maxWidth: imageMaxSize * 0.7, maxHeight: imageMaxSize * 0.7)
+                      .shadow(radius: 4)
+                      .scaleEffect(x: -1, y: 1)
+                    Spacer()
+                  }
 
-            case .staggered(let topImage, let bottomImage):
-              VStack(spacing: 16) {
-                HStack {
-                  Spacer()
-                    .frame(width: 40)
-                  Image(topImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: 180, maxHeight: 180)
-                    .shadow(radius: 4)
-                    .scaleEffect(x: -1, y: 1)
-                  Spacer()
-                }
-
-                HStack {
-                  Spacer()
-                  Image(bottomImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: 180, maxHeight: 180)
-                    .shadow(radius: 4)
-                  Spacer()
-                    .frame(width: 40)
+                  HStack {
+                    Spacer()
+                    Image(bottomImage)
+                      .resizable()
+                      .scaledToFit()
+                      .frame(maxWidth: imageMaxSize * 0.7, maxHeight: imageMaxSize * 0.7)
+                      .shadow(radius: 4)
+                    Spacer()
+                      .frame(width: isLargeDevice ? 60 : 40)
+                  }
                 }
               }
+
+              // Text below images
+              Text(page.text)
+                .font(.system(size: fontSize, weight: .regular))
+                .lineSpacing(isLargeDevice ? 10 : 8)
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, horizontalPadding)
             }
+            .frame(maxWidth: isLargeDevice ? 900 : .infinity)
 
-            // Text below images
-            Text(page.text)
-              .font(.system(size: 18, weight: .regular))
-              .lineSpacing(8)
-              .foregroundColor(.primary)
-              .padding(.horizontal, 40)
-              .padding(.bottom, 80)
+            Spacer()
+
+            // Page number at bottom
+            Text("\(pageNumber)")
+              .font(.system(size: isLargeDevice ? 14 : 12))
+              .foregroundColor(.secondary.opacity(0.5))
+              .padding(.bottom, 40)
           }
-          .frame(maxWidth: .infinity)
-        }
-        .scrollIndicators(.hidden)
-
-        // Page number at bottom
-        VStack {
-          Spacer()
-          Text("\(pageNumber)")
-            .font(.system(size: 12))
-            .foregroundColor(.secondary.opacity(0.5))
-            .padding(.bottom, 40)
         }
       }
     }
