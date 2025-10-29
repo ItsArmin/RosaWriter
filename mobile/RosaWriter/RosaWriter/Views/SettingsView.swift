@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum AppTheme: String, CaseIterable, Identifiable {
   case system = "System"
@@ -24,7 +25,12 @@ enum AppTheme: String, CaseIterable, Identifiable {
 }
 
 struct SettingsView: View {
+  @Environment(\.modelContext) private var modelContext
   @EnvironmentObject var themeManager: ThemeManager
+  
+  @State private var showResetConfirmation = false
+  @State private var showResetSuccess = false
+  @State private var resetError: String?
 
   var currentTheme: AppTheme {
     if let scheme = themeManager.colorScheme {
@@ -45,7 +51,7 @@ struct SettingsView: View {
           HStack(spacing: 12) {
             Image(systemName: "circle.lefthalf.filled")
               .font(.title2)
-              .foregroundColor(.yellow)
+              .foregroundColor(.blue)
             Text("Color Theme")
               .font(.title2)
               .fontWeight(.semibold)
@@ -73,7 +79,7 @@ struct SettingsView: View {
           HStack(spacing: 12) {
             Image(systemName: "text.quote")
               .font(.title2)
-              .foregroundColor(.yellow)
+              .foregroundColor(.blue)
             Text("Language")
               .font(.title2)
               .fontWeight(.semibold)
@@ -93,7 +99,7 @@ struct SettingsView: View {
           HStack(spacing: 12) {
             Image(systemName: "doc.text")
               .font(.title2)
-              .foregroundColor(.yellow)
+              .foregroundColor(.blue)
             Text("Library Limits")
               .font(.title2)
               .fontWeight(.semibold)
@@ -112,12 +118,50 @@ struct SettingsView: View {
         }
         .padding(.horizontal)
 
+        // Reset Sample Books Section
+        VStack(alignment: .leading, spacing: 16) {
+          HStack(spacing: 12) {
+            Image(systemName: "arrow.counterclockwise.circle")
+              .font(.title2)
+              .foregroundColor(.blue)
+            Text("Reset Sample Books")
+              .font(.title2)
+              .fontWeight(.semibold)
+          }
+
+          VStack(alignment: .leading, spacing: 12) {
+            Text(
+              "Restore the default sample books to their original state. This will delete any modifications to sample books."
+            )
+            .font(.body)
+            .foregroundColor(.secondary)
+
+            Button(action: {
+              showResetConfirmation = true
+            }) {
+              Text("Reset Sample Books")
+                .font(.body)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.red)
+                .cornerRadius(12)
+            }
+          }
+          .padding()
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .background(Color(.secondarySystemGroupedBackground))
+          .cornerRadius(12)
+        }
+        .padding(.horizontal)
+
         // Disclaimer Section
         VStack(alignment: .leading, spacing: 16) {
           HStack(spacing: 12) {
             Image(systemName: "exclamationmark.circle")
               .font(.title2)
-              .foregroundColor(.yellow)
+              .foregroundColor(.blue)
             Text("Disclaimer")
               .font(.title2)
               .fontWeight(.semibold)
@@ -156,10 +200,41 @@ struct SettingsView: View {
     .navigationTitle("Settings")
     .navigationBarTitleDisplayMode(.inline)
     .background(Color(.systemGroupedBackground).ignoresSafeArea())
+    .alert("Reset Sample Books?", isPresented: $showResetConfirmation) {
+      Button("Cancel", role: .cancel) {}
+      Button("Reset", role: .destructive) {
+        resetSampleBooks()
+      }
+    } message: {
+      Text(
+        "This will restore all sample books to their original state. Any modifications you've made to sample books will be lost."
+      )
+    }
+    .alert("Success", isPresented: $showResetSuccess) {
+      Button("OK", role: .cancel) {}
+    } message: {
+      Text("Sample books have been reset successfully.")
+    }
+    .alert("Error", isPresented: .constant(resetError != nil)) {
+      Button("OK", role: .cancel) {
+        resetError = nil
+      }
+    } message: {
+      Text(resetError ?? "An error occurred")
+    }
   }
 
   private func updateTheme(_ theme: AppTheme) {
     themeManager.setTheme(theme.colorScheme)
+  }
+
+  private func resetSampleBooks() {
+    do {
+      try StorageService.shared.resetSampleBooks(context: modelContext)
+      showResetSuccess = true
+    } catch {
+      resetError = error.localizedDescription
+    }
   }
 }
 

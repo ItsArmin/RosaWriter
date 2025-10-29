@@ -182,6 +182,12 @@ struct BookshelfView: View {
       .task {
         await loadBooksOnAppear()
       }
+      .onChange(of: navigateToSettings) { oldValue, newValue in
+        // Reload books when returning from Settings
+        if oldValue == true && newValue == false {
+          loadBooks()
+        }
+      }
     }
   }
 

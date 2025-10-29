@@ -145,6 +145,20 @@ class StorageService {
       try saveStoryData(book, context: context)
     }
   }
+  
+  /// Reset sample books to their original state
+  func resetSampleBooks(context: ModelContext) throws {
+    let sampleBooks = BookService.shared.loadAllSampleBooks()
+    let sampleBookIds = sampleBooks.map { $0.id }
+    
+    // Delete existing sample books
+    for bookId in sampleBookIds {
+      try? deleteStoryData(id: bookId, context: context)
+    }
+    
+    // Recreate them fresh
+    try populateWithSampleData(context: context)
+  }
 }
 
 // MARK: - Helper Types
