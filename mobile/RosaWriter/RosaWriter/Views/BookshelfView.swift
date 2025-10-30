@@ -17,6 +17,20 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
   }
 }
 
+enum BookSortOrder: String, CaseIterable {
+  case newestFirst = "Newest First"
+  case oldestFirst = "Oldest First"
+  case alphabetical = "A to Z"
+
+  var icon: String {
+    switch self {
+    case .newestFirst: return "arrow.down"
+    case .oldestFirst: return "arrow.up"
+    case .alphabetical: return "textformat"
+    }
+  }
+}
+
 struct BookshelfView: View {
   @Environment(\.modelContext) private var modelContext
   @StateObject private var themeManager = ThemeManager()
@@ -29,10 +43,24 @@ struct BookshelfView: View {
   @State private var showDeleteConfirmation = false
   @State private var scrollOffset: CGFloat = 0
   @State private var navigateToSettings = false
+  @State private var sortOrder: BookSortOrder = .newestFirst
 
   let columns = [
     GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
   ]
+  
+  var sortedBooks: [Book] {
+    switch sortOrder {
+    case .newestFirst:
+      return books.sorted { $0.createdAt > $1.createdAt }
+    case .oldestFirst:
+      return books.sorted { $0.createdAt < $1.createdAt }
+    case .alphabetical:
+      return books.sorted {
+        $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+      }
+    }
+  }
 
   var body: some View {
     NavigationStack {
@@ -78,7 +106,7 @@ struct BookshelfView: View {
               emptyStateContent
             } else {
               LazyVGrid(columns: columns, spacing: 30) {
-                ForEach(books) { book in
+                ForEach(sortedBooks) { book in
                   bookCoverView(for: book)
                 }
               }
@@ -139,6 +167,25 @@ struct BookshelfView: View {
               }) {
                 Label("Create Story", systemImage: "sparkles")
                   .labelStyle(.iconOnly)
+              }
+
+              // Sort menu
+              if !books.isEmpty {
+                Menu {
+                  ForEach(BookSortOrder.allCases, id: \.self) { order in
+                    Button(action: {
+                      sortOrder = order
+                    }) {
+                      Label(
+                        order.rawValue,
+                        systemImage: sortOrder == order ? "checkmark" : order.icon
+                      )
+                    }
+                  }
+                } label: {
+                  Image(systemName: "arrow.up.arrow.down")
+                    .font(.title3)
+                }
               }
 
               // Select button

@@ -89,12 +89,11 @@ struct BookCover: View {
           .foregroundColor(.primary)
           .lineLimit(2)
           .multilineTextAlignment(.center)
-          .frame(width: 110, height: 32, alignment: .top)
-          .fixedSize(horizontal: false, vertical: true)
+          .frame(width: 110, height: 36, alignment: .top)
       }
     }
     .buttonStyle(PlainButtonStyle())
-    .frame(height: 205)  // Fixed total height: 165 (cover) + 8 (spacing) + 32 (title)
+    .frame(height: 210)  // Fixed total height: 165 (cover) + 8 (spacing) + 36 (title)
   }
 }
 
