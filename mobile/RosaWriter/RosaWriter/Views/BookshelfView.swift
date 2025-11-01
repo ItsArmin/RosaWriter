@@ -136,26 +136,31 @@ struct BookshelfView: View {
                         Button(action: {
                             showCreateStory = true
                         }) {
-                            Image(systemName: "sparkles")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(
-                                    LinearGradient(
-                                        colors: [Color.blue, Color.purple],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
+                            Label {
+                                Text("New Story")
+                                    .font(.headline)
+                            } icon: {
+                                Image(systemName: "sparkles")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .shadow(
+                                        color: Color.black.opacity(0.3),
+                                        radius: 8,
+                                        x: 0,
+                                        y: 4
                                     )
-                                )
-                                .clipShape(Circle())
-                                .shadow(
-                                    color: Color.black.opacity(0.3),
-                                    radius: 8,
-                                    x: 0,
-                                    y: 4
-                                )
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(
+                                Capsule().fill(Color(.secondarySystemBackground).opacity(0.6))
+                            )
+                            .contentShape(Capsule())
                         }
+                        .glassEffect(
+                            .regular.tint(.blue.opacity(0.2)).interactive(),
+                            in: .capsule
+                        )
                         .padding(.trailing, 20)
                         .padding(.bottom, 20)
                     }
@@ -241,7 +246,7 @@ struct BookshelfView: View {
                             }
                         }
                     }
-                    
+
                     ToolbarSpacer(placement: .topBarTrailing)
 
                     // 3) Settings (rightmost)
@@ -509,3 +514,4 @@ struct BookshelfView: View {
     BookshelfView()
         .modelContainer(previewContainer)
 }
+
