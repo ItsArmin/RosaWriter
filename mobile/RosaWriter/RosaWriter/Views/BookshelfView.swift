@@ -127,6 +127,39 @@ struct BookshelfView: View {
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                     scrollOffset = value
                 }
+
+                // Floating Action Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            showCreateStory = true
+                        }) {
+                            Image(systemName: "sparkles")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(width: 60, height: 60)
+                                .background(
+                                    LinearGradient(
+                                        colors: [Color.blue, Color.purple],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .clipShape(Circle())
+                                .shadow(
+                                    color: Color.black.opacity(0.3),
+                                    radius: 8,
+                                    x: 0,
+                                    y: 4
+                                )
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 20)
+                    }
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -190,13 +223,15 @@ struct BookshelfView: View {
                     if !books.isEmpty {
                         ToolbarItem(placement: .topBarTrailing) {
                             Menu {
-                                ForEach(BookSortOrder.allCases, id: \.self) { order in
+                                ForEach(BookSortOrder.allCases, id: \.self) {
+                                    order in
                                     Button {
                                         sortOrder = order
                                     } label: {
                                         Label(
                                             order.rawValue,
-                                            systemImage: sortOrder == order ? "checkmark" : order.icon
+                                            systemImage: sortOrder == order
+                                                ? "checkmark" : order.icon
                                         )
                                     }
                                 }
@@ -206,20 +241,10 @@ struct BookshelfView: View {
                             }
                         }
                     }
-
-                    // 3) Create
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showCreateStory = true
-                        } label: {
-                            Label("Create Story", systemImage: "sparkles")
-                                .labelStyle(.iconOnly)
-                        }
-                    }
                     
                     ToolbarSpacer(placement: .topBarTrailing)
 
-                    // 4) Settings (rightmost)
+                    // 3) Settings (rightmost)
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             navigateToSettings = true
