@@ -33,7 +33,6 @@ enum BookSortOrder: String, CaseIterable {
 
 struct BookshelfView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var themeManager = ThemeManager()
     @State private var books: [Book] = []
     @State private var showCreateStory = false
     @State private var selectedBook: Book?
@@ -176,12 +175,12 @@ struct BookshelfView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 24)
-                            // Only show text on larger devices (iPad)
-                            if isLargeDevice {
-                                Text("Rosa Writer")
+//                            // Only show text on larger devices (iPad)
+//                            if isLargeDevice {
+                                Text("BETA")
                                     .font(.headline)
                                     .fontWeight(.semibold)
-                            }
+//                            }
                         }
                     } else {
                         Text("My Library")
@@ -260,8 +259,6 @@ struct BookshelfView: View {
                     }
                 }
             }
-            .preferredColorScheme(themeManager.colorScheme)
-            .environmentObject(themeManager)
             .sheet(isPresented: $showCreateStory) {
                 CreateStoryView { newBook in
                     do {
@@ -279,11 +276,9 @@ struct BookshelfView: View {
             }
             .navigationDestination(isPresented: $navigateToSettings) {
                 SettingsView()
-                    .environmentObject(themeManager)
             }
             .navigationDestination(item: $selectedBook) { book in
                 BookView(book: book)
-                    .environmentObject(themeManager)
             }
             .confirmationDialog(
                 deleteConfirmationTitle,
@@ -489,29 +484,15 @@ struct BookshelfView: View {
     }
 }
 
-#Preview {
-    @Previewable @State var previewContainer: ModelContainer = {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(
-            for: StoryData.self,
-            configurations: config
-        )
-        let context = container.mainContext
-
-        // Add sample books for preview
-        let sampleBooks = BookService.shared.loadAllSampleBooks()
-        for book in sampleBooks {
-            do {
-                try StorageService.shared.saveStoryData(book, context: context)
-            } catch {
-                print("Error saving preview book: \(error)")
-            }
-        }
-
-        return container
-    }()
-
-    BookshelfView()
-        .modelContainer(previewContainer)
+#Preview("BookshelfView") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: StoryData.self, configurations: config)
+    let context = container.mainContext
+    // Seed with sample data for preview
+    let sampleBooks = BookService.shared.loadAllSampleBooks()
+    for book in sampleBooks {
+        try? StorageService.shared.saveStoryData(book, context: context)
+    }
+    return BookshelfView()
+        .modelContainer(container)
 }
-

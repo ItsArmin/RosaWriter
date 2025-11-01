@@ -10,7 +10,6 @@ import SwiftUI
 struct BookView: View {
   let book: Book
   @Environment(\.dismiss) private var dismiss
-  @EnvironmentObject var themeManager: ThemeManager
   @State private var currentPageIndex = 0
 
   var body: some View {
@@ -60,7 +59,6 @@ struct BookView: View {
       }
     }
     .navigationBarHidden(true)
-    .preferredColorScheme(themeManager.colorScheme)
   }
 
 }
@@ -92,5 +90,4 @@ struct BookView: View {
   book.addPage(page3)
 
   return BookView(book: book)
-    .environmentObject(ThemeManager())
 }

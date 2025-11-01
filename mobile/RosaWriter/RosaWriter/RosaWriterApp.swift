@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct RosaWriterApp: App {
+  @AppStorage("theme") private var theme: AppTheme = .system
+
   var sharedModelContainer: ModelContainer = {
     let schema = Schema([
       StoryData.self
@@ -26,6 +28,7 @@ struct RosaWriterApp: App {
   var body: some Scene {
     WindowGroup {
       SplashView()
+        .preferredColorScheme(theme.colorScheme)
     }
     .modelContainer(sharedModelContainer)
   }
