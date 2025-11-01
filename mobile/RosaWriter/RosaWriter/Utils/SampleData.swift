@@ -12,7 +12,7 @@ struct SampleData {
   // MARK: - Mario's Adventure (Red Cover)
 
   static func marioAdventure() -> Book {
-    var book = Book(title: "Mario's Big Adventure")
+    var book = Book(title: "Mario's Big Adventure", isSample: true)
 
     let pages = [
       // Cover
@@ -84,7 +84,7 @@ struct SampleData {
   // MARK: - Luigi's Journey (Green Cover, no cover image)
 
   static func luigiJourney() -> Book {
-    var book = Book(title: "Luigi's Journey")
+    var book = Book(title: "Luigi's Journey", isSample: true)
 
     let pages = [
       // Cover (no image, just green color)
@@ -152,7 +152,7 @@ struct SampleData {
   // MARK: - Rosalina's Story (Brown Cover with star)
 
   static func rosalinaStory() -> Book {
-    var book = Book(title: "Rosalina's Story")
+    var book = Book(title: "Rosalina's Story", isSample: true)
 
     let pages = [
       // Cover
@@ -475,7 +475,7 @@ struct SampleData {
   // MARK: - Peach's Cooking Day (Blue Cover)
 
   static func peachsCookingDay() -> Book {
-    var book = Book(title: "Peach's Cooking Day")
+    var book = Book(title: "Peach's Cooking Day", isSample: true)
 
     let pages = [
       // Cover

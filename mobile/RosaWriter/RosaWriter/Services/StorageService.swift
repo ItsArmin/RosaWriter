@@ -185,6 +185,7 @@ private struct CodableBook: Codable {
   let pages: [CodablePage]
   let createdAt: Date
   let updatedAt: Date
+  let isSample: Bool
 
   init(from book: Book) {
     self.id = book.id
@@ -192,6 +193,7 @@ private struct CodableBook: Codable {
     self.pages = book.pages.map { CodablePage(from: $0) }
     self.createdAt = book.createdAt
     self.updatedAt = book.updatedAt
+    self.isSample = book.isSample
   }
 
   func toBook() -> Book {
@@ -201,7 +203,8 @@ private struct CodableBook: Codable {
       title: title,
       pages: bookPages,
       createdAt: createdAt,
-      updatedAt: updatedAt
+      updatedAt: updatedAt,
+      isSample: isSample
     )
   }
 }

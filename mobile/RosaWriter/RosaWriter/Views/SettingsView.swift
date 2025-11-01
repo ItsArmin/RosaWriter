@@ -130,7 +130,7 @@ struct SettingsView: View {
                             Text("Reset Sample Books")
                                 .font(.body)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.primary)
+                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
 //                                .background(Color.red)

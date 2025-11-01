@@ -163,7 +163,7 @@ struct BookshelfView: View {
                             .contentShape(Capsule())
                         }
                         .glassEffect(
-                            .regular.tint(.blue.opacity(0.2)).interactive(),
+              .regular.tint(.blue.opacity(0.3)).interactive(),
                             in: .capsule
                         )
                         .padding(.trailing, 20)
