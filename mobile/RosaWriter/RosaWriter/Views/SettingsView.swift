@@ -130,15 +130,15 @@ struct SettingsView: View {
                             Text("Reset Sample Books")
                                 .font(.body)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity)
                                 .padding()
 //                                .background(Color.red)
                                 .cornerRadius(12)
                         }
                         .glassEffect(
-                            .regular.tint(.red.opacity(0.2)).interactive(),
-                            in: .capsule
+                            .regular.tint(.blue.opacity(1.0)).interactive(),
+                            in: .buttonBorder
                         )
 
                     }
