@@ -44,8 +44,14 @@ struct BookshelfView: View {
     @State private var navigateToSettings = false
     @State private var sortOrder: BookSortOrder = .newestFirst
 
-    let columns = [
-        GridItem(.adaptive(minimum: 110, maximum: 140), spacing: 20)
+  let columns = [
+    GridItem(
+      .adaptive(
+        minimum: BookCoverConstants.totalWidth,
+        maximum: BookCoverConstants.totalWidth + 34
+      ),
+      spacing: 20
+    )
     ]
 
     var sortedBooks: [Book] {
