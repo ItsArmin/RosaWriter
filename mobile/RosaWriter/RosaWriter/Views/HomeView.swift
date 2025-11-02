@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var themeManager = ThemeManager()
     @State private var books: [Book] = []
-  @State private var showCreateStory = false
+    @State private var showCreateStory = false
 
     var body: some View {
         NavigationStack {
@@ -18,7 +17,6 @@ struct HomeView: View {
                 ForEach(books) { book in
                     NavigationLink {
                         BookView(book: book)
-                            .environmentObject(themeManager)
                     } label: {
                         HStack(spacing: 16) {
                             // Book icon
@@ -63,17 +61,6 @@ struct HomeView: View {
             }
             .navigationTitle("My Books")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { themeManager.toggleTheme() }) {
-                        Image(
-                            systemName: themeManager.isDarkMode
-                                ? "sun.max.fill" : "moon.fill"
-                        )
-                        .foregroundColor(
-                            themeManager.isDarkMode ? .yellow : .blue
-                        )
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
@@ -89,22 +76,20 @@ struct HomeView: View {
 //                }
                 ToolbarItem() {
                     Button(action: {
-            showCreateStory = true
+                        showCreateStory = true
                     }) {
-            Label("Create Story", systemImage: "sparkles")
+                        Label("Create Story", systemImage: "sparkles")
                     }
                 }
             }
         }
-        .preferredColorScheme(themeManager.colorScheme)
-        .environmentObject(themeManager)
-    .sheet(isPresented: $showCreateStory) {
-      CreateStoryView { newBook in
-        withAnimation {
-          books.append(newBook)
+        .sheet(isPresented: $showCreateStory) {
+            CreateStoryView { newBook in
+                withAnimation {
+                    books.append(newBook)
+                }
+            }
         }
-      }
-    }
         .onAppear {
             if books.isEmpty {
                 books = BookService.shared.loadAllSampleBooks()
@@ -146,4 +131,3 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
-

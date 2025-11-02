@@ -9,27 +9,51 @@ import SwiftUI
 import Combine
 
 class ThemeManager: ObservableObject {
-  // Persisted key for dark mode preference
-  private let key = "isDarkMode"
+  // Persisted keys
+  private let legacyKey = "isDarkMode"
+  private let themeKey = "appTheme"
 
   // Use @Published for ObservableObject change notifications
-  @Published var isDarkMode: Bool {
+  @Published var colorScheme: ColorScheme? {
     didSet {
       // Persist changes to UserDefaults whenever the value updates
-      UserDefaults.standard.set(isDarkMode, forKey: key)
+      if let scheme = colorScheme {
+        UserDefaults.standard.set(scheme == .dark, forKey: legacyKey)
+        UserDefaults.standard.set(scheme == .dark ? "Dark" : "Light", forKey: themeKey)
+      } else {
+        UserDefaults.standard.removeObject(forKey: legacyKey)
+        UserDefaults.standard.set("System", forKey: themeKey)
+      }
     }
   }
 
-  init() {
-    // Initialize from persisted storage (defaults to false)
-    self.isDarkMode = UserDefaults.standard.bool(forKey: key)
+  var isDarkMode: Bool {
+    colorScheme == .dark
   }
 
-  var colorScheme: ColorScheme {
-    isDarkMode ? .dark : .light
+  init() {
+    // Initialize from persisted storage
+    let savedTheme = UserDefaults.standard.string(forKey: themeKey)
+
+    if savedTheme == "System" {
+      self.colorScheme = nil
+    } else if savedTheme == "Dark" {
+      self.colorScheme = .dark
+    } else if savedTheme == "Light" {
+      self.colorScheme = .light
+    } else {
+      // Legacy support: check old key
+      let legacyDarkMode = UserDefaults.standard.bool(forKey: legacyKey)
+      self.colorScheme = legacyDarkMode ? .dark : .light
+    }
   }
 
   func toggleTheme() {
-    isDarkMode.toggle()
+    // Toggle between light and dark (legacy behavior)
+    colorScheme = (colorScheme == .dark) ? .light : .dark
+  }
+  
+  func setTheme(_ scheme: ColorScheme?) {
+    colorScheme = scheme
   }
 }

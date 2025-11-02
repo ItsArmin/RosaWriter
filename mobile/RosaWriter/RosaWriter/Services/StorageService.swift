@@ -145,6 +145,20 @@ class StorageService {
       try saveStoryData(book, context: context)
     }
   }
+  
+  /// Reset sample books to their original state
+  func resetSampleBooks(context: ModelContext) throws {
+    let sampleBooks = BookService.shared.loadAllSampleBooks()
+    let sampleBookIds = sampleBooks.map { $0.id }
+    
+    // Delete existing sample books
+    for bookId in sampleBookIds {
+      try? deleteStoryData(id: bookId, context: context)
+    }
+    
+    // Recreate them fresh
+    try populateWithSampleData(context: context)
+  }
 }
 
 // MARK: - Helper Types
@@ -171,6 +185,7 @@ private struct CodableBook: Codable {
   let pages: [CodablePage]
   let createdAt: Date
   let updatedAt: Date
+  let isSample: Bool
 
   init(from book: Book) {
     self.id = book.id
@@ -178,6 +193,7 @@ private struct CodableBook: Codable {
     self.pages = book.pages.map { CodablePage(from: $0) }
     self.createdAt = book.createdAt
     self.updatedAt = book.updatedAt
+    self.isSample = book.isSample
   }
 
   func toBook() -> Book {
@@ -187,7 +203,8 @@ private struct CodableBook: Codable {
       title: title,
       pages: bookPages,
       createdAt: createdAt,
-      updatedAt: updatedAt
+      updatedAt: updatedAt,
+      isSample: isSample
     )
   }
 }

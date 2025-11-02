@@ -13,6 +13,7 @@ struct Book: Identifiable, Hashable {
   var pages: [BookPage]
   var createdAt: Date
   var updatedAt: Date
+  var isSample: Bool
   
   // Hashable conformance
   func hash(into hasher: inout Hasher) {
@@ -23,21 +24,23 @@ struct Book: Identifiable, Hashable {
     lhs.id == rhs.id
   }
 
-  init(title: String, pages: [BookPage] = []) {
+  init(title: String, pages: [BookPage] = [], isSample: Bool = false) {
     self.id = UUID()
     self.title = title
     self.pages = pages
     self.createdAt = Date()
     self.updatedAt = Date()
+    self.isSample = isSample
   }
   
   // Internal init for deserialization that preserves ID and dates
-  init(id: UUID, title: String, pages: [BookPage], createdAt: Date, updatedAt: Date) {
+  init(id: UUID, title: String, pages: [BookPage], createdAt: Date, updatedAt: Date, isSample: Bool = false) {
     self.id = id
     self.title = title
     self.pages = pages
     self.createdAt = createdAt
     self.updatedAt = updatedAt
+    self.isSample = isSample
   }
 
   mutating func addPage(_ page: BookPage) {

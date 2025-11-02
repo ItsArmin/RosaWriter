@@ -12,7 +12,7 @@ struct SampleData {
   // MARK: - Mario's Adventure (Red Cover)
 
   static func marioAdventure() -> Book {
-    var book = Book(title: "Mario's Big Adventure")
+    var book = Book(title: "Mario's Big Adventure", isSample: true)
 
     let pages = [
       // Cover
@@ -84,7 +84,7 @@ struct SampleData {
   // MARK: - Luigi's Journey (Green Cover, no cover image)
 
   static func luigiJourney() -> Book {
-    var book = Book(title: "Luigi's Journey")
+    var book = Book(title: "Luigi's Journey", isSample: true)
 
     let pages = [
       // Cover (no image, just green color)
@@ -152,7 +152,7 @@ struct SampleData {
   // MARK: - Rosalina's Story (Brown Cover with star)
 
   static func rosalinaStory() -> Book {
-    var book = Book(title: "Rosalina's Story")
+    var book = Book(title: "Rosalina's Story", isSample: true)
 
     let pages = [
       // Cover
@@ -207,7 +207,7 @@ struct SampleData {
         text:
           "Days passed with no sight of the comet, or even a single planet. Instead, asteroids extended for as far as the eye could see. \"If I had known it was going to take this long, I would have packed more jam,\" said the little girl, above the rumble of her belly.\n\nBefore they left, she had packed all the essentials: telescope, butterfly net, stuffed bunny, bread, milk, jam, and apricot-flavored tea, but...",
         pageNumber: 6,
-        imageLayout: .single(imageName: "page_06_img1")
+        imageLayout: .staggered(topImage: "page_06_img1", bottomImage: "page_06_img2")
       ),
 
       // Page 7
@@ -215,7 +215,7 @@ struct SampleData {
         text:
           "\"I forgot to bring water!\" At this, Luma burst into gales of laughter, and the girl began to pout. \"As long as I have Star Bits, I'll be fine,\" said Luma. \"Want some?\" The little girl couldn't stay mad after hearing this.\n\nLuma continued to laugh, and the girl couldn't help but join in. \"All right, maybe just a nibble.\"",
         pageNumber: 7,
-        imageLayout: .single(imageName: "page_07_img1")
+        imageLayout: .staggered(topImage: "page_07_img1", bottomImage: "page_07_img2")
       ),
 
       // Page 8
@@ -246,7 +246,7 @@ struct SampleData {
         text:
           "The pair descended on the comet and found that it was made of ice. They looked high and low, but Luma's mother was nowhere to be found. Exhausted, the little girl sat down with a flop, utterly unable to take another step. \"Look!\"",
         pageNumber: 11,
-        imageLayout: .single(imageName: "page_11_img1")
+        imageLayout: .single(imageName: "page_10_img2")
       ),
 
       // Page 12
@@ -254,7 +254,7 @@ struct SampleData {
         text:
           "Peering down at the icy ground where Luma was pointing, the girl suddenly noticed clusters of Star Bits encased in the ice. \"Pretty good, huh? Finding Star Bits is my specialty!\" said Luma, beaming. \"There's ice here, but it's so warm, I'll bet there's water here too.\" The two decided to stay on the comet for a while. Riding the turquoise comet, the pair continued their search for Luma's mother.",
         pageNumber: 12,
-        imageLayout: .single(imageName: "page_13_img1")
+        imageLayout: .single(imageName: "page_11_img1")
       ),
 
       // Page 13 - Chapter 4 Title
@@ -269,7 +269,7 @@ struct SampleData {
         text:
           "One night, the girl dreamed about her own mother. \"Where are you going?\" she asked her mother's retreating back. Without turning, her mother replied, \"Don't fret, dearest. I'm not going anywhere. I'm always watching over you, like the sun in the day and the moon in the night.\"\n\nA wave of sadness washed over the girl. \"What about when it rains, and I can't see the sun or the moon?\" Her mother thought for a moment before responding.",
         pageNumber: 14,
-        imageLayout: .single(imageName: "page_14_img1")
+        imageLayout: .staggered(topImage: "page_13_img1", bottomImage: "page_13_img2")
       ),
 
       // Page 15
@@ -277,7 +277,7 @@ struct SampleData {
         text:
           "\"I will turn into a star in the clouds and wait for your tears to dry.\"\n\nWhen she awoke, the girl's face was damp with tears. \"You have Star Bits in your eyes!\" said Luma to the girl. Wiping her face, the girl replied, \"These are tears, not Star Bits. I'm crying because I'll never see my mother ever again!\" At this, Luma began to cry too. \"Mama, oh, Mama... waaaah!\"",
         pageNumber: 15,
-        imageLayout: .single(imageName: "page_15_img1")
+        imageLayout: .staggered(topImage: "page_14_img1", bottomImage: "page_14_img2")
       ),
 
       // Page 16
@@ -285,7 +285,7 @@ struct SampleData {
         text:
           "The pair traveled through the starry skies, and though they encountered many other comets, not one of them held Luma's mother. Luma was despondent. \"Now, now, Luma. The rain clouds won't go away if you keep crying,\" the girl said, giving Luma a squeeze. \"I'll give you a present if you stop.\" The girl closed her eyes and said gently, \"I'll take care of you.\" With these words, she felt a small spark in her heart.",
         pageNumber: 16,
-        imageLayout: .single(imageName: "page_17_img1")
+        imageLayout: .single(imageName: "page_15_img1")
       ),
 
       // Page 17 - Chapter 5 Title
@@ -300,7 +300,7 @@ struct SampleData {
         text:
           "\"The Kitchen will go here, and the library will go over there,\" the girl said busily to herself. \"We'll put the gate here.\" Ever since the girl took Luma under her care, she'd been bustling about at a feverish pace. \"It's a lot of work, but it's worth it to make a happy home.\" It turned out that Star Bits weren't the only things buried in the ice. There were tools and furniture unlike any they had ever seen, and the girl used them to build a home.",
         pageNumber: 18,
-        imageLayout: .single(imageName: "page_18_img1")
+        imageLayout: .single(imageName: "page_17_img1")
       ),
 
       // Page 19
@@ -308,7 +308,7 @@ struct SampleData {
         text:
           "Looking at the completed house, Luma remarked, \"Don't you think it's awfully big for just the two of us?\" With a library, bedroom, kitchen, fountain, and gate, it was certainly spacious, but still, something seemed to be missing. \"If only my father, brother, and mother were here,\" the girl said wistfully. Indeed, the house was too large for its two small residents.\n\nThat night, clutching her favorite stuffed bunny close to her heart, the girl fell asleep in the starship.",
         pageNumber: 19,
-        imageLayout: .single(imageName: "page_20_img1")
+        imageLayout: .staggered(topImage: "page_18_img1", bottomImage: "page_18_img2")
       ),
 
       // Page 20 - Chapter 6 Title
@@ -323,7 +323,7 @@ struct SampleData {
         text:
           "Then one day, while the girl sat sipping tea, a tiny apricot-colored planet appeared on the horizon. From the planet, another Luma of the same color emerged. \"Do you two know each other?!\" the girl asked the two Lumas gleefully. Despite the girl's excitement, they seemed uneasy.",
         pageNumber: 21,
-        imageLayout: .single(imageName: "page_21_img1")
+        imageLayout: .single(imageName: "page_20_img1")
       ),
 
       // Page 22
@@ -331,7 +331,7 @@ struct SampleData {
         text:
           "The two Lumas neither drew closer nor backed away from each other. Instead, they just stared. Then one Luma broke the silence. \"My mama!\" At once, the apricot Luma parroted back, \"My mama! My mama!\" \"My mama!\" \"My mama!\" The two Lumas began to dance around the girl frantically, and neither showed any sign of stopping. The girl was so charmed by this adorable scene that she couldn't help but laugh. And that's when something very strange happened.",
         pageNumber: 22,
-        imageLayout: .single(imageName: "page_22_img1")
+        imageLayout: .single(imageName: "page_21_img1")
       ),
 
       // Page 23
@@ -339,7 +339,7 @@ struct SampleData {
         text:
           "Suddenly, more Lumas began to pop out from the apricot planet. They were different colors, but they all shouted the same thing. \"My mama!\" \"My mama!\" The sight of all the shouting Lumas only made the girl laugh harder. \"What am I going to do with all these children?!\" The Lumas just stared blankly as she doubled over laughing. \"I guess we'll have to name each and every one of you.\" Tomorrow, once she had finished naming them all, she would begin moving all the Lumas into the new house.",
         pageNumber: 23,
-        imageLayout: .single(imageName: "page_24_img1")
+        imageLayout: .single(imageName: "page_22_img1")
       ),
 
       // Page 24 - Chapter 7 Title
@@ -354,7 +354,7 @@ struct SampleData {
         text:
           "After seeing their 100th comet, a sudden thought popped into the girl's head: \"I wonder if my home planet is still as blue as it was.\" That's when she remembered her father's telescope.\n\nPeeking into the telescope, a tiny blue dot floated into sight. It was smaller than a Star Bit. \"How strange... It's so far away, but it feels so close.\"",
         pageNumber: 25,
-        imageLayout: .single(imageName: "page_25_img1")
+        imageLayout: .staggered(topImage: "page_24_img1", bottomImage: "page_24_img2")
       ),
 
       // Page 26
@@ -362,7 +362,7 @@ struct SampleData {
         text:
           "She twisted the knob of the telescope, and the blue dot grew until she could make out a grassy hill dotted with flowers. It seemed very familiar to her. Zooming even closer, a terrace on the hill came into view. \"I used to go stargazing there when I lived on my home planet.\"",
         pageNumber: 26,
-        imageLayout: .single(imageName: "page_26_img1")
+        imageLayout: .single(imageName: "page_25_img1")
       ),
 
       // Page 27
@@ -370,7 +370,7 @@ struct SampleData {
         text:
           "She remembered rubbing the sleep out of her eyes as she followed her father up that hill to look at the stars...",
         pageNumber: 27,
-        imageLayout: .single(imageName: "page_27_img1")
+        imageLayout: .single(imageName: "page_25_img2")
       ),
 
       // Page 28
@@ -378,7 +378,7 @@ struct SampleData {
         text:
           "She remembered how she and her brother would sled down that hill...",
         pageNumber: 28,
-        imageLayout: .single(imageName: "page_27_img2")
+        imageLayout: .single(imageName: "page_26_img1")
       ),
 
       // Page 29
@@ -386,7 +386,7 @@ struct SampleData {
         text:
           "She remembered having picnics with her mother on that hill on bright and windy days... And...",
         pageNumber: 29,
-        imageLayout: .single(imageName: "page_29_img1")
+        imageLayout: .single(imageName: "page_26_img2")
       ),
 
       // Page 30
@@ -394,7 +394,7 @@ struct SampleData {
         text:
           "\"I want to go home! I want to go home right now!\" The girl burst into tears, and the Lumas didn't know what to do. \"I want to go home! I want to go back to my house by the hill! I want to see my mother!\" The girl was shouting now, her face wet with tears. \"But I know she's not there! I knew all along that she wasn't out there in the sky! Because...because...\"",
         pageNumber: 30,
-        imageLayout: .single(imageName: "page_30_img1")
+        imageLayout: .single(imageName: "page_27_img1")
       ),
 
       // Page 31
@@ -402,7 +402,7 @@ struct SampleData {
         text:
           "\"She's sleeping under the tree on the hill!\" The girl's cries echoed through the stars, and a hush fell over the area.",
         pageNumber: 31,
-        imageLayout: .single(imageName: "page_31_img1")
+        imageLayout: .single(imageName: "page_27_img2")
       ),
 
       // Page 32 - Chapter 8 Title
@@ -417,7 +417,7 @@ struct SampleData {
         text:
           "Though usually quite cheery, one day the girl became sad again. Luma drew close and tried to comfort her. \"Mama, you still have me!\" \"And don't be sad about your mama, because she's a part of you! That means she's always close by!\" \"It's like me. I love Star Bits because they remind me of my mama.\" \"No...no...\" the girl said, unable to stop the tears.",
         pageNumber: 33,
-        imageLayout: .single(imageName: "page_32_img2")
+        imageLayout: .single(imageName: "page_29_img1")
       ),
 
       // Page 34
@@ -425,7 +425,7 @@ struct SampleData {
         text:
           "A lonely look flickered across Luma's face, but it was soon replaced by a wide grin. \"I have an idea!\" \"I will transform into a comet, a soaring comet that can carry you all on this journey!\"",
         pageNumber: 34,
-        imageLayout: .single(imageName: "page_34_img1")
+        imageLayout: .single(imageName: "page_29_img2")
       ),
 
       // Page 35
@@ -433,7 +433,7 @@ struct SampleData {
         text:
           "With that, Luma, trailing bands of white, soared high into the sky and just as quickly started to plummet back down. KABOOM! KABLAM! The ground shook, and a bright light poured out of the crater that the Luma had created.",
         pageNumber: 35,
-        imageLayout: .single(imageName: "page_35_img1")
+        imageLayout: .single(imageName: "page_30_img1")
       ),
 
       // Page 36
@@ -441,7 +441,7 @@ struct SampleData {
         text:
           "The bands of light twisted together to form a comet tail. And then Luma emerged, reborn as a comet.",
         pageNumber: 36,
-        imageLayout: .single(imageName: "page_36_img1")
+        imageLayout: .single(imageName: "page_30_img2")
       ),
 
       // Page 37
@@ -449,7 +449,7 @@ struct SampleData {
         text:
           "The girl could scarcely believe her eyes. \"But...how?\" she kept asking. \"Our destiny as Lumas is to transform into different things,\" said a red Luma who had suddenly appeared. \"Stars, comets, planets... We can become all of these things!\" \"When I grow up, I want to become a star that makes someone special smile,\" said a green Luma. A blue Luma chimed in, \"That Luma turned into a real cutie of a comet, didn't he!\"",
         pageNumber: 37,
-        imageLayout: .single(imageName: "page_37_img1")
+        imageLayout: .single(imageName: "page_31_img1")
       ),
 
       // Page 38
@@ -457,7 +457,7 @@ struct SampleData {
         text:
           "All of the Lumas together said, \"No more crying, Mama!\" \"Thank you...\" said the girl in a whisper, and she pulled the Lumas close and hugged them. From that day on, Star Bits no longer fell from the girl's eyes.\n\nThe comet set forth for the girl's home planet, its long tail blazing proudly behind it.",
         pageNumber: 38,
-        imageLayout: .single(imageName: "page_38_img1")
+        imageLayout: .staggered(topImage: "page_32_img1", bottomImage: "page_32_img2")
       ),
 
       // the end
@@ -475,7 +475,7 @@ struct SampleData {
   // MARK: - Peach's Cooking Day (Blue Cover)
 
   static func peachsCookingDay() -> Book {
-    var book = Book(title: "Peach's Cooking Day")
+    var book = Book(title: "Peach's Cooking Day", isSample: true)
 
     let pages = [
       // Cover
