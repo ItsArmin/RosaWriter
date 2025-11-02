@@ -13,6 +13,23 @@ class StorageService {
   static let shared = StorageService()
 
   private init() {}
+  
+  // MARK: - Sample Book Version Management
+
+  /// Current version of sample books - increment this when you update sample content
+  private let currentSampleBooksVersion = 1
+  private let sampleBooksVersionKey = "sampleBooksVersion"
+
+  /// Check if sample books need updating
+  private func needsSampleBookUpdate() -> Bool {
+    let storedVersion = UserDefaults.standard.integer(forKey: sampleBooksVersionKey)
+    return storedVersion < currentSampleBooksVersion
+  }
+
+  /// Mark sample books as updated to current version
+  private func markSampleBooksUpdated() {
+    UserDefaults.standard.set(currentSampleBooksVersion, forKey: sampleBooksVersionKey)
+  }
 
   // MARK: - Book to JSON Conversion
 
@@ -74,6 +91,9 @@ class StorageService {
       existingStory.coverImage = coverImageName
       existingStory.wordCount = wordCount
       existingStory.storyJson = jsonString
+      existingStory.isSample = book.isSample
+      existingStory.lastModified = Date()
+      existingStory.schemaVersion = 2
     } else {
       // Create new story
       let storyData = StoryData(
@@ -82,7 +102,10 @@ class StorageService {
         title: book.title,
         coverImage: coverImageName,
         wordCount: wordCount,
-        storyJson: jsonString
+        storyJson: jsonString,
+        schemaVersion: 2,
+        isSample: book.isSample,
+        lastModified: Date()
       )
       context.insert(storyData)
     }
@@ -108,6 +131,30 @@ class StorageService {
   /// Load all stories (returns lightweight StoryData for bookshelf view)
   func loadAllStoryData(context: ModelContext) throws -> [StoryData] {
     let fetchDescriptor = FetchDescriptor<StoryData>(
+      sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+    )
+
+    return try context.fetch(fetchDescriptor)
+  }
+  
+  /// Load only user-created stories (excludes sample books)
+  func loadUserStoryData(context: ModelContext) throws -> [StoryData] {
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        story.isSample != true
+      },
+      sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+    )
+
+    return try context.fetch(fetchDescriptor)
+  }
+
+  /// Load only sample stories
+  func loadSampleStoryData(context: ModelContext) throws -> [StoryData] {
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        story.isSample == true
+      },
       sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
     )
 
@@ -144,20 +191,113 @@ class StorageService {
     for book in sampleBooks {
       try saveStoryData(book, context: context)
     }
+    
+    markSampleBooksUpdated()
   }
-  
-  /// Reset sample books to their original state
-  func resetSampleBooks(context: ModelContext) throws {
-    let sampleBooks = BookService.shared.loadAllSampleBooks()
-    let sampleBookIds = sampleBooks.map { $0.id }
-    
-    // Delete existing sample books
-    for bookId in sampleBookIds {
-      try? deleteStoryData(id: bookId, context: context)
+
+  /// Update sample books if there's a new version available
+  func updateSampleBooksIfNeeded(context: ModelContext) throws {
+    guard needsSampleBookUpdate() else {
+      print("📚 Sample books are up to date (version \(currentSampleBooksVersion))")
+      return
     }
-    
+
+    print("📚 Updating sample books to version \(currentSampleBooksVersion)...")
+
+    // Delete all existing sample books
+    // Try the efficient way first (using isSample field), fall back to JSON parsing
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        (story.isSample == true) || story.storyJson.contains("\"isSample\" : true")
+          || story.storyJson.contains("\"isSample\":true")
+      }
+    )
+
+    let sampleStories = try context.fetch(fetchDescriptor)
+    for story in sampleStories {
+      context.delete(story)
+    }
+
+    // Add fresh sample books
+    let sampleBooks = BookService.shared.loadAllSampleBooks()
+    for book in sampleBooks {
+      try saveStoryData(book, context: context)
+    }
+
+    try context.save()
+    markSampleBooksUpdated()
+
+    print("✅ Sample books updated successfully!")
+  }
+
+  /// Reset sample books to their original state (user-triggered action)
+  func resetSampleBooks(context: ModelContext) throws {
+    print("📚 Resetting sample books...")
+
+    // Delete all existing sample books
+    // Try the efficient way first (using isSample field), fall back to JSON parsing
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        (story.isSample == true) || story.storyJson.contains("\"isSample\" : true")
+          || story.storyJson.contains("\"isSample\":true")
+      }
+    )
+
+    let sampleStories = try context.fetch(fetchDescriptor)
+    for story in sampleStories {
+      context.delete(story)
+    }
+
     // Recreate them fresh
-    try populateWithSampleData(context: context)
+    let sampleBooks = BookService.shared.loadAllSampleBooks()
+    for book in sampleBooks {
+      try saveStoryData(book, context: context)
+    }
+
+    try context.save()
+    markSampleBooksUpdated()
+
+    print("✅ Sample books reset successfully!")
+  }
+
+  // MARK: - Migration Utilities
+
+  /// Migrate old StoryData records to the new schema
+  /// Call this on app launch to ensure all records are up to date
+  func migrateToLatestSchema(context: ModelContext) throws {
+    print("🔄 Checking for schema migrations...")
+
+    // Fetch all stories that need migration (schemaVersion < 2 or nil)
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        (story.schemaVersion ?? 0) < 2
+      }
+    )
+
+    let oldStories = try context.fetch(fetchDescriptor)
+
+    guard !oldStories.isEmpty else {
+      print("✅ All stories are up to date (schema version 2)")
+      return
+    }
+
+    print("🔄 Migrating \(oldStories.count) stories to schema version 2...")
+
+    for story in oldStories {
+      // Parse the JSON to determine if it's a sample book
+      if let book = try? jsonToBook(story.storyJson) {
+        story.isSample = book.isSample
+        story.lastModified = book.updatedAt
+      } else {
+        story.isSample = false
+        story.lastModified = story.createdAt
+      }
+
+      story.schemaVersion = 2
+    }
+
+    try context.save()
+    print("✅ Migration complete!")
   }
 }
 

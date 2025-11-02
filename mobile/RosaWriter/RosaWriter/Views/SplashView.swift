@@ -40,12 +40,42 @@ struct SplashView: View {
           opacity = 1.0
         }
 
+        // Initialize app: migrations, sample books, etc.
+        Task {
+          await initializeApp()
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
           withAnimation(.easeInOut(duration: 0.4)) {
             isActive = true
           }
         }
       }
+    }
+  }
+  
+  // MARK: - App Initialization
+
+  @MainActor
+  private func initializeApp() async {
+    do {
+      // 1. Run schema migrations if needed
+      try StorageService.shared.migrateToLatestSchema(context: modelContext)
+
+      // 2. Update sample books if there's a new version
+      try StorageService.shared.updateSampleBooksIfNeeded(context: modelContext)
+
+      // 3. If this is the first launch, populate with sample data
+      let stories = try StorageService.shared.loadAllStoryData(context: modelContext)
+      if stories.isEmpty {
+        print("📚 First launch detected - populating with sample data")
+        try StorageService.shared.populateWithSampleData(context: modelContext)
+      }
+
+      print("✅ App initialization complete")
+    } catch {
+      print("❌ Initialization error: \(error.localizedDescription)")
+      // App will still continue, but with potential issues
     }
   }
 }
