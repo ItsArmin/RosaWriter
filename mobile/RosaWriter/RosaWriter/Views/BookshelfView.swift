@@ -44,14 +44,14 @@ struct BookshelfView: View {
     @State private var navigateToSettings = false
     @State private var sortOrder: BookSortOrder = .newestFirst
 
-  let columns = [
-    GridItem(
-      .adaptive(
-        minimum: BookCoverConstants.totalWidth,
-        maximum: BookCoverConstants.totalWidth + 34
-      ),
-      spacing: 20
-    )
+    let columns = [
+        GridItem(
+            .adaptive(
+                minimum: BookCoverConstants.totalWidth,
+                maximum: BookCoverConstants.totalWidth + 34
+            ),
+            spacing: 20
+        )
     ]
 
     var sortedBooks: [Book] {
@@ -144,10 +144,13 @@ struct BookshelfView: View {
                             Label {
                                 Text("New Story")
                                     .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
                             } icon: {
                                 Image(systemName: "sparkles")
                                     .font(.title2)
                                     .fontWeight(.semibold)
+                                    .foregroundColor(.white)
                                     .shadow(
                                         color: Color.black.opacity(0.3),
                                         radius: 8,
@@ -157,13 +160,17 @@ struct BookshelfView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
-                            .background(
-                                Capsule().fill(Color(.secondarySystemBackground).opacity(0.6))
-                            )
+//                            .background(
+//                                Capsule().fill(
+//                                    Color(.secondarySystemBackground).opacity(
+//                                        0.6
+//                                    )
+//                                )
+//                            )
                             .contentShape(Capsule())
                         }
                         .glassEffect(
-              .regular.tint(.blue.opacity(0.3)).interactive(),
+                            .regular.tint(.blue.opacity(0.8)).interactive(),
                             in: .capsule
                         )
                         .padding(.trailing, 20)
@@ -181,12 +188,12 @@ struct BookshelfView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 24)
-//                            // Only show text on larger devices (iPad)
-//                            if isLargeDevice {
-                                Text("BETA")
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-//                            }
+                            //                            // Only show text on larger devices (iPad)
+                            //                            if isLargeDevice {
+                            Text("BETA")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            //                            }
                         }
                     } else {
                         Text("My Library")
@@ -492,7 +499,10 @@ struct BookshelfView: View {
 
 #Preview("BookshelfView") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: StoryData.self, configurations: config)
+    let container = try! ModelContainer(
+        for: StoryData.self,
+        configurations: config
+    )
     let context = container.mainContext
     // Seed with sample data for preview
     let sampleBooks = BookService.shared.loadAllSampleBooks()
