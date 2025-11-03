@@ -12,12 +12,12 @@ struct SampleData {
   // MARK: - Mario's Adventure (Red Cover)
 
   static func marioAdventure() -> Book {
-    var book = Book(title: "Mario's Big Adventure", isSample: true)
+    var book = Book(title: "Mario's Super Adventure", isSample: true)
 
     let pages = [
       // Cover
       BookPage(
-        text: "Mario's Big Adventure",
+        text: "Mario's Super Adventure",
         pageNumber: 1,
         imageLayout: .single(imageName: "mario"),
         isCover: true,
