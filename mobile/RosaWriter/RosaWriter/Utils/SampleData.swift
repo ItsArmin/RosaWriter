@@ -12,12 +12,12 @@ struct SampleData {
   // MARK: - Mario's Adventure (Red Cover)
 
   static func marioAdventure() -> Book {
-    var book = Book(title: "Mario's Big Adventure", isSample: true)
+    var book = Book(title: "Mario's Super Adventure", isSample: true)
 
     let pages = [
       // Cover
       BookPage(
-        text: "Mario's Big Adventure",
+        text: "Mario's Super Adventure",
         pageNumber: 1,
         imageLayout: .single(imageName: "mario"),
         isCover: true,
@@ -460,11 +460,54 @@ struct SampleData {
         imageLayout: .staggered(topImage: "page_32_img1", bottomImage: "page_32_img2")
       ),
 
+      // Page 39 - Final Chapter Title
+      BookPage(
+        text: "Chapter 9:\nFamily",
+        pageNumber: 39,
+        imageLayout: .none
+      ),
+
+      // Page 40
+      BookPage(
+        text: """
+          With its many Lumas and telescopes, the comet was quite a sight to behold. The girl and the Lumas were proud to call it home. At a welcoming party for a new Luma, the girl gathered everyone in the Kitchen and said in a louder voice than usual... "All right, everyone! Let's make a cake! A cake sprinkled with Star Bits! Then it will be a star cake!" The Lumas excitedly began to gather the ingredients...
+          """,
+        pageNumber: 40,
+        imageLayout: .single(imageName: "page_34_img1")
+      ),
+
+      // Page 41
+      BookPage(
+        text: """
+          As she watched the Lumas scurry about, the girl smiled and thought to herself, "This is my family now, and I will stay with them until they're ready to leave the nest. And when they do leave, I'll see them off with a smile." "Because that's what makes a mother happiest."
+          """,
+        pageNumber: 41,
+        imageLayout: .single(imageName: "page_35_img1")
+      ),
+
+      // Page 42
+      BookPage(
+        text: """
+          That night, when the girl lay down to sleep, a soft light enveloped her and reminded her of the blue planet she once called home. "But it would be nice to return home once every one hundred years to nap in my favorite sleeping nook."
+          """,
+        pageNumber: 42,
+        imageLayout: .single(imageName: "page_36_img1")
+      ),
+
+      // Page 43
+      BookPage(
+        text: """
+          The comet carrying the Lumas and the girl continues on its journey to this very day. With more "family members" in tow than can be counted, it's said that the comet visits the girl's home planet once every hundred years, its proud white tail glittering in the sky.
+          """,
+        pageNumber: 43,
+        imageLayout: .single(imageName: "page_37_img1")
+      ),
+
       // the end
       BookPage(
         text: "The End",
-        pageNumber: 39,
-        imageLayout: .none
+        pageNumber: 44,
+        imageLayout: .single(imageName: "page_38_img1")
       ),
     ]
 
@@ -549,3 +592,4 @@ struct SampleData {
     ]
   }
 }
+
