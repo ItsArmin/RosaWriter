@@ -43,9 +43,10 @@ struct SplashView: View {
         // Initialize app: migrations, sample books, etc.
         Task {
           await initializeApp()
-        }
+          
+          // Wait for animation to finish, then transition
+          try? await Task.sleep(nanoseconds: 1_500_000_000)  // 1.5 seconds
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
           withAnimation(.easeInOut(duration: 0.4)) {
             isActive = true
           }

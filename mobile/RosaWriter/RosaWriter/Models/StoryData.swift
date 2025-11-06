@@ -47,6 +47,6 @@ final class StoryData {
     self.storyJson = storyJson
     self.schemaVersion = schemaVersion
     self.isSample = isSample
-    self.lastModified = lastModified ?? Date()
+    self.lastModified = lastModified ?? createdAt  // Preserve original timestamp for migrations
   }
 }

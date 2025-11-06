@@ -17,7 +17,7 @@ class StorageService {
   // MARK: - Sample Book Version Management
 
   /// Current version of sample books - increment this when you update sample content
-  private let currentSampleBooksVersion = 3
+  private let currentSampleBooksVersion = 5
   private let sampleBooksVersionKey = "sampleBooksVersion"
 
   /// Check if sample books need updating
@@ -29,6 +29,17 @@ class StorageService {
   /// Mark sample books as updated to current version
   private func markSampleBooksUpdated() {
     UserDefaults.standard.set(currentSampleBooksVersion, forKey: sampleBooksVersionKey)
+  }
+  
+  /// Fetch all sample books from database
+  /// After migration, this primarily uses the isSample field for efficiency
+  private func fetchSampleBooks(context: ModelContext) throws -> [StoryData] {
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        story.isSample == true
+      }
+    )
+    return try context.fetch(fetchDescriptor)
   }
 
   // MARK: - Book to JSON Conversion
@@ -196,6 +207,7 @@ class StorageService {
   }
 
   /// Update sample books if there's a new version available
+  /// Note: This should be called after migrateToLatestSchema() to ensure isSample field is populated
   func updateSampleBooksIfNeeded(context: ModelContext) throws {
     guard needsSampleBookUpdate() else {
       print("📚 Sample books are up to date (version \(currentSampleBooksVersion))")
@@ -205,15 +217,8 @@ class StorageService {
     print("📚 Updating sample books to version \(currentSampleBooksVersion)...")
 
     // Delete all existing sample books
-    // Try the efficient way first (using isSample field), fall back to JSON parsing
-    let fetchDescriptor = FetchDescriptor<StoryData>(
-      predicate: #Predicate { story in
-        (story.isSample == true) || story.storyJson.contains("\"isSample\" : true")
-          || story.storyJson.contains("\"isSample\":true")
-      }
-    )
-
-    let sampleStories = try context.fetch(fetchDescriptor)
+    // Uses isSample field for efficiency (migration has already run)
+    let sampleStories = try fetchSampleBooks(context: context)
     for story in sampleStories {
       context.delete(story)
     }
@@ -234,16 +239,8 @@ class StorageService {
   func resetSampleBooks(context: ModelContext) throws {
     print("📚 Resetting sample books...")
 
-    // Delete all existing sample books
-    // Try the efficient way first (using isSample field), fall back to JSON parsing
-    let fetchDescriptor = FetchDescriptor<StoryData>(
-      predicate: #Predicate { story in
-        (story.isSample == true) || story.storyJson.contains("\"isSample\" : true")
-          || story.storyJson.contains("\"isSample\":true")
-      }
-    )
-
-    let sampleStories = try context.fetch(fetchDescriptor)
+    // Delete all existing sample books using efficient isSample field
+    let sampleStories = try fetchSampleBooks(context: context)
     for story in sampleStories {
       context.delete(story)
     }
