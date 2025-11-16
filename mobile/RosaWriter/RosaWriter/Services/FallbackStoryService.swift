@@ -1,0 +1,192 @@
+//
+//  FallbackStoryService.swift
+//  RosaWriter
+//
+//  Created by Armin on 11/15/25.
+//
+
+import Combine
+import Foundation
+import SwiftUI
+
+/// Template-based story generation service for devices without Apple Intelligence
+@MainActor
+class FallbackStoryService: ObservableObject {
+  static let shared = FallbackStoryService()
+
+  @Published var isGenerating = false
+  @Published var progress: Double = 0.0
+
+  private let renderer: TemplateRenderer
+
+  private init() {
+    do {
+      self.renderer = try TemplateRenderer()
+    } catch {
+      print("❌ [Fallback] Failed to initialize template renderer: \(error)")
+      fatalError("Could not load story templates: \(error.localizedDescription)")
+    }
+  }
+
+  // MARK: - Story Generation
+
+  /// Generate a story using templates
+  /// - Parameters:
+  ///   - mainCharacter: The main character
+  ///   - mood: Story mood
+  ///   - theme: Story theme
+  ///   - sideCharacter: Optional side character (randomly selected if nil)
+  ///   - pageCount: Desired page count (ignored, uses template length)
+  ///   - coverColor: Cover color for the book
+  /// - Returns: Generated book
+  func generateCustomStory(
+    mainCharacter: StoryCharacter,
+    mood: StoryMood,
+    theme: StoryTheme,
+    sideCharacter: StoryCharacter? = nil,
+    pageCount: Int = 5,
+    coverColor: CoverColor? = nil
+  ) async throws -> Book {
+    isGenerating = true
+    progress = 0.0
+    defer {
+      isGenerating = false
+      progress = 0.0
+    }
+
+    print("📚 [Fallback] Generating template-based story...")
+    print("   Character: \(mainCharacter.displayName)")
+    print("   Mood: \(mood.rawValue)")
+    print("   Theme: \(theme.rawValue)")
+
+    progress = 0.1
+
+    // Find matching template
+    guard let template = renderer.findTemplate(mood: mood, theme: theme) else {
+      let available = renderer.availableCombinations()
+      let availableStr = available.map { "\($0.mood.rawValue) + \($0.theme.rawValue)" }.joined(
+        separator: ", ")
+
+      print("❌ [Fallback] No template for \(mood.rawValue) + \(theme.rawValue)")
+      print("   Available combinations: \(availableStr)")
+
+      throw NSError(
+        domain: "FallbackStoryService",
+        code: -1,
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "No template available for \(mood.rawValue) + \(theme.rawValue). Available: \(availableStr)"
+        ]
+      )
+    }
+
+    print("✅ [Fallback] Found template: \(template.id)")
+    progress = 0.3
+
+    // Select random objects
+    let objects = StoryAssets.randomObjects(count: 2)
+    print("   Using objects: \(objects.map { $0.displayName }.joined(separator: ", "))")
+
+    if let side = sideCharacter {
+      print("   Using side character: \(side.displayName)")
+    } else {
+      print("   Side character will be randomly selected")
+    }
+
+    progress = 0.5
+
+    // Render the template
+    let renderedStory = renderer.render(
+      template: template,
+      mainCharacter: mainCharacter,
+      sideCharacter: sideCharacter,
+      objects: objects,
+      enableRandomization: true
+    )
+
+    print("✅ [Fallback] Template rendered: \(renderedStory.title)")
+    print("   Pages: \(renderedStory.pages.count)")
+
+    // Debug: Print images for each page
+    for page in renderedStory.pages {
+      print("   Page \(page.pageNumber) images: \(page.suggestedImages)")
+    }
+
+    progress = 0.8
+
+    // Convert to Book format
+    let book = convertToBook(
+      renderedStory: renderedStory,
+      coverColor: coverColor ?? .blue
+    )
+
+    progress = 1.0
+    print("✅ [Fallback] Story generation complete!")
+
+    return book
+  }
+
+  // MARK: - Private Helpers
+
+  private func convertToBook(renderedStory: RenderedStory, coverColor: CoverColor) -> Book {
+    var book = Book(title: renderedStory.title)
+
+    // Create cover page
+    let coverImageAssetId = renderedStory.pages.first?.suggestedImages.first
+    let coverImageName = coverImageAssetId.flatMap { assetId in
+      if let character = StoryAssets.character(for: assetId) {
+        return character.imageName
+      } else if let object = StoryAssets.object(for: assetId) {
+        return object.imageName
+      }
+      return nil
+    }
+
+    let coverPage = BookPage(
+      text: renderedStory.title,
+      pageNumber: 0,
+      imageLayout: coverImageName.map { .single(imageName: $0) } ?? .none,
+      isCover: true,
+      coverColor: coverColor
+    )
+    book.addPage(coverPage)
+
+    // Create content pages
+    for renderedPage in renderedStory.pages {
+      let imageLayout = determineImageLayout(from: renderedPage.suggestedImages)
+      let bookPage = BookPage(
+        text: renderedPage.text,
+        pageNumber: renderedPage.pageNumber,
+        imageLayout: imageLayout
+      )
+      book.addPage(bookPage)
+    }
+
+    return book
+  }
+
+  private func determineImageLayout(from assetIds: [String]) -> PageImageLayout {
+    let validImages = assetIds.compactMap { assetId -> String? in
+      if let character = StoryAssets.character(for: assetId) {
+        return character.imageName
+      } else if let object = StoryAssets.object(for: assetId) {
+        return object.imageName
+      }
+      return nil
+    }
+
+    switch validImages.count {
+    case 0:
+      return .none
+    case 1:
+      return .single(imageName: validImages[0])
+    case 2...:
+      return .staggered(
+        topImage: validImages[0],
+        bottomImage: validImages[1]
+      )
+    default:
+      return .none
+    }
+  }
+}

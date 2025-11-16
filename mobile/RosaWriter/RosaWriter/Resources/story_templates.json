@@ -1,0 +1,65 @@
+{
+  "version": "1.0.0",
+  "templates": [
+    {
+      "id": "adventure_birthday_001",
+      "mood": "Adventure",
+      "theme": "Birthday",
+      "title": "{{MAIN_CHARACTER}}'s Birthday Adventure",
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "It was {{MAIN_CHARACTER}}'s birthday! {{PRONOUN_SUBJECTIVE}} woke up excited to see what adventures the day would bring. The sun was shining brightly through the window.",
+          "textVariants": [
+            "Today was {{MAIN_CHARACTER}}'s special day! {{PRONOUN_SUBJECTIVE}} jumped out of bed, eager to discover what exciting surprises awaited. Sunshine streamed through the curtains.",
+            "{{MAIN_CHARACTER}} opened {{PRONOUN_POSSESSIVE}} eyes on birthday morning! {{PRONOUN_SUBJECTIVE}} could barely contain {{PRONOUN_POSSESSIVE}} excitement for the day ahead. Golden light filled the room."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "{{MAIN_CHARACTER}} found a mysterious map on {{PRONOUN_POSSESSIVE}} birthday table. It showed the way to hidden treasure! {{PRONOUN_SUBJECTIVE}} grabbed {{PRONOUN_POSSESSIVE}} backpack and called {{SIDE_CHARACTER}} to join the adventure.",
+          "textVariants": [
+            "On the breakfast table sat an ancient-looking map with {{MAIN_CHARACTER}}'s name on it. The treasure marker caught {{PRONOUN_POSSESSIVE}} eye immediately! {{PRONOUN_SUBJECTIVE}} quickly found {{SIDE_CHARACTER}} to share the discovery.",
+            "A rolled-up treasure map lay beside {{MAIN_CHARACTER}}'s birthday cake. {{PRONOUN_SUBJECTIVE}} unrolled it carefully, eyes widening at what it promised. {{SIDE_CHARACTER}} had to see this!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}"],
+          "imageVariants": [
+            ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"],
+            ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
+          ]
+        },
+        {
+          "pageNumber": 3,
+          "text": "Following the map, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} discovered {{OBJECT_1}} hidden behind a waterfall! But the journey wasn't over yet. The map showed one more secret location to explore.",
+          "textVariants": [
+            "The waterfall's roar grew louder as they approached. Behind the cascading water, {{MAIN_CHARACTER}} spotted {{OBJECT_1}} glowing softly! {{SIDE_CHARACTER}} pointed at the map—another marker remained.",
+            "{{SIDE_CHARACTER}} helped {{MAIN_CHARACTER}} climb through the waterfall cave. There, resting on a stone pedestal, was {{OBJECT_1}}! The map hinted at one final treasure spot."
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "At the final spot, {{MAIN_CHARACTER}} found {{OBJECT_2}} glowing with magical light! It was the most amazing birthday surprise. {{SIDE_CHARACTER}} cheered as {{PRONOUN_SUBJECTIVE}} picked it up carefully.",
+          "textVariants": [
+            "The X on the map led them to an ancient oak tree. Beneath its roots, {{OBJECT_2}} shimmered with enchanted energy! {{MAIN_CHARACTER}} couldn't believe {{PRONOUN_POSSESSIVE}} luck—what a birthday gift!",
+            "{{SIDE_CHARACTER}} dug near the marked stone while {{MAIN_CHARACTER}} checked the map. Suddenly, brilliant light burst forth—{{OBJECT_2}} emerged, more magnificent than anything they'd imagined!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_2}}"],
+          "imageVariants": [
+            ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}", "{{OBJECT_2}}"]
+          ]
+        },
+        {
+          "pageNumber": 5,
+          "text": "{{MAIN_CHARACTER}} returned home with {{SIDE_CHARACTER}}, carrying {{PRONOUN_POSSESSIVE}} treasures proudly. It had been the best birthday adventure ever! {{PRONOUN_SUBJECTIVE}} couldn't wait to tell everyone about the magical journey.",
+          "textVariants": [
+            "As the sun began to set, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} made their way back, treasures in hand. What an unforgettable birthday celebration! Everyone at home would love hearing this tale.",
+            "The adventure complete, {{MAIN_CHARACTER}} walked home alongside {{SIDE_CHARACTER}}, both grinning from ear to ear. This birthday would be remembered forever! The magical treasures would remind {{PRONOUN_OBJECTIVE}} of this perfect day."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    }
+  ]
+}

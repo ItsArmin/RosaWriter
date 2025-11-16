@@ -177,7 +177,7 @@ struct StoryAssets {
 
 // MARK: - Story Configuration Options
 
-enum StoryMood: String, CaseIterable, Identifiable {
+enum StoryMood: String, CaseIterable, Identifiable, Codable {
   case fantasy = "Fantasy"
   case silly = "Silly"
   case learning = "Learning"
@@ -211,7 +211,36 @@ enum StoryMood: String, CaseIterable, Identifiable {
   }
 }
 
-enum StorySpark: String, CaseIterable, Identifiable {
+/// Theme categorizes the story's central concept for template matching
+enum StoryTheme: String, Codable, CaseIterable, Identifiable {
+  case birthday = "Birthday"
+  case adventure = "Adventure"
+  case friendship = "Friendship"
+  case mystery = "Mystery"
+  case learning = "Learning"
+  case celebration = "Celebration"
+
+  var id: String { rawValue }
+
+  var description: String {
+    switch self {
+    case .birthday:
+      return "Birthday parties and celebrations"
+    case .adventure:
+      return "Exciting journeys and exploration"
+    case .friendship:
+      return "Stories about friends helping each other"
+    case .mystery:
+      return "Solving puzzles and uncovering secrets"
+    case .learning:
+      return "Discovering new things and learning"
+    case .celebration:
+      return "Special occasions and festivities"
+    }
+  }
+}
+
+enum StorySpark: String, CaseIterable, Identifiable, Codable {
   case treasureHunt = "Treasure Hunt"
   case findingFood = "Finding Something to Eat"
   case helpingFriend = "Helping a Friend"
@@ -244,6 +273,46 @@ enum StorySpark: String, CaseIterable, Identifiable {
       return "The character faces a tricky problem that needs a clever solution"
     case .random:
       return "Choose any creative premise that would make an engaging children's story"
+    }
+  }
+}
+
+// MARK: - Character Pronoun Helpers
+
+extension StoryCharacter {
+  /// Returns subject pronouns (he, she, they)
+  var pronounSubjective: String {
+    switch id {
+    case "MARIO", "LUIGI", "BOWSER":
+      return "he"
+    case "PEACH":
+      return "she"
+    default:
+      return "they"
+    }
+  }
+
+  /// Returns possessive pronouns (his, her, their)
+  var pronounPossessive: String {
+    switch id {
+    case "MARIO", "LUIGI", "BOWSER":
+      return "his"
+    case "PEACH":
+      return "her"
+    default:
+      return "their"
+    }
+  }
+
+  /// Returns object pronouns (him, her, them)
+  var pronounObjective: String {
+    switch id {
+    case "MARIO", "LUIGI", "BOWSER":
+      return "him"
+    case "PEACH":
+      return "her"
+    default:
+      return "them"
     }
   }
 }
