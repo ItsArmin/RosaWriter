@@ -59,16 +59,26 @@ class TemplateRenderer {
     objects: [StoryObject],
     enableRandomization: Bool = true
   ) -> RenderedStory {
-    // Select side character if not provided
-    let selectedSideCharacter = sideCharacter ?? selectRandomSideCharacter(excluding: mainCharacter)
-
-    // Render title
-    let renderedTitle = substitutePlaceholders(
-      in: template.title,
-      mainCharacter: mainCharacter,
-      sideCharacter: selectedSideCharacter,
-      objects: objects
-    )
+            // Select side character if not provided
+        let selectedSideCharacter = sideCharacter ?? selectRandomSideCharacter(excluding: mainCharacter)
+        
+        // Choose title (variant or original)
+        var titleTemplate = template.title
+        if enableRandomization,
+           let variants = template.titleVariants,
+           !variants.isEmpty {
+            // Randomly pick a variant or use original
+            let allTitleOptions = [template.title] + variants
+            titleTemplate = allTitleOptions.randomElement() ?? template.title
+        }
+        
+        // Render title with placeholders
+        let renderedTitle = substitutePlaceholders(
+            in: titleTemplate,
+            mainCharacter: mainCharacter,
+            sideCharacter: selectedSideCharacter,
+            objects: objects
+        )
 
     // Render pages
     let renderedPages = template.pages.map { templatePage in

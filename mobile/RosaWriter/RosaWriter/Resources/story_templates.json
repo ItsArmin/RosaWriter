@@ -1,12 +1,22 @@
 {
   "version": "1.0.0",
   "templates": [
-    {
-      "id": "adventure_birthday_001",
-      "mood": "Adventure",
-      "theme": "Birthday",
-      "title": "{{MAIN_CHARACTER}}'s Birthday Adventure",
-      "pages": [
+            {
+            "id": "adventure_birthday_001",
+            "mood": "Adventure",
+            "theme": "Birthday",
+            "title": "{{MAIN_CHARACTER}}'s Birthday Adventure",
+            "titleVariants": [
+                "The Amazing Birthday Quest of {{MAIN_CHARACTER}}",
+                "{{MAIN_CHARACTER}} and the Birthday Treasure Hunt",
+                "{{MAIN_CHARACTER}}'s Magical Birthday Journey",
+                "The Great Birthday Adventure: {{MAIN_CHARACTER}}'s Story",
+                "{{MAIN_CHARACTER}}'s Epic Birthday Expedition",
+                "A Birthday to Remember: {{MAIN_CHARACTER}}'s Tale",
+                "{{MAIN_CHARACTER}} Discovers Birthday Magic",
+                "The Legendary Birthday of {{MAIN_CHARACTER}}"
+            ],
+            "pages": [
         {
           "pageNumber": 1,
           "text": "It was {{MAIN_CHARACTER}}'s birthday! {{PRONOUN_SUBJECTIVE}} woke up excited to see what adventures the day would bring. The sun was shining brightly through the window.",
