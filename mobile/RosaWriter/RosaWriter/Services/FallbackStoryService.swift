@@ -54,7 +54,12 @@ class FallbackStoryService: ObservableObject {
       progress = 0.0
     }
 
-    print("📚 [Fallback] Generating template-based story...")
+    // Random delay to simulate generation time (3-5 seconds)
+    let delaySeconds = Int.random(in: 3...5)
+    print("📚 [Fallback] Generating template-based story... (simulating \(delaySeconds)s delay)")
+    try await Task.sleep(nanoseconds: UInt64(delaySeconds) * 1_000_000_000)
+
+    print("📚 [Fallback] Template generation starting...")
     print("   Character: \(mainCharacter.displayName)")
     print("   Mood: \(mood.rawValue)")
     print("   Theme: \(theme.rawValue)")
