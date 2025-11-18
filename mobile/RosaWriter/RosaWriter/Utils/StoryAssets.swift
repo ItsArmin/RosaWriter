@@ -14,17 +14,26 @@ struct StoryCharacter: Equatable, Hashable {
     let imageName: String
     let displayName: String
     let description: String
+    let pronounSubjective: String  // he, she, they
+    let pronounPossessive: String   // his, her, their
+    let pronounObjective: String    // him, her, them
 
     init(
         id: String,
         imageName: String,
         displayName: String,
-        description: String = ""
+        description: String = "",
+        pronounSubjective: String,
+        pronounPossessive: String,
+        pronounObjective: String
     ) {
         self.id = id
         self.imageName = imageName
         self.displayName = displayName
         self.description = description
+        self.pronounSubjective = pronounSubjective
+        self.pronounPossessive = pronounPossessive
+        self.pronounObjective = pronounObjective
     }
 }
 
@@ -57,14 +66,20 @@ struct StoryAssets {
         id: "MARIO",
         imageName: "mario",
         displayName: "Mario",
-        description: "A brave and adventurous hero in red overalls"
+        description: "A brave and adventurous hero in red overalls",
+        pronounSubjective: "he",
+        pronounPossessive: "his",
+        pronounObjective: "him"
     )
 
     static let LUIGI = StoryCharacter(
         id: "LUIGI",
         imageName: "luigi",
         displayName: "Luigi",
-        description: "Mario's kind and clever brother in green overalls"
+        description: "Mario's kind and clever brother in green overalls",
+        pronounSubjective: "he",
+        pronounPossessive: "his",
+        pronounObjective: "him"
     )
 
     static let PEACH = StoryCharacter(
@@ -72,7 +87,10 @@ struct StoryAssets {
         imageName: "peach",
         displayName: "Princess Peach",
         description:
-            "A kind and graceful princess who rules the Mushroom Kingdom"
+            "A kind and graceful princess who rules the Mushroom Kingdom",
+        pronounSubjective: "she",
+        pronounPossessive: "her",
+        pronounObjective: "her"
     )
 
     static let BOWSER = StoryCharacter(
@@ -80,7 +98,10 @@ struct StoryAssets {
         imageName: "bowser",
         displayName: "Bowser",
         description:
-            "A large, sometimes grumpy character who can be a friend or foe"
+            "A large, sometimes grumpy character who can be a friend or foe",
+        pronounSubjective: "he",
+        pronounPossessive: "his",
+        pronounObjective: "him"
     )
 
     static let allCharacters: [StoryCharacter] = [
@@ -273,46 +294,6 @@ enum StorySpark: String, CaseIterable, Identifiable, Codable {
       return "The character faces a tricky problem that needs a clever solution"
     case .random:
       return "Choose any creative premise that would make an engaging children's story"
-    }
-  }
-}
-
-// MARK: - Character Pronoun Helpers
-
-extension StoryCharacter {
-  /// Returns subject pronouns (he, she, they)
-  var pronounSubjective: String {
-    switch id {
-    case "MARIO", "LUIGI", "BOWSER":
-      return "he"
-    case "PEACH":
-      return "she"
-    default:
-      return "they"
-    }
-  }
-
-  /// Returns possessive pronouns (his, her, their)
-  var pronounPossessive: String {
-    switch id {
-    case "MARIO", "LUIGI", "BOWSER":
-      return "his"
-    case "PEACH":
-      return "her"
-    default:
-      return "their"
-    }
-  }
-
-  /// Returns object pronouns (him, her, them)
-  var pronounObjective: String {
-    switch id {
-    case "MARIO", "LUIGI", "BOWSER":
-      return "him"
-    case "PEACH":
-      return "her"
-    default:
-      return "them"
     }
   }
 }
