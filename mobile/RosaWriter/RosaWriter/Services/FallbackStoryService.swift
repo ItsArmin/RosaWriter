@@ -38,7 +38,6 @@ class FallbackStoryService: ObservableObject {
   ///   - mood: Story mood
   ///   - theme: Story theme
   ///   - sideCharacter: Optional side character (randomly selected if nil)
-  ///   - pageCount: Desired page count (ignored, uses template length)
   ///   - coverColor: Cover color for the book
   /// - Returns: Generated book
   func generateCustomStory(
@@ -46,7 +45,6 @@ class FallbackStoryService: ObservableObject {
     mood: StoryMood,
     theme: StoryTheme,
     sideCharacter: StoryCharacter? = nil,
-    pageCount: Int = 5,
     coverColor: CoverColor? = nil
   ) async throws -> Book {
     isGenerating = true

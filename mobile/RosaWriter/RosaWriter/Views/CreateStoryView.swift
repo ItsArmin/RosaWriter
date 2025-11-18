@@ -271,9 +271,8 @@ struct CreateStoryView: View {
                         mainCharacter: selectedCharacter,
                         mood: selectedMood,
                         theme: theme,
-                        sideCharacter: nil,  // Let service pick randomly
-                        pageCount: 5,
-                        coverColor: selectedColor
+            sideCharacter: nil,  // Let service pick randomly
+            coverColor: selectedColor
                     )
                 }
 
