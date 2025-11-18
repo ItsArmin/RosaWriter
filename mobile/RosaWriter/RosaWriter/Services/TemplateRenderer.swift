@@ -162,20 +162,22 @@ class TemplateRenderer {
     var result = text
 
     // Main character substitutions
+    // Note: TemplatePlaceholders.mainCharacterPronounSubjective = "{{PRONOUN_SUBJECTIVE}}"
+    // This matches the placeholders used in story_templates.json
     result = result.replacingOccurrences(
       of: TemplatePlaceholders.mainCharacter,
       with: mainCharacter.displayName
     )
     result = result.replacingOccurrences(
-      of: TemplatePlaceholders.mainCharacterPronounSubjective,
+      of: TemplatePlaceholders.mainCharacterPronounSubjective,  // "{{PRONOUN_SUBJECTIVE}}"
       with: mainCharacter.pronounSubjective
     )
     result = result.replacingOccurrences(
-      of: TemplatePlaceholders.mainCharacterPronounPossessive,
+      of: TemplatePlaceholders.mainCharacterPronounPossessive,  // "{{PRONOUN_POSSESSIVE}}"
       with: mainCharacter.pronounPossessive
     )
     result = result.replacingOccurrences(
-      of: TemplatePlaceholders.mainCharacterPronounObjective,
+      of: TemplatePlaceholders.mainCharacterPronounObjective,  // "{{PRONOUN_OBJECTIVE}}"
       with: mainCharacter.pronounObjective
     )
 
