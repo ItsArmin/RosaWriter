@@ -11,7 +11,7 @@ import SwiftUI
   let page = BookPage(
     text: "This is a sample page with a single centered image below the text.",
     pageNumber: 2,
-    imageLayout: .single(imageName: "mario")
+    imageLayout: .single(imageName: "mrDog")
   )
 
   return PageContentView(page: page, pageNumber: 2, totalPages: 5)
@@ -21,7 +21,7 @@ import SwiftUI
   let page = BookPage(
     text: "This page shows two images in a staggered layout - one higher than the other.",
     pageNumber: 3,
-    imageLayout: .staggered(topImage: "mario", bottomImage: "luigi")
+    imageLayout: .staggered(topImage: "sirWhiskers", bottomImage: "msCow")
   )
 
   return PageContentView(page: page, pageNumber: 3, totalPages: 5)
@@ -29,9 +29,9 @@ import SwiftUI
 
 #Preview("Cover - Red") {
   let page = BookPage(
-    text: "Mario's Big Adventure",
+    text: "Mr. Dog's Big Adventure",
     pageNumber: 1,
-    imageLayout: .single(imageName: "mario"),
+    imageLayout: .single(imageName: "mrDog"),
     isCover: true,
     coverColor: .red
   )
@@ -41,9 +41,9 @@ import SwiftUI
 
 #Preview("Cover - Blue") {
   let page = BookPage(
-    text: "Luigi's Journey",
+    text: "Sir Whiskers' Journey",
     pageNumber: 1,
-    imageLayout: .single(imageName: "luigi"),
+    imageLayout: .single(imageName: "sirWhiskers"),
     isCover: true,
     coverColor: .blue
   )
@@ -53,9 +53,9 @@ import SwiftUI
 
 #Preview("Cover - Green") {
   let page = BookPage(
-    text: "The 1-Up Adventure",
+    text: "The Apple Adventure",
     pageNumber: 1,
-    imageLayout: .single(imageName: "1up"),
+    imageLayout: .single(imageName: "apple"),
     isCover: true,
     coverColor: .green
   )
@@ -65,9 +65,9 @@ import SwiftUI
 
 #Preview("Cover - Yellow") {
   let page = BookPage(
-    text: "Mushroom Kingdom Tales",
+    text: "Professor Seal's Tales",
     pageNumber: 1,
-    imageLayout: .single(imageName: "mario"),
+    imageLayout: .single(imageName: "professorSeal"),
     isCover: true,
     coverColor: .yellow
   )

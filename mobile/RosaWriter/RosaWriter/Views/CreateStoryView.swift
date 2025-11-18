@@ -12,7 +12,7 @@ struct CreateStoryView: View {
     @StateObject private var aiService = AIStoryService.shared
 
     // User selections
-    @State private var selectedCharacter: StoryCharacter = StoryAssets.MARIO
+  @State private var selectedCharacter: StoryCharacter = StoryAssets.MR_DOG
     @State private var selectedMood: StoryMood = .adventure
     @State private var selectedSpark: StorySpark = .random
     @State private var selectedColor: CoverColor = .blue
@@ -233,48 +233,15 @@ struct CreateStoryView: View {
 
         Task {
             do {
-                // Check Apple Intelligence availability
-                let useAppleIntelligence = AIStoryService.isAppleIntelligenceAvailable()
-                
-                let book: Book
-
-                if useAppleIntelligence {
-                    // Use Apple Intelligence
-                    print("📚 Using Apple Intelligence for story generation")
-                    book = try await AIStoryService.shared.generateCustomStory(
-                        mainCharacter: selectedCharacter,
-                        mood: selectedMood,
-                        spark: selectedSpark,
-                        pageCount: 5,
-                        coverColor: selectedColor
-                    )
-                } else {
-                    // Use template-based fallback
-                    print("📚 Using Template Fallback for story generation")
-                    
-                    // Map selectedSpark to StoryTheme
-                    let theme: StoryTheme
-                    switch selectedSpark {
-                    case .birthday:
-                        theme = .birthday
-                    case .treasureHunt, .magicalDiscovery:
-                        theme = .adventure
-                    case .helpingFriend:
-                        theme = .friendship
-                    case .solvingProblem:
-                        theme = .mystery
-                    case .findingFood, .lostAndFound, .buildingSomething, .random:
-                        theme = .adventure  // Default fallback
-                    }
-
-                    book = try await FallbackStoryService.shared.generateCustomStory(
-                        mainCharacter: selectedCharacter,
-                        mood: selectedMood,
-                        theme: theme,
-            sideCharacter: nil,  // Let service pick randomly
-            coverColor: selectedColor
-                    )
-                }
+        // Use Apple Intelligence for story generation
+        print("📚 Using Apple Intelligence for story generation")
+        let book = try await AIStoryService.shared.generateCustomStory(
+          mainCharacter: selectedCharacter,
+          mood: selectedMood,
+          spark: selectedSpark,
+          pageCount: 5,
+          coverColor: selectedColor
+        )
 
                 // Success! Pass book back and dismiss
                 await MainActor.run {

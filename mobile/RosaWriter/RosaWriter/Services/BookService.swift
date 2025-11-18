@@ -13,7 +13,7 @@ class BookService {
   private init() {}
 
   func createSampleBook() -> Book {
-    return SampleData.marioAdventure()
+    return SampleData.mrDogsAdventure()
   }
 
   func loadAllSampleBooks() -> [Book] {
@@ -47,11 +47,11 @@ class BookService {
       // Fallback to sample data if AI generation fails
       print("❌ AI generation failed: \(error.localizedDescription)")
       print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.marioAdventure()
+      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
     } catch {
       print("❌ Unexpected error during AI generation: \(error)")
       print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.marioAdventure()
+      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
     }
   }
 
@@ -72,11 +72,11 @@ class BookService {
     } catch let error as AIStoryError {
       print("❌ AI generation failed: \(error.localizedDescription)")
       print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.marioAdventure()
+      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
     } catch {
       print("❌ Unexpected error during AI generation: \(error)")
       print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.marioAdventure()
+      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
     }
   }
 }

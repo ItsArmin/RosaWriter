@@ -77,12 +77,12 @@ struct StoryPrompts {
                 {
                   "pageNumber": 1,
                   "text": "Once upon a time...",
-                  "suggestedImages": ["MARIO", "COIN"]
+                  "suggestedImages": ["MR_DOG", "APPLE"]
                 },
                 {
                   "pageNumber": 2,
                   "text": "The next day...",
-                  "suggestedImages": ["LUIGI"]
+                  "suggestedImages": ["SIR_WHISKERS"]
                 }
               ]
             }
@@ -199,12 +199,12 @@ struct StoryPrompts {
           {
             "pageNumber": 1,
             "text": "Once upon a time...",
-            "suggestedImages": ["MARIO", "COIN"]
+            "suggestedImages": ["MR_DOG", "APPLE"]
           },
           {
             "pageNumber": 2,
             "text": "The next day...",
-            "suggestedImages": ["LUIGI"]
+            "suggestedImages": ["SIR_WHISKERS"]
           }
         ]
       }

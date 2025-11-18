@@ -62,110 +62,120 @@ struct StoryAssets {
 
     // MARK: - Characters
 
-    static let MARIO = StoryCharacter(
-        id: "MARIO",
-        imageName: "mario",
-        displayName: "Mario",
-        description: "A brave and adventurous hero in red overalls",
+    static let MR_DOG = StoryCharacter(
+        id: "MR_DOG",
+        imageName: "mrDog",
+        displayName: "Mr. Dog",
+        description: "A friendly, happy-go-lucky optimistic dog",
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him"
     )
 
-    static let LUIGI = StoryCharacter(
-        id: "LUIGI",
-        imageName: "luigi",
-        displayName: "Luigi",
-        description: "Mario's kind and clever brother in green overalls",
+    static let SIR_WHISKERS = StoryCharacter(
+        id: "SIR_WHISKERS",
+        imageName: "sirWhiskers",
+        displayName: "Sir Whiskers",
+        description: "A prim and proper cat who speaks with a whimsical British accent",
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him"
     )
 
-    static let PEACH = StoryCharacter(
-        id: "PEACH",
-        imageName: "peach",
-        displayName: "Princess Peach",
-        description:
-            "A kind and graceful princess who rules the Mushroom Kingdom",
+    static let PROFESSOR_SEAL = StoryCharacter(
+        id: "PROFESSOR_SEAL",
+        imageName: "professorSeal",
+        displayName: "Professor Seal",
+        description: "A wise and logical educator seal",
+        pronounSubjective: "he",
+        pronounPossessive: "his",
+        pronounObjective: "him"
+    )
+
+    static let MS_COW = StoryCharacter(
+        id: "MS_COW",
+        imageName: "msCow",
+        displayName: "Ms. Cow",
+        description: "A kind and simple cow who speaks with a southern accent",
         pronounSubjective: "she",
         pronounPossessive: "her",
         pronounObjective: "her"
     )
 
-    static let BOWSER = StoryCharacter(
-        id: "BOWSER",
-        imageName: "bowser",
-        displayName: "Bowser",
-        description:
-            "A large, sometimes grumpy character who can be a friend or foe",
-        pronounSubjective: "he",
-        pronounPossessive: "his",
-        pronounObjective: "him"
-    )
-
     static let allCharacters: [StoryCharacter] = [
-        MARIO,
-        LUIGI,
-        PEACH,
-        BOWSER,
+        MR_DOG,
+        SIR_WHISKERS,
+        PROFESSOR_SEAL,
+        MS_COW,
     ]
 
     // MARK: - Objects
 
-    static let ONE_UP = StoryObject(
-        id: "ONE_UP",
-        imageName: "1up",
-        displayName: "1-Up Mushroom",
-        description:
-            "A magical green mushroom that grants an extra life or special power"
+    static let APPLE = StoryObject(
+        id: "APPLE",
+        imageName: "apple",
+        displayName: "Apple",
+        description: "A shiny red apple, healthy and delicious"
     )
 
-    static let COIN = StoryObject(
-        id: "COIN",
-        imageName: "coin",
-        displayName: "Gold Coin",
-        description:
-            "A shiny golden coin that can be collected or used as treasure"
+    static let BALLOON = StoryObject(
+        id: "BALLOON",
+        imageName: "balloon",
+        displayName: "Balloon",
+        description: "A colorful balloon that floats in the air"
     )
 
-    static let STAR = StoryObject(
-        id: "STAR",
-        imageName: "star",
-        displayName: "Power Star",
-        description:
-            "A magical star that grants special powers or makes wishes come true"
+    static let BASKETBALL = StoryObject(
+        id: "BASKETBALL",
+        imageName: "basketball",
+        displayName: "Basketball",
+        description: "An orange basketball for playing and bouncing"
     )
 
-    static let FIRE_FLOWER = StoryObject(
-        id: "FIRE_FLOWER",
-        imageName: "fireflower",
-        displayName: "Fire Flower",
-        description: "A special flower with magical fire powers"
+    static let BOOK = StoryObject(
+        id: "BOOK",
+        imageName: "book",
+        displayName: "Book",
+        description: "A book full of stories and knowledge"
     )
 
-    static let SPAGHETTI = StoryObject(
-        id: "SPAGHETTI",
-        imageName: "spaghetti",
-        displayName: "Spaghetti",
-        description: "A delicious plate of Italian pasta"
+    static let BURGER = StoryObject(
+        id: "BURGER",
+        imageName: "burger",
+        displayName: "Burger",
+        description: "A tasty burger with all the fixings"
     )
 
-    static let GOOMBA = StoryObject(
-        id: "GOOMBA",
-        imageName: "goomba",
-        displayName: "Goomba",
-        description:
-            "A small mushroom creature that can be friendly or mischievous"
+    static let CAKE = StoryObject(
+        id: "CAKE",
+        imageName: "cake",
+        displayName: "Cake",
+        description: "A delicious cake perfect for celebrations"
+    )
+
+    static let CRAYON = StoryObject(
+        id: "CRAYON",
+        imageName: "crayon",
+        displayName: "Crayon",
+        description: "A colorful crayon for drawing and creating art"
+    )
+
+    static let TEDDY = StoryObject(
+        id: "TEDDY",
+        imageName: "teddy",
+        displayName: "Teddy Bear",
+        description: "A soft and cuddly teddy bear"
     )
 
     static let allObjects: [StoryObject] = [
-        ONE_UP,
-        COIN,
-        STAR,
-        FIRE_FLOWER,
-        SPAGHETTI,
-        GOOMBA,
+        APPLE,
+        BALLOON,
+        BASKETBALL,
+        BOOK,
+        BURGER,
+        CAKE,
+        CRAYON,
+        TEDDY,
     ]
 
     // MARK: - Helper Methods
@@ -228,35 +238,6 @@ enum StoryMood: String, CaseIterable, Identifiable, Codable {
       return "Curious and engaging with puzzles to solve"
     case .kindness:
       return "Gentle and caring about helping others"
-    }
-  }
-}
-
-/// Theme categorizes the story's central concept for template matching
-enum StoryTheme: String, Codable, CaseIterable, Identifiable {
-  case birthday = "Birthday"
-  case adventure = "Adventure"
-  case friendship = "Friendship"
-  case mystery = "Mystery"
-  case learning = "Learning"
-  case celebration = "Celebration"
-
-  var id: String { rawValue }
-
-  var description: String {
-    switch self {
-    case .birthday:
-      return "Birthday parties and celebrations"
-    case .adventure:
-      return "Exciting journeys and exploration"
-    case .friendship:
-      return "Stories about friends helping each other"
-    case .mystery:
-      return "Solving puzzles and uncovering secrets"
-    case .learning:
-      return "Discovering new things and learning"
-    case .celebration:
-      return "Special occasions and festivities"
     }
   }
 }

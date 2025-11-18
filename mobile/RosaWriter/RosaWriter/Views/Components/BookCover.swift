@@ -253,7 +253,7 @@ struct BookCover: View {
             BookPage(
                 text: "Sample Book",
                 pageNumber: 1,
-                imageLayout: .single(imageName: "mario"),
+                imageLayout: .single(imageName: "mrDog"),
                 isCover: true,
                 coverColor: .red
             )
