@@ -42,6 +42,33 @@ class AIStoryService: ObservableObject {
 
   private init() {}
 
+  // MARK: - Availability Check
+
+  /// Check if Apple Intelligence is available on this device
+  /// Note: iOS Simulator does NOT support Apple Intelligence, even if your Mac does
+  static func isAppleIntelligenceAvailable() -> Bool {
+    #if canImport(FoundationModels)
+      let model = SystemLanguageModel.default
+      let isAvailable = model.isAvailable
+      
+      #if targetEnvironment(simulator)
+        print("🔍 Apple Intelligence availability check: ❌ Not Available (iOS Simulator)")
+        print("   Note: Simulator does not support Apple Intelligence - use a physical device")
+        return false
+      #else
+        if isAvailable {
+          print("🔍 Apple Intelligence availability check: ✅ Available (Physical Device)")
+        } else {
+          print("🔍 Apple Intelligence availability check: ❌ Not Available (Device doesn't support Apple Intelligence)")
+        }
+        return isAvailable
+      #endif
+    #else
+      print("🔍 Apple Intelligence availability check: ❌ FoundationModels framework not available")
+      return false
+    #endif
+  }
+
   // MARK: - Story Generation
 
   /// Generate a new story using Apple Intelligence

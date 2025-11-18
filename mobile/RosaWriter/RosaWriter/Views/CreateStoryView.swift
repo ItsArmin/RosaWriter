@@ -233,13 +233,48 @@ struct CreateStoryView: View {
 
         Task {
             do {
-                let book = try await AIStoryService.shared.generateCustomStory(
-                    mainCharacter: selectedCharacter,
-                    mood: selectedMood,
-                    spark: selectedSpark,
-                    pageCount: 5,
-                    coverColor: selectedColor
-                )
+                // Check Apple Intelligence availability
+                let useAppleIntelligence = AIStoryService.isAppleIntelligenceAvailable()
+                
+                let book: Book
+
+                if useAppleIntelligence {
+                    // Use Apple Intelligence
+                    print("📚 Using Apple Intelligence for story generation")
+                    book = try await AIStoryService.shared.generateCustomStory(
+                        mainCharacter: selectedCharacter,
+                        mood: selectedMood,
+                        spark: selectedSpark,
+                        pageCount: 5,
+                        coverColor: selectedColor
+                    )
+                } else {
+                    // Use template-based fallback
+                    print("📚 Using Template Fallback for story generation")
+                    
+                    // Map selectedSpark to StoryTheme
+                    let theme: StoryTheme
+                    switch selectedSpark {
+                    case .birthday:
+                        theme = .birthday
+                    case .treasureHunt, .magicalDiscovery:
+                        theme = .adventure
+                    case .helpingFriend:
+                        theme = .friendship
+                    case .solvingProblem:
+                        theme = .mystery
+                    case .findingFood, .lostAndFound, .buildingSomething, .random:
+                        theme = .adventure  // Default fallback
+                    }
+
+                    book = try await FallbackStoryService.shared.generateCustomStory(
+                        mainCharacter: selectedCharacter,
+                        mood: selectedMood,
+                        theme: theme,
+            sideCharacter: nil,  // Let service pick randomly
+            coverColor: selectedColor
+                    )
+                }
 
                 // Success! Pass book back and dismiss
                 await MainActor.run {
