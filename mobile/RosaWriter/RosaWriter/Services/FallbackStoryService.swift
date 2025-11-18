@@ -17,14 +17,16 @@ class FallbackStoryService: ObservableObject {
   @Published var isGenerating = false
   @Published var progress: Double = 0.0
 
-  private let renderer: TemplateRenderer
+  private let renderer: TemplateRenderer?
 
   private init() {
     do {
       self.renderer = try TemplateRenderer()
+      print("✅ [Fallback] Template renderer initialized successfully")
     } catch {
       print("❌ [Fallback] Failed to initialize template renderer: \(error)")
-      fatalError("Could not load story templates: \(error.localizedDescription)")
+      print("⚠️ [Fallback] Template-based story generation will not be available")
+      self.renderer = nil
     }
   }
 
@@ -66,9 +68,21 @@ class FallbackStoryService: ObservableObject {
 
     progress = 0.1
 
+    // Check if renderer is available
+    guard let templateRenderer = renderer else {
+      print("❌ [Fallback] Template renderer not available - templates could not be loaded")
+      throw NSError(
+        domain: "FallbackStoryService",
+        code: -2,
+        userInfo: [
+          NSLocalizedDescriptionKey: "Template-based story generation is not available. Story templates could not be loaded."
+        ]
+      )
+    }
+
     // Find matching template
-    guard let template = renderer.findTemplate(mood: mood, theme: theme) else {
-      let available = renderer.availableCombinations()
+    guard let template = templateRenderer.findTemplate(mood: mood, theme: theme) else {
+      let available = templateRenderer.availableCombinations()
       let availableStr = available.map { "\($0.mood.rawValue) + \($0.theme.rawValue)" }.joined(
         separator: ", ")
 
@@ -101,7 +115,7 @@ class FallbackStoryService: ObservableObject {
     progress = 0.5
 
     // Render the template
-    let renderedStory = renderer.render(
+    let renderedStory = templateRenderer.render(
       template: template,
       mainCharacter: mainCharacter,
       sideCharacter: sideCharacter,

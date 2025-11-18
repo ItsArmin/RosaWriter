@@ -50,6 +50,8 @@ struct TemplatePlaceholders {
   static let mainCharacterPronounObjective = "{{PRONOUN_OBJECTIVE}}"
 
   static let sideCharacter = "{{SIDE_CHARACTER}}"
+  // Side character pronoun placeholders (available for use in templates)
+  // Example: "{{SIDE_CHARACTER}} found {{SIDE_PRONOUN_POSSESSIVE}} backpack"
   static let sideCharacterPronounSubjective = "{{SIDE_PRONOUN_SUBJECTIVE}}"
   static let sideCharacterPronounPossessive = "{{SIDE_PRONOUN_POSSESSIVE}}"
   static let sideCharacterPronounObjective = "{{SIDE_PRONOUN_OBJECTIVE}}"
