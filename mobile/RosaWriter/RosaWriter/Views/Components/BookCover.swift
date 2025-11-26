@@ -15,7 +15,7 @@ enum BookCoverConstants {
     static let cornerRadius: CGFloat = 8
     static let titleHeight: CGFloat = 36
     static let titleSpacing: CGFloat = 8
-    static let imagePadding: CGFloat = 16
+    static let imagePadding: CGFloat = 2
     static let innerShadowWidth: CGFloat = 8
 
     // Computed

@@ -131,8 +131,9 @@ struct PageContentView: View {
   var body: some View {
     GeometryReader { geometry in
       let isLargeDevice = geometry.size.width >= 700  // iPad Mini and larger (744pt in portrait)
+      // Increased image size: 85% of width with higher max (was 70% with 250pt max)
       let imageMaxSize =
-        isLargeDevice ? min(geometry.size.width * 0.8, 650) : min(geometry.size.width * 0.7, 250)
+        isLargeDevice ? min(geometry.size.width * 0.85, 650) : min(geometry.size.width * 0.85, 350)
       let horizontalPadding: CGFloat = isLargeDevice ? 80 : 40
       let fontSize: CGFloat = isLargeDevice ? 26 : 18
 
@@ -194,29 +195,30 @@ struct PageContentView: View {
 
               case .staggered(let topImage, let bottomImage):
                 let isEvenPage = pageNumber % 2 == 0
+                let staggeredMaxSize = imageMaxSize * 0.75
 
-                VStack(spacing: isLargeDevice ? 24 : 8) {
+                VStack(spacing: isLargeDevice ? 16 : 8) {
                   // Top image
                   Image(topImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: imageMaxSize * 0.85, maxHeight: imageMaxSize * 0.85)
+                    .frame(maxWidth: staggeredMaxSize, maxHeight: staggeredMaxSize)
                     .shadow(radius: 4)
                     .scaleEffect(x: isEvenPage ? -1 : 1, y: 1)
                     .frame(maxWidth: .infinity, alignment: isEvenPage ? .leading : .trailing)
-                    .padding(.leading, isEvenPage ? (isLargeDevice ? 60 : 40) : 0)
-                    .padding(.trailing, isEvenPage ? 0 : (isLargeDevice ? 60 : 40))
+                    .padding(.leading, isEvenPage ? 20 : 0)
+                    .padding(.trailing, isEvenPage ? 0 : 20)
 
                   // Bottom image
                   Image(bottomImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: imageMaxSize * 0.85, maxHeight: imageMaxSize * 0.85)
+                    .frame(maxWidth: staggeredMaxSize, maxHeight: staggeredMaxSize)
                     .shadow(radius: 4)
                     .scaleEffect(x: isEvenPage ? 1 : -1, y: 1)
                     .frame(maxWidth: .infinity, alignment: isEvenPage ? .trailing : .leading)
-                    .padding(.leading, isEvenPage ? 0 : (isLargeDevice ? 60 : 40))
-                    .padding(.trailing, isEvenPage ? (isLargeDevice ? 60 : 40) : 0)
+                    .padding(.leading, isEvenPage ? 0 : 20)
+                    .padding(.trailing, isEvenPage ? 20 : 0)
                 }
               }
 
