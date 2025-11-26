@@ -161,7 +161,7 @@ struct PageContentView: View {
                 Image(imageName)
                   .resizable()
                   .scaledToFit()
-                  .frame(maxWidth: imageMaxSize, maxHeight: imageMaxSize)
+                  .frame(maxWidth: imageMaxSize)
                   .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
               }
 
@@ -176,11 +176,12 @@ struct PageContentView: View {
             }
           }
         } else {
-          // Regular page with images and text - centered content
-          VStack {
+          // Regular page with images and text
+          VStack(spacing: 0) {
             Spacer()
+              .frame(height: isLargeDevice ? 60 : 40)
             
-            VStack(alignment: .center, spacing: isLargeDevice ? 32 : 24) {
+            VStack(alignment: .center, spacing: isLargeDevice ? 20 : 12) {
               // Render images based on layout
               switch page.imageLayout {
               case .none:
@@ -190,35 +191,49 @@ struct PageContentView: View {
                 Image(imageName)
                   .resizable()
                   .scaledToFit()
-                  .frame(maxWidth: imageMaxSize, maxHeight: imageMaxSize)
+                  .frame(maxWidth: imageMaxSize)
                   .shadow(radius: 4)
 
               case .staggered(let topImage, let bottomImage):
                 let isEvenPage = pageNumber % 2 == 0
-                let staggeredMaxSize = imageMaxSize * 0.75
+                
+                // Resolve sizes
+                let topSize = StoryAssets.size(forImageName: topImage)
+                let bottomSize = StoryAssets.size(forImageName: bottomImage)
+                
+                // Calculate widths based on imageMaxSize (flexible layout)
+                // Large: 0.7 (was 0.8), Small: 0.4
+                let topWidth = imageMaxSize * (topSize == .large ? 0.7 : 0.4)
+                let bottomWidth = imageMaxSize * (bottomSize == .large ? 0.7 : 0.4)
 
-                VStack(spacing: isLargeDevice ? 16 : 8) {
+                VStack(spacing: isLargeDevice ? 8 : 4) {
                   // Top image
-                  Image(topImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: staggeredMaxSize, maxHeight: staggeredMaxSize)
-                    .shadow(radius: 4)
-                    .scaleEffect(x: isEvenPage ? -1 : 1, y: 1)
-                    .frame(maxWidth: .infinity, alignment: isEvenPage ? .leading : .trailing)
-                    .padding(.leading, isEvenPage ? 20 : 0)
-                    .padding(.trailing, isEvenPage ? 0 : 20)
+                  HStack {
+                    if !isEvenPage { Spacer() }
+                    Image(topImage)
+                      .resizable()
+                      .scaledToFit()
+                      .frame(width: topWidth)
+                      .padding(12)
+                      .scaleEffect(x: isEvenPage ? -1 : 1, y: 1, anchor: .center)
+                      .shadow(radius: 4)
+                    if isEvenPage { Spacer() }
+                  }
+                  .padding(.horizontal, 20)
 
                   // Bottom image
-                  Image(bottomImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: staggeredMaxSize, maxHeight: staggeredMaxSize)
-                    .shadow(radius: 4)
-                    .scaleEffect(x: isEvenPage ? 1 : -1, y: 1)
-                    .frame(maxWidth: .infinity, alignment: isEvenPage ? .trailing : .leading)
-                    .padding(.leading, isEvenPage ? 0 : 20)
-                    .padding(.trailing, isEvenPage ? 20 : 0)
+                  HStack {
+                    if isEvenPage { Spacer() }
+                    Image(bottomImage)
+                      .resizable()
+                      .scaledToFit()
+                      .frame(width: bottomWidth)
+                      .padding(12)
+                      .scaleEffect(x: isEvenPage ? 1 : -1, y: 1, anchor: .center)
+                      .shadow(radius: 4)
+                    if !isEvenPage { Spacer() }
+                  }
+                  .padding(.horizontal, 20)
                 }
               }
 
@@ -232,7 +247,7 @@ struct PageContentView: View {
             }
             .frame(maxWidth: isLargeDevice ? 900 : .infinity)
 
-            Spacer()
+            Spacer(minLength: 20)
 
             // Page number at bottom
             Text("\(pageNumber)")

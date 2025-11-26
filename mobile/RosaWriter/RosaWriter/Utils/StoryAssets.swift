@@ -9,11 +9,17 @@ import Foundation
 
 // MARK: - Story Asset Models
 
+enum StoryAssetSize {
+    case small
+    case large
+}
+
 struct StoryCharacter: Equatable, Hashable {
     let id: String
     let imageName: String
     let displayName: String
     let description: String
+    let size: StoryAssetSize
     let pronounSubjective: String  // he, she, they
     let pronounPossessive: String   // his, her, their
     let pronounObjective: String    // him, her, them
@@ -23,6 +29,7 @@ struct StoryCharacter: Equatable, Hashable {
         imageName: String,
         displayName: String,
         description: String = "",
+        size: StoryAssetSize = .large,
         pronounSubjective: String,
         pronounPossessive: String,
         pronounObjective: String
@@ -31,6 +38,7 @@ struct StoryCharacter: Equatable, Hashable {
         self.imageName = imageName
         self.displayName = displayName
         self.description = description
+        self.size = size
         self.pronounSubjective = pronounSubjective
         self.pronounPossessive = pronounPossessive
         self.pronounObjective = pronounObjective
@@ -42,17 +50,20 @@ struct StoryObject {
     let imageName: String
     let displayName: String
     let description: String
+    let size: StoryAssetSize
 
     init(
         id: String,
         imageName: String,
         displayName: String,
-        description: String = ""
+        description: String = "",
+        size: StoryAssetSize = .small
     ) {
         self.id = id
         self.imageName = imageName
         self.displayName = displayName
         self.description = description
+        self.size = size
     }
 }
 
@@ -67,6 +78,7 @@ struct StoryAssets {
         imageName: "mrDog",
         displayName: "Mr. Dog",
         description: "A friendly, happy-go-lucky optimistic dog",
+        size: .large,
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him"
@@ -77,6 +89,7 @@ struct StoryAssets {
         imageName: "sirWhiskers",
         displayName: "Sir Whiskers",
         description: "A prim and proper cat who speaks with a whimsical British accent",
+        size: .small,
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him"
@@ -87,6 +100,7 @@ struct StoryAssets {
         imageName: "professorSeal",
         displayName: "Professor Seal",
         description: "A wise and logical educator seal",
+        size: .large,
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him"
@@ -97,6 +111,7 @@ struct StoryAssets {
         imageName: "msCow",
         displayName: "Ms. Cow",
         description: "A kind and simple cow who speaks with a southern accent",
+        size: .large,
         pronounSubjective: "she",
         pronounPossessive: "her",
         pronounObjective: "her"
@@ -122,7 +137,8 @@ struct StoryAssets {
         id: "BALLOON",
         imageName: "balloon",
         displayName: "Balloon",
-        description: "A colorful balloon that floats in the air"
+        description: "A colorful balloon that floats in the air",
+        size: .large
     )
 
     static let BASKETBALL = StoryObject(
@@ -203,6 +219,17 @@ struct StoryAssets {
     /// Get all asset image names (useful for validation)
     static var allImageNames: [String] {
         allCharacters.map { $0.imageName } + allObjects.map { $0.imageName }
+    }
+
+    /// Get size for a given image name
+    static func size(forImageName name: String) -> StoryAssetSize {
+        if let char = allCharacters.first(where: { $0.imageName == name }) {
+            return char.size
+        }
+        if let obj = allObjects.first(where: { $0.imageName == name }) {
+            return obj.size
+        }
+        return .small // Default fallback
     }
 }
 

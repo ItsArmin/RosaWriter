@@ -238,6 +238,7 @@ class AIStoryService: ObservableObject {
   // MARK: - Private Methods
 
   private func callAppleIntelligence(prompt: String) async throws -> String {
+    throw AIStoryError.notAvailable // 🔧 DEBUG: Uncomment to force fallback
     #if canImport(FoundationModels)
       // Use Apple Intelligence on-device model
       let model = SystemLanguageModel.default
