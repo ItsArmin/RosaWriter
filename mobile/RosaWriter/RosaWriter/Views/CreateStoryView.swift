@@ -233,15 +233,31 @@ struct CreateStoryView: View {
 
         Task {
             do {
-        // Use Apple Intelligence for story generation
-        print("📚 Using Apple Intelligence for story generation")
-        let book = try await AIStoryService.shared.generateCustomStory(
-          mainCharacter: selectedCharacter,
-          mood: selectedMood,
-          spark: selectedSpark,
-          pageCount: 5,
-          coverColor: selectedColor
-        )
+        let book: Book
+
+        // Check if Apple Intelligence is available
+        if AIStoryService.isAppleIntelligenceAvailable() {
+          // Use Apple Intelligence for story generation
+          print("📚 Using Apple Intelligence for story generation")
+          book = try await AIStoryService.shared.generateCustomStory(
+            mainCharacter: selectedCharacter,
+            mood: selectedMood,
+            spark: selectedSpark,
+            pageCount: 5,
+            coverColor: selectedColor
+          )
+        } else {
+          // Use template-based fallback
+          print("📚 Using template-based fallback for story generation")
+          // Map StorySpark to StoryTheme for fallback
+          let theme = mapSparkToTheme(selectedSpark)
+          book = try await FallbackStoryService.shared.generateCustomStory(
+            mainCharacter: selectedCharacter,
+            mood: selectedMood,
+            theme: theme,
+            coverColor: selectedColor
+          )
+        }
 
                 // Success! Pass book back and dismiss
                 await MainActor.run {
@@ -257,8 +273,26 @@ struct CreateStoryView: View {
                     showError = true
                 }
             }
-        }
     }
+  }
+
+  /// Map StorySpark to StoryTheme for fallback service
+  private func mapSparkToTheme(_ spark: StorySpark) -> StoryTheme {
+    switch spark {
+    case .birthday:
+      return .birthday
+    case .treasureHunt, .magicalDiscovery, .lostAndFound:
+      return .adventure
+    case .helpingFriend, .buildingSomething:
+      return .friendship
+    case .solvingProblem:
+      return .mystery
+    case .findingFood:
+      return .celebration
+    case .random:
+      return StoryTheme.allCases.randomElement() ?? .adventure
+    }
+  }
 }
 
 #Preview {

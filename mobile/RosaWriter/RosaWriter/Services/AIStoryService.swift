@@ -13,6 +13,9 @@ import SwiftUI
   import FoundationModels
 #endif
 
+// 🔧 DEBUG: Set to true to force fallback to template stories (even on devices with Apple Intelligence)
+private let forceUseFallback = true
+
 enum AIStoryError: Error {
   case generationFailed
   case parsingFailed
@@ -47,6 +50,12 @@ class AIStoryService: ObservableObject {
   /// Check if Apple Intelligence is available on this device
   /// Note: iOS Simulator does NOT support Apple Intelligence, even if your Mac does
   static func isAppleIntelligenceAvailable() -> Bool {
+    // Debug override to force fallback
+    if forceUseFallback {
+      print("🔍 Apple Intelligence availability check: ❌ Forced OFF (debug flag)")
+      return false
+    }
+    
     #if canImport(FoundationModels)
       let model = SystemLanguageModel.default
       let isAvailable = model.isAvailable
@@ -238,7 +247,6 @@ class AIStoryService: ObservableObject {
   // MARK: - Private Methods
 
   private func callAppleIntelligence(prompt: String) async throws -> String {
-    throw AIStoryError.notAvailable // 🔧 DEBUG: Uncomment to force fallback
     #if canImport(FoundationModels)
       // Use Apple Intelligence on-device model
       let model = SystemLanguageModel.default

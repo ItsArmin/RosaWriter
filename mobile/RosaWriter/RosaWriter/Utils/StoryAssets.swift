@@ -7,6 +7,83 @@
 
 import Foundation
 
+// MARK: - Character Voice / Lexicon
+
+/// A collection of character-specific phrases for personalized dialogue
+/// Used both in templates (direct usage) and AI prompts (as guidance)
+struct CharacterVoice: Equatable, Hashable {
+    let greeting: [String]
+    let farewell: [String]
+    let excited: [String]
+    let thinking: [String]
+    let agreement: [String]
+    let surprise: [String]
+    
+    /// Get a random phrase for a category
+    func randomGreeting() -> String { greeting.randomElement() ?? "Hello!" }
+    func randomFarewell() -> String { farewell.randomElement() ?? "Goodbye!" }
+    func randomExcited() -> String { excited.randomElement() ?? "Wow!" }
+    func randomThinking() -> String { thinking.randomElement() ?? "Hmm..." }
+    func randomAgreement() -> String { agreement.randomElement() ?? "Yes!" }
+    func randomSurprise() -> String { surprise.randomElement() ?? "Oh!" }
+    
+    /// Format for AI prompt inclusion
+    var promptDescription: String {
+        """
+        Greetings: \(greeting.joined(separator: ", "))
+        Farewells: \(farewell.joined(separator: ", "))
+        When excited: \(excited.joined(separator: ", "))
+        When thinking: \(thinking.joined(separator: ", "))
+        Agreement: \(agreement.joined(separator: ", "))
+        Surprise: \(surprise.joined(separator: ", "))
+        """
+    }
+}
+
+// MARK: - Predefined Character Voices
+
+extension CharacterVoice {
+    /// Mr. Dog - Enthusiastic, friendly, playful
+    static let mrDog = CharacterVoice(
+        greeting: ["Woof! Hello there!", "Hey friend!", "Hi hi hi!"],
+        farewell: ["See ya later!", "Bye-bye, friend!", "Catch you soon!"],
+        excited: ["Oh boy, oh boy!", "This is pawsome!", "Yippee!"],
+        thinking: ["Hmm, let me sniff this out...", "I wonder...", "Ooh, what's that?"],
+        agreement: ["You bet!", "Absolutely!", "Let's do it!"],
+        surprise: ["Whoa!", "No way!", "Woof!"]
+    )
+    
+    /// Sir Whiskers - Formal, British, dignified
+    static let sirWhiskers = CharacterVoice(
+        greeting: ["Good day to you!", "Greetings, dear friend.", "Ah, splendid to see you!"],
+        farewell: ["Cheerio!", "Farewell, old chap!", "Until we meet again!"],
+        excited: ["How delightful!", "Splendid!", "Most excellent!"],
+        thinking: ["Let me ponder this...", "Curious, most curious...", "I do believe..."],
+        agreement: ["Indeed!", "Quite right!", "Precisely so!"],
+        surprise: ["Good heavens!", "My word!", "I say!"]
+    )
+    
+    /// Professor Seal - Wise, thoughtful, educational
+    static let professorSeal = CharacterVoice(
+        greeting: ["Greetings, young learner!", "Hello there!", "Ah, welcome!"],
+        farewell: ["Keep learning!", "Until next time!", "Stay curious!"],
+        excited: ["Fascinating!", "Remarkable!", "What a discovery!"],
+        thinking: ["Let me think...", "According to my research...", "Aha!"],
+        agreement: ["Correct!", "Exactly right!", "Well reasoned!"],
+        surprise: ["Extraordinary!", "How unexpected!", "Incredible!"]
+    )
+    
+    /// Ms. Cow - Warm, Southern, nurturing
+    static let msCow = CharacterVoice(
+        greeting: ["Well, hello there, sugar!", "Howdy, y'all!", "Hey there, sweetpea!"],
+        farewell: ["Y'all come back now!", "Take care, hon!", "Bye-bye, darlin'!"],
+        excited: ["Well, I'll be!", "Hot diggity!", "Ain't that somethin'!"],
+        thinking: ["Now let me think on that...", "Well, I reckon...", "Hmm, sugar..."],
+        agreement: ["Bless your heart, yes!", "You got that right!", "Mhm, sure thing!"],
+        surprise: ["Oh my stars!", "Well, I never!", "Goodness gracious!"]
+    )
+}
+
 // MARK: - Story Asset Models
 
 enum StoryAssetSize {
@@ -23,6 +100,7 @@ struct StoryCharacter: Equatable, Hashable {
     let pronounSubjective: String  // he, she, they
     let pronounPossessive: String   // his, her, their
     let pronounObjective: String    // him, her, them
+    let voice: CharacterVoice       // Character-specific phrases/lexicon
 
     init(
         id: String,
@@ -32,7 +110,8 @@ struct StoryCharacter: Equatable, Hashable {
         size: StoryAssetSize = .large,
         pronounSubjective: String,
         pronounPossessive: String,
-        pronounObjective: String
+        pronounObjective: String,
+        voice: CharacterVoice
     ) {
         self.id = id
         self.imageName = imageName
@@ -42,6 +121,7 @@ struct StoryCharacter: Equatable, Hashable {
         self.pronounSubjective = pronounSubjective
         self.pronounPossessive = pronounPossessive
         self.pronounObjective = pronounObjective
+        self.voice = voice
     }
 }
 
@@ -81,7 +161,8 @@ struct StoryAssets {
         size: .large,
         pronounSubjective: "he",
         pronounPossessive: "his",
-        pronounObjective: "him"
+        pronounObjective: "him",
+        voice: .mrDog
     )
 
     static let SIR_WHISKERS = StoryCharacter(
@@ -92,7 +173,8 @@ struct StoryAssets {
         size: .small,
         pronounSubjective: "he",
         pronounPossessive: "his",
-        pronounObjective: "him"
+        pronounObjective: "him",
+        voice: .sirWhiskers
     )
 
     static let PROFESSOR_SEAL = StoryCharacter(
@@ -103,7 +185,8 @@ struct StoryAssets {
         size: .large,
         pronounSubjective: "he",
         pronounPossessive: "his",
-        pronounObjective: "him"
+        pronounObjective: "him",
+        voice: .professorSeal
     )
 
     static let MS_COW = StoryCharacter(
@@ -114,7 +197,8 @@ struct StoryAssets {
         size: .large,
         pronounSubjective: "she",
         pronounPossessive: "her",
-        pronounObjective: "her"
+        pronounObjective: "her",
+        voice: .msCow
     )
 
     static let allCharacters: [StoryCharacter] = [
@@ -265,6 +349,34 @@ enum StoryMood: String, CaseIterable, Identifiable, Codable {
       return "Curious and engaging with puzzles to solve"
     case .kindness:
       return "Gentle and caring about helping others"
+    }
+  }
+}
+
+enum StoryTheme: String, Codable, CaseIterable, Identifiable {
+  case birthday = "Birthday"
+  case adventure = "Adventure"
+  case friendship = "Friendship"
+  case mystery = "Mystery"
+  case learning = "Learning"
+  case celebration = "Celebration"
+
+  var id: String { rawValue }
+
+  var description: String {
+    switch self {
+    case .birthday:
+      return "Birthday parties and celebrations"
+    case .adventure:
+      return "Exciting journeys and exploration"
+    case .friendship:
+      return "Stories about friends helping each other"
+    case .mystery:
+      return "Solving puzzles and uncovering secrets"
+    case .learning:
+      return "Discovering new things and learning"
+    case .celebration:
+      return "Special occasions and festivities"
     }
   }
 }

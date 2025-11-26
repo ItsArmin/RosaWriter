@@ -30,11 +30,7 @@ struct StoryPrompts {
         pageCount: Int = 5,
         theme: String? = nil
     ) -> String {
-        let characterList = characters.map {
-            "- \($0.displayName): \($0.description)"
-        }.joined(
-            separator: "\n"
-        )
+        let characterList = characters.map { characterDescription($0) }.joined(separator: "\n")
         let objectList = objects.map {
             "- \($0.displayName): \($0.description)"
         }.joined(
@@ -57,6 +53,8 @@ struct StoryPrompts {
             - The story should have a clear beginning, middle, and end
             - Include specific moments where characters interact with the objects
             - Make it engaging and fun for children
+            - When characters speak, use their voice style phrases naturally in dialogue
+            - ALL character dialogue MUST be wrapped in quotation marks (e.g., "Hello!" said the character)
             """
 
         if let theme = theme {
@@ -104,6 +102,20 @@ struct StoryPrompts {
         StoryAssets.allCharacters.map { $0.id }
             + StoryAssets.allObjects.map { $0.id }
     }
+    
+    /// Formats character info including voice/lexicon for prompts
+    private static func characterDescription(_ character: StoryCharacter) -> String {
+        """
+        - \(character.displayName): \(character.description)
+          Pronouns: \(character.pronounSubjective)/\(character.pronounPossessive)/\(character.pronounObjective)
+          Voice style - \(character.voice.promptDescription.replacingOccurrences(of: "\n", with: "; "))
+        """
+    }
+    
+    /// Formats all characters with their voice info
+    private static func allCharactersWithVoice() -> String {
+        StoryAssets.allCharacters.map { characterDescription($0) }.joined(separator: "\n")
+    }
 
     /// Generates a prompt for a random story with random assets
     static func randomStoryPrompt(pageCount: Int = 5, theme: String? = nil)
@@ -147,11 +159,6 @@ struct StoryPrompts {
     spark: StorySpark,
     pageCount: Int = 5
   ) -> String {
-    // All character bios for context
-    let allCharacterBios = StoryAssets.allCharacters.map {
-      "- \($0.displayName): \($0.description)"
-    }.joined(separator: "\n")
-
     // All available objects
     let allObjectsList = StoryAssets.allObjects.map {
       "- \($0.displayName): \($0.description)"
@@ -160,9 +167,8 @@ struct StoryPrompts {
     let prompt = """
       Create a children's story with exactly \(pageCount) pages (excluding the cover page).
 
-      CHARACTER REFERENCE:
-      Here are all available characters for context:
-      \(allCharacterBios)
+      CHARACTER REFERENCE (with voice styles for dialogue):
+      \(allCharactersWithVoice())
 
       AVAILABLE OBJECTS TO USE IN THE STORY:
       \(allObjectsList)
@@ -171,7 +177,8 @@ struct StoryPrompts {
 
       Main Character: \(mainCharacter.displayName)
       - This character MUST be the protagonist and appear throughout the story
-      - Other characters can appear as supporting characters
+      - When \(mainCharacter.displayName) speaks, use their voice style phrases naturally
+      - Other characters can appear as supporting characters (use their voice styles too)
 
       Story Mood: \(mood.rawValue)
       - \(mood.description)
@@ -187,6 +194,8 @@ struct StoryPrompts {
       - The story should have a clear beginning, middle, and end
       - Make it engaging and fun for children aged 5-10
       - Include moments where characters interact with the objects
+      - When characters speak, incorporate their unique voice style phrases
+      - ALL character dialogue MUST be wrapped in quotation marks (e.g., "Hello!" said Mr. Dog)
 
       RESPONSE FORMAT:
       You MUST respond with ONLY a valid JSON object, no additional text before or after.
