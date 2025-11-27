@@ -14,12 +14,13 @@ struct StoryTemplate: Codable {
   let id: String
   let mood: StoryMood
   let theme: StoryTheme
+  let pageCount: Int?  // Optional for backwards compatibility
   let title: String  // Can contain placeholders like {{MAIN_CHARACTER}}
   let titleVariants: [String]?  // Optional alternative title formats
   let pages: [TemplatePage]
 
   enum CodingKeys: String, CodingKey {
-    case id, mood, theme, title, titleVariants, pages
+    case id, mood, theme, pageCount, title, titleVariants, pages
   }
 }
 

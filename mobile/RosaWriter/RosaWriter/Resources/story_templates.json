@@ -1,28 +1,23 @@
 {
-  "version": "1.2.0",
+  "version": "2.0.0",
   "templates": [
     {
-      "id": "adventure_birthday_001",
+      "id": "adventure_birthday_5p_001",
       "mood": "Adventure",
       "theme": "Birthday",
+      "pageCount": 5,
       "title": "{{MAIN_CHARACTER}}'s Birthday Adventure",
       "titleVariants": [
         "The Amazing Birthday Quest of {{MAIN_CHARACTER}}",
         "{{MAIN_CHARACTER}} and the Birthday Treasure Hunt",
-        "{{MAIN_CHARACTER}}'s Magical Birthday Journey",
-        "The Great Birthday Adventure: {{MAIN_CHARACTER}}'s Story",
-        "{{MAIN_CHARACTER}}'s Epic Birthday Expedition",
-        "A Birthday to Remember: {{MAIN_CHARACTER}}'s Tale",
-        "{{MAIN_CHARACTER}} Discovers Birthday Magic",
-        "The Legendary Birthday of {{MAIN_CHARACTER}}"
+        "{{MAIN_CHARACTER}}'s Magical Birthday Journey"
       ],
       "pages": [
         {
           "pageNumber": 1,
           "text": "It was {{MAIN_CHARACTER}}'s birthday! {{PRONOUN_SUBJECTIVE}} woke up excited. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} exclaimed, jumping out of bed. The sun was shining brightly through the window.",
           "textVariants": [
-            "Today was {{MAIN_CHARACTER}}'s special day! {{PRONOUN_SUBJECTIVE}} jumped out of bed. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} cheered, eager to discover what surprises awaited.",
-            "{{MAIN_CHARACTER}} opened {{PRONOUN_POSSESSIVE}} eyes on birthday morning! \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} could barely contain {{PRONOUN_POSSESSIVE}} excitement for the day ahead."
+            "Today was {{MAIN_CHARACTER}}'s special day! {{PRONOUN_SUBJECTIVE}} jumped out of bed. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} cheered, eager to discover what surprises awaited."
           ],
           "suggestedImages": ["{{MAIN_CHARACTER}}"]
         },
@@ -30,21 +25,15 @@
           "pageNumber": 2,
           "text": "{{MAIN_CHARACTER}} found a mysterious map on {{PRONOUN_POSSESSIVE}} birthday table. \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} gasped. It showed the way to hidden treasure! {{PRONOUN_SUBJECTIVE}} called {{SIDE_CHARACTER}} to join the adventure. \"{{SIDE_VOICE_GREETING}}\" said {{SIDE_CHARACTER}}, arriving quickly.",
           "textVariants": [
-            "On the breakfast table sat an ancient-looking map. \"{{VOICE_THINKING}}\" murmured {{MAIN_CHARACTER}}, studying it closely. {{SIDE_CHARACTER}} appeared at the door. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} called out cheerfully.",
-            "A rolled-up treasure map lay beside {{MAIN_CHARACTER}}'s birthday cake. \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} exclaimed. {{SIDE_CHARACTER}} peeked in. \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said, spotting the map."
+            "On the breakfast table sat an ancient-looking map. \"{{VOICE_THINKING}}\" murmured {{MAIN_CHARACTER}}, studying it closely. {{SIDE_CHARACTER}} appeared at the door. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} called out cheerfully."
           ],
-          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}"],
-          "imageVariants": [
-            ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"],
-            ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
-          ]
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
         },
         {
           "pageNumber": 3,
           "text": "Following the map, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} discovered {{A_OBJECT_1}} hidden behind a waterfall! \"{{VOICE_EXCITED}}\" cheered {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. But the journey wasn't over yet.",
           "textVariants": [
-            "The waterfall's roar grew louder as they approached. Behind the cascading water, {{MAIN_CHARACTER}} spotted {{A_OBJECT_1}}! \"{{VOICE_SURPRISE}}\" {{SIDE_CHARACTER}} pointed at the map—another marker remained.",
-            "\"{{VOICE_THINKING}}\" said {{MAIN_CHARACTER}}, studying the cave entrance. {{SIDE_CHARACTER}} helped {{PRONOUN_OBJECTIVE}} climb through. There, they found {{A_OBJECT_1}}! \"{{SIDE_VOICE_EXCITED}}\" exclaimed {{SIDE_CHARACTER}}."
+            "The waterfall's roar grew louder as they approached. Behind the cascading water, {{MAIN_CHARACTER}} spotted {{A_OBJECT_1}}! \"{{VOICE_SURPRISE}}\" {{SIDE_CHARACTER}} pointed at the map—another marker remained."
           ],
           "suggestedImages": ["{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
         },
@@ -52,34 +41,29 @@
           "pageNumber": 4,
           "text": "At the final spot, {{MAIN_CHARACTER}} found {{A_OBJECT_2}} glowing with magical light! \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} cried out. It was the most amazing birthday surprise. \"{{SIDE_VOICE_EXCITED}}\" cheered {{SIDE_CHARACTER}}.",
           "textVariants": [
-            "The X on the map led them to an ancient oak tree. Beneath its roots, {{A_OBJECT_2}} shimmered! \"{{VOICE_SURPRISE}}\" gasped {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" agreed {{SIDE_CHARACTER}}.",
-            "{{SIDE_CHARACTER}} dug near the marked stone. Suddenly, brilliant light burst forth—{{A_OBJECT_2}} emerged! \"{{VOICE_EXCITED}}\" shouted {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_SURPRISE}}\" added {{SIDE_CHARACTER}}."
+            "The X on the map led them to an ancient oak tree. Beneath its roots, {{A_OBJECT_2}} shimmered! \"{{VOICE_SURPRISE}}\" gasped {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" agreed {{SIDE_CHARACTER}}."
           ],
-          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_2}}"],
-          "imageVariants": [
-            ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}", "{{OBJECT_2}}"]
-          ]
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_2}}"]
         },
         {
           "pageNumber": 5,
           "text": "{{MAIN_CHARACTER}} returned home with {{SIDE_CHARACTER}}, carrying the {{OBJECT_1}} and {{OBJECT_2}} proudly. \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" waved {{SIDE_CHARACTER}}. It had been the best birthday adventure ever!",
           "textVariants": [
-            "As the sun began to set, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} made their way back with their treasures. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}} happily. \"{{SIDE_VOICE_FAREWELL}}\" called {{SIDE_CHARACTER}}. What an unforgettable birthday!",
-            "The adventure complete, {{MAIN_CHARACTER}} walked home alongside {{SIDE_CHARACTER}}. \"{{VOICE_FAREWELL}}\" {{PRONOUN_SUBJECTIVE}} said warmly. This birthday would be remembered forever!"
+            "As the sun began to set, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} made their way back with their treasures. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}} happily. \"{{SIDE_VOICE_FAREWELL}}\" called {{SIDE_CHARACTER}}. What an unforgettable birthday!"
           ],
           "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
         }
       ]
     },
     {
-      "id": "friendship_adventure_001",
+      "id": "friendship_adventure_5p_001",
       "mood": "Friendship",
       "theme": "Adventure",
+      "pageCount": 5,
       "title": "{{MAIN_CHARACTER}} and {{SIDE_CHARACTER}}'s Big Day",
       "titleVariants": [
         "Best Friends: {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}}",
-        "The Adventures of {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}}",
-        "{{MAIN_CHARACTER}} Meets {{SIDE_CHARACTER}}"
+        "The Adventures of {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}}"
       ],
       "pages": [
         {
@@ -119,6 +103,430 @@
           "text": "As the sun set, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} headed home together with the {{OBJECT_1}} and {{OBJECT_2}}. \"{{VOICE_FAREWELL}}\" said {{MAIN_CHARACTER}} warmly. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. They knew they'd have many more adventures together!",
           "textVariants": [
             "The day was ending, but their friendship was just beginning. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. Best friends forever!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "adventure_adventure_5p_001",
+      "mood": "Adventure",
+      "theme": "Adventure",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Great Expedition",
+      "titleVariants": [
+        "The Incredible Journey of {{MAIN_CHARACTER}}",
+        "{{MAIN_CHARACTER}} Explores the Unknown"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} stood at the edge of the Whispering Woods, ready for adventure. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} declared boldly. Today, {{PRONOUN_SUBJECTIVE}} would explore places no one had ever seen!",
+          "textVariants": [
+            "The morning mist swirled around {{MAIN_CHARACTER}} as {{PRONOUN_SUBJECTIVE}} gazed at the distant mountains. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} murmured. An exciting journey awaited!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "Deep in the forest, {{MAIN_CHARACTER}} heard a friendly voice. \"{{SIDE_VOICE_GREETING}}\" called {{SIDE_CHARACTER}} from behind a bush. \"Want some company on your adventure?\" \"{{VOICE_AGREEMENT}}\" replied {{MAIN_CHARACTER}} happily.",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} appeared on the winding path. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said with a wave. {{MAIN_CHARACTER}}'s eyes lit up. \"{{VOICE_EXCITED}}\" Together, they continued onward."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They crossed a rickety bridge over a bubbling stream. On the other side, {{A_OBJECT_1}} gleamed in the sunlight! \"{{VOICE_SURPRISE}}\" gasped {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" added {{SIDE_CHARACTER}}.",
+          "textVariants": [
+            "The path led them to a sparkling waterfall. Behind it, they discovered {{A_OBJECT_1}}! \"{{VOICE_EXCITED}}\" shouted {{MAIN_CHARACTER}}. {{SIDE_CHARACTER}} clapped with joy. \"{{SIDE_VOICE_AGREEMENT}}\""
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "At the top of the highest hill, they found {{A_OBJECT_2}} waiting for them. \"{{VOICE_EXCITED}}\" cheered {{MAIN_CHARACTER}}, picking it up carefully. \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_CHARACTER}} danced with delight.",
+          "textVariants": [
+            "The final destination revealed {{A_OBJECT_2}}, more beautiful than they imagined! \"{{VOICE_SURPRISE}}\" whispered {{MAIN_CHARACTER}} in awe. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}} solemnly."
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "As stars began to twinkle, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} headed home with their discoveries. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" smiled {{SIDE_CHARACTER}}. What an incredible adventure it had been!",
+          "textVariants": [
+            "The sunset painted the sky orange and pink. {{MAIN_CHARACTER}} looked at {{SIDE_CHARACTER}} and smiled. \"{{VOICE_FAREWELL}}\" {{PRONOUN_SUBJECTIVE}} said. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. They couldn't wait for their next expedition!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "friendship_friendship_5p_001",
+      "mood": "Friendship",
+      "theme": "Friendship",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Special Friend",
+      "titleVariants": [
+        "The Day {{MAIN_CHARACTER}} Made a Friend",
+        "{{MAIN_CHARACTER}} and {{SIDE_CHARACTER}}: Friends Forever"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} sat alone in the meadow, feeling a little lonely. {{PRONOUN_SUBJECTIVE}} wished {{PRONOUN_SUBJECTIVE}} had someone to play with. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} sighed, looking at the clouds.",
+          "textVariants": [
+            "It was a quiet afternoon, and {{MAIN_CHARACTER}} had no one to share it with. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} wondered aloud. Would {{PRONOUN_SUBJECTIVE}} ever find a good friend?"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "Just then, {{SIDE_CHARACTER}} came walking by. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said kindly. \"You look like you could use a friend!\" {{MAIN_CHARACTER}}'s face lit up. \"{{VOICE_EXCITED}}\"",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} noticed {{MAIN_CHARACTER}} sitting alone. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} called out warmly. \"Would you like to play?\" \"{{VOICE_AGREEMENT}}\" replied {{MAIN_CHARACTER}} with a big smile."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "Together, they found {{A_OBJECT_1}} and decided to share it. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}}, handing half to {{SIDE_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_PRONOUN_SUBJECTIVE}} replied gratefully. Sharing made everything better!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} showed {{SIDE_CHARACTER}} {{A_OBJECT_1}} {{PRONOUN_SUBJECTIVE}} had found. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} said. \"Let's enjoy it together!\" \"{{SIDE_VOICE_AGREEMENT}}\" smiled {{SIDE_CHARACTER}}."
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "Later, {{SIDE_CHARACTER}} found {{A_OBJECT_2}} and shared it with {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" said {{SIDE_CHARACTER}}. \"That's what friends do!\" \"{{VOICE_EXCITED}}\" replied {{MAIN_CHARACTER}}, feeling so happy.",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} spotted {{A_OBJECT_2}} and immediately thought of {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_PRONOUN_SUBJECTIVE}} called out. \"This is for you!\" \"{{VOICE_SURPRISE}}\" {{MAIN_CHARACTER}} was touched."
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "As the day ended, {{MAIN_CHARACTER}} realized {{PRONOUN_SUBJECTIVE}} wasn't lonely anymore. \"{{VOICE_FAREWELL}}\" {{PRONOUN_SUBJECTIVE}} said to {{SIDE_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. They had found something more precious than any treasure—a true friend!",
+          "textVariants": [
+            "The sun set on two happy friends. \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}}. \"Today was the best day ever!\" \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. Friendship was the greatest gift of all."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "silly_celebration_5p_001",
+      "mood": "Silly",
+      "theme": "Celebration",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Wacky Party",
+      "titleVariants": [
+        "The Silliest Party Ever",
+        "{{MAIN_CHARACTER}}'s Crazy Celebration"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} was throwing a party, but everything was going hilariously wrong! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} exclaimed as {{A_OBJECT_1}} bounced across the room. This was going to be one silly celebration!",
+          "textVariants": [
+            "It was party day, and {{MAIN_CHARACTER}} had big plans. But when {{PRONOUN_SUBJECTIVE}} opened the door, {{A_OBJECT_1}} rolled right past {{PRONOUN_OBJECTIVE}}! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} giggled."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "{{SIDE_CHARACTER}} arrived wearing the funniest hat ever! \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said, tripping over {{SIDE_PRONOUN_POSSESSIVE}} own feet. {{MAIN_CHARACTER}} burst out laughing. \"{{VOICE_EXCITED}}\"",
+          "textVariants": [
+            "\"{{SIDE_VOICE_GREETING}}\" called {{SIDE_CHARACTER}}, sliding through the door! {{MAIN_CHARACTER}} couldn't stop giggling. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} chuckled."
+          ],
+          "suggestedImages": ["{{SIDE_CHARACTER}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They tried to play a game, but {{A_OBJECT_2}} kept bouncing everywhere! \"{{VOICE_SURPRISE}}\" shouted {{MAIN_CHARACTER}}, ducking under a table. \"{{SIDE_VOICE_EXCITED}}\" laughed {{SIDE_CHARACTER}}, chasing after it.",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} attempted to catch {{A_OBJECT_2}}, but it was too bouncy! \"{{VOICE_EXCITED}}\" giggled {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_THINKING}}\" pondered {{SIDE_CHARACTER}}, scratching {{SIDE_PRONOUN_POSSESSIVE}} head."
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "The snacks ended up on the ceiling, and the music played backwards! \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}, dancing upside down. \"{{SIDE_VOICE_AGREEMENT}}\" agreed {{SIDE_CHARACTER}}, doing a silly wiggle.",
+          "textVariants": [
+            "Nothing went as planned, but that made it more fun! \"{{VOICE_AGREEMENT}}\" declared {{MAIN_CHARACTER}}, wearing a lampshade as a hat. \"{{SIDE_VOICE_EXCITED}}\" cheered {{SIDE_CHARACTER}}."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "By the end, everyone was covered in confetti and couldn't stop laughing. \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" giggled {{SIDE_CHARACTER}}. It was the silliest, most wonderful party ever!",
+          "textVariants": [
+            "The party was a beautiful mess, and everyone loved it! \"{{VOICE_AGREEMENT}}\" beamed {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. Sometimes the silliest parties are the best!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "learning_learning_5p_001",
+      "mood": "Learning",
+      "theme": "Learning",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}} Learns Something New",
+      "titleVariants": [
+        "The Curious Discovery of {{MAIN_CHARACTER}}",
+        "{{MAIN_CHARACTER}}'s Learning Adventure"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} loved learning new things! Today, {{PRONOUN_SUBJECTIVE}} found {{A_OBJECT_1}} and wondered what it was for. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} pondered curiously.",
+          "textVariants": [
+            "Every day was a chance to discover something wonderful! {{MAIN_CHARACTER}} spotted {{A_OBJECT_1}} and tilted {{PRONOUN_POSSESSIVE}} head. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} murmured. What could it be?"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{OBJECT_1}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "{{SIDE_CHARACTER}} happened to walk by. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said. \"Do you know what this is?\" asked {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_THINKING}}\" replied {{SIDE_CHARACTER}}. \"Let's find out together!\"",
+          "textVariants": [
+            "\"{{SIDE_VOICE_GREETING}}\" called {{SIDE_CHARACTER}}, noticing {{MAIN_CHARACTER}}'s puzzled look. \"{{VOICE_THINKING}}\" said {{MAIN_CHARACTER}}, showing the {{OBJECT_1}}. \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_CHARACTER}} loved a good mystery!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They examined the {{OBJECT_1}} carefully. {{MAIN_CHARACTER}} noticed something interesting! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} exclaimed. \"{{SIDE_VOICE_EXCITED}}\" added {{SIDE_CHARACTER}}. They were learning so much!",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} pointed out a special detail on the {{OBJECT_1}}. \"{{SIDE_VOICE_THINKING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} explained. \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}. Now {{PRONOUN_SUBJECTIVE}} understood!"
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "Then they discovered {{A_OBJECT_2}}! \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}. They used what they learned to understand this one too. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}} wisely.",
+          "textVariants": [
+            "Finding {{A_OBJECT_2}} was even more exciting now that they knew how to learn! \"{{VOICE_THINKING}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" agreed {{SIDE_CHARACTER}}. Knowledge opened new doors!"
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "By the end of the day, {{MAIN_CHARACTER}} felt so proud! \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} said to {{SIDE_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. The joy of learning was the best feeling in the world!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} couldn't wait to learn more tomorrow! \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said happily. \"{{SIDE_VOICE_FAREWELL}}\" waved {{SIDE_CHARACTER}}. Every day was a new adventure in learning!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "mystery_mystery_5p_001",
+      "mood": "Mystery",
+      "theme": "Mystery",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}} Solves the Mystery",
+      "titleVariants": [
+        "The Case of the Missing {{OBJECT_1}}",
+        "{{MAIN_CHARACTER}}: Detective Extraordinaire"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "Something strange had happened! {{A_OBJECT_1}} had gone missing from the meadow. \"{{VOICE_THINKING}}\" said {{MAIN_CHARACTER}}, looking for clues. {{PRONOUN_SUBJECTIVE}} would solve this mystery!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} noticed something was wrong. The {{OBJECT_1}} that was always by the old tree had vanished! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} gasped. Time to investigate!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "{{SIDE_CHARACTER}} offered to help. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said. \"I saw some footprints earlier!\" \"{{VOICE_EXCITED}}\" replied {{MAIN_CHARACTER}}. Now they had their first clue!",
+          "textVariants": [
+            "\"{{SIDE_VOICE_GREETING}}\" called {{SIDE_CHARACTER}}, running over. \"I think I know something!\" {{MAIN_CHARACTER}}'s eyes widened. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said. \"Tell me everything!\""
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "Following the clues, they found {{A_OBJECT_2}} near the pond. \"{{VOICE_THINKING}}\" said {{MAIN_CHARACTER}}. This must be connected! \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}.",
+          "textVariants": [
+            "The trail led them to {{A_OBJECT_2}} hidden in the bushes. \"{{VOICE_SURPRISE}}\" exclaimed {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" added {{SIDE_CHARACTER}}. Another piece of the puzzle!"
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "Finally, they discovered the answer! A family of birds had borrowed the {{OBJECT_1}} to build their nest! \"{{VOICE_SURPRISE}}\" laughed {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" chuckled {{SIDE_CHARACTER}}. Mystery solved!",
+          "textVariants": [
+            "The truth was revealed—a playful squirrel had hidden the {{OBJECT_1}} for safekeeping! \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" smiled {{SIDE_CHARACTER}}. What a clever solution!"
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "With the mystery solved, {{MAIN_CHARACTER}} and {{SIDE_CHARACTER}} celebrated. \"{{VOICE_EXCITED}}\" said {{MAIN_CHARACTER}} proudly. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. They made a great detective team!",
+          "textVariants": [
+            "Another case closed! \"{{VOICE_AGREEMENT}}\" beamed {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. Together, they could solve any mystery!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "kindness_friendship_5p_001",
+      "mood": "Kindness",
+      "theme": "Friendship",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Helping Heart",
+      "titleVariants": [
+        "The Kind Deed of {{MAIN_CHARACTER}}",
+        "{{MAIN_CHARACTER}} Helps a Friend"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} was enjoying a beautiful day when {{PRONOUN_SUBJECTIVE}} heard someone crying. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} wondered. Who could that be? {{PRONOUN_SUBJECTIVE}} followed the sound to help.",
+          "textVariants": [
+            "The sun was shining, but {{MAIN_CHARACTER}} noticed something was wrong. Someone nearby sounded sad. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} said softly. {{PRONOUN_SUBJECTIVE}} had to find out what happened."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "It was {{SIDE_CHARACTER}}, looking very sad! \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} sniffled. \"I lost my favorite {{OBJECT_1}}.\" \"{{VOICE_AGREEMENT}}\" said {{MAIN_CHARACTER}} gently. \"I'll help you find it!\"",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} sat under a tree, tears in {{SIDE_PRONOUN_POSSESSIVE}} eyes. \"{{SIDE_VOICE_THINKING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said sadly. \"My {{OBJECT_1}} is gone.\" {{MAIN_CHARACTER}} sat beside {{SIDE_PRONOUN_OBJECTIVE}}. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said kindly."
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They searched high and low. {{MAIN_CHARACTER}} looked behind bushes while {{SIDE_CHARACTER}} checked near the pond. \"{{VOICE_EXCITED}}\" called {{MAIN_CHARACTER}} suddenly. {{PRONOUN_SUBJECTIVE}} had found {{A_OBJECT_1}}!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} didn't give up. {{PRONOUN_SUBJECTIVE}} searched every corner of the meadow. Finally—there it was! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} shouted happily. The {{OBJECT_1}} was safe!"
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "{{SIDE_CHARACTER}}'s face lit up with joy! \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_PRONOUN_SUBJECTIVE}} cheered, hugging the {{OBJECT_1}}. To thank {{MAIN_CHARACTER}}, {{SIDE_CHARACTER}} shared {{A_OBJECT_2}} with {{PRONOUN_OBJECTIVE}}. \"{{VOICE_AGREEMENT}}\" smiled {{MAIN_CHARACTER}}.",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} was so happy! \"{{SIDE_VOICE_EXCITED}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said gratefully. {{SIDE_PRONOUN_SUBJECTIVE}} wanted to give {{MAIN_CHARACTER}} something special—{{A_OBJECT_2}}! \"{{VOICE_SURPRISE}}\" said {{MAIN_CHARACTER}}, touched by the gesture."
+          ],
+          "suggestedImages": ["{{SIDE_CHARACTER}}", "{{OBJECT_2}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "As they sat together, {{MAIN_CHARACTER}} felt warm inside. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said. Helping others was the best feeling! \"{{SIDE_VOICE_FAREWELL}}\" said {{SIDE_CHARACTER}} gratefully. Kindness made the world brighter.",
+          "textVariants": [
+            "The day ended with two happy friends. \"{{VOICE_FAREWELL}}\" said {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. Being kind to others was its own reward!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "courage_adventure_5p_001",
+      "mood": "Courage",
+      "theme": "Adventure",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Brave Journey",
+      "titleVariants": [
+        "The Courageous Quest of {{MAIN_CHARACTER}}",
+        "{{MAIN_CHARACTER}} Faces {{PRONOUN_POSSESSIVE}} Fears"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} stood before the Dark Woods, feeling a little scared. But {{PRONOUN_SUBJECTIVE}} took a deep breath. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} said bravely. {{PRONOUN_SUBJECTIVE}} could do this!",
+          "textVariants": [
+            "Everyone said the old cave was too scary to explore. But {{MAIN_CHARACTER}} wanted to be brave. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said to {{PRONOUN_OBJECTIVE}}self. {{PRONOUN_SUBJECTIVE}} would face {{PRONOUN_POSSESSIVE}} fears!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "{{SIDE_CHARACTER}} appeared beside {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said. \"You don't have to be brave alone!\" \"{{VOICE_EXCITED}}\" replied {{MAIN_CHARACTER}}, feeling stronger already.",
+          "textVariants": [
+            "\"{{SIDE_VOICE_GREETING}}\" called {{SIDE_CHARACTER}}, running up. \"I'll come with you!\" {{MAIN_CHARACTER}}'s fear melted away a little. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said gratefully. Together, they could face anything!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They encountered a rushing river! {{MAIN_CHARACTER}} was nervous, but {{PRONOUN_SUBJECTIVE}} spotted {{A_OBJECT_1}} they could use as a bridge. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} said. They crossed carefully together.",
+          "textVariants": [
+            "A steep hill blocked their path. {{MAIN_CHARACTER}} felt scared, but then noticed {{A_OBJECT_1}} that could help them climb. \"{{VOICE_THINKING}}\" {{PRONOUN_SUBJECTIVE}} said. \"{{SIDE_VOICE_AGREEMENT}}\" encouraged {{SIDE_CHARACTER}}. They made it!"
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "At the heart of their journey, they discovered {{A_OBJECT_2}}—the treasure they sought! \"{{VOICE_EXCITED}}\" shouted {{MAIN_CHARACTER}} triumphantly. \"{{SIDE_VOICE_EXCITED}}\" cheered {{SIDE_CHARACTER}}. Their courage had paid off!",
+          "textVariants": [
+            "They finally reached their goal and found {{A_OBJECT_2}} waiting for them! \"{{VOICE_SURPRISE}}\" gasped {{MAIN_CHARACTER}} with pride. \"{{SIDE_VOICE_AGREEMENT}}\" beamed {{SIDE_CHARACTER}}. Being brave had led them here!"
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "Walking home, {{MAIN_CHARACTER}} felt proud. {{PRONOUN_SUBJECTIVE}} had been scared but did it anyway! \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said. \"{{SIDE_VOICE_FAREWELL}}\" smiled {{SIDE_CHARACTER}}. True courage meant facing your fears!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} realized that being brave didn't mean not being scared—it meant trying anyway! \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} said happily. \"{{SIDE_VOICE_FAREWELL}}\" agreed {{SIDE_CHARACTER}}. They were both heroes!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        }
+      ]
+    },
+    {
+      "id": "fantasy_adventure_5p_001",
+      "mood": "Fantasy",
+      "theme": "Adventure",
+      "pageCount": 5,
+      "title": "{{MAIN_CHARACTER}}'s Magical Quest",
+      "titleVariants": [
+        "The Enchanted Journey of {{MAIN_CHARACTER}}",
+        "{{MAIN_CHARACTER}} and the Magic Kingdom"
+      ],
+      "pages": [
+        {
+          "pageNumber": 1,
+          "text": "{{MAIN_CHARACTER}} discovered a glowing portal in the garden! \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} gasped. Without hesitation, {{PRONOUN_SUBJECTIVE}} stepped through into a magical world of floating islands and sparkling rivers!",
+          "textVariants": [
+            "A mysterious rainbow appeared before {{MAIN_CHARACTER}}. \"{{VOICE_EXCITED}}\" {{PRONOUN_SUBJECTIVE}} exclaimed. {{PRONOUN_SUBJECTIVE}} touched it and was transported to an enchanted forest where flowers sang and trees whispered secrets!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 2,
+          "text": "In this magical place, {{MAIN_CHARACTER}} met {{SIDE_CHARACTER}}, who had fairy wings! \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said, sprinkling stardust. \"{{VOICE_EXCITED}}\" replied {{MAIN_CHARACTER}}. \"Will you show me around?\"",
+          "textVariants": [
+            "{{SIDE_CHARACTER}} floated down on a cloud. \"{{SIDE_VOICE_GREETING}}\" {{SIDE_PRONOUN_SUBJECTIVE}} said magically. {{MAIN_CHARACTER}}'s eyes grew wide. \"{{VOICE_SURPRISE}}\" {{PRONOUN_SUBJECTIVE}} whispered. This was incredible!"
+          ],
+          "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 3,
+          "text": "They flew over crystal mountains and found {{A_OBJECT_1}} that granted wishes! \"{{VOICE_EXCITED}}\" cheered {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_AGREEMENT}}\" nodded {{SIDE_CHARACTER}}. But they must use its magic wisely!",
+          "textVariants": [
+            "In a garden of giant flowers, they discovered {{A_OBJECT_1}} with magical powers! \"{{VOICE_SURPRISE}}\" gasped {{MAIN_CHARACTER}}. \"{{SIDE_VOICE_EXCITED}}\" added {{SIDE_CHARACTER}}. It shimmered with rainbow light!"
+          ],
+          "suggestedImages": ["{{OBJECT_1}}", "{{SIDE_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 4,
+          "text": "Using the magic, they created {{A_OBJECT_2}} that could fly! \"{{VOICE_EXCITED}}\" laughed {{MAIN_CHARACTER}}, soaring through the clouds. \"{{SIDE_VOICE_EXCITED}}\" cheered {{SIDE_CHARACTER}}. The magical world was amazing!",
+          "textVariants": [
+            "The magic transformed {{A_OBJECT_2}} into something wonderful! \"{{VOICE_SURPRISE}}\" said {{MAIN_CHARACTER}} with delight. \"{{SIDE_VOICE_AGREEMENT}}\" smiled {{SIDE_CHARACTER}}. In this world, anything was possible!"
+          ],
+          "suggestedImages": ["{{OBJECT_2}}", "{{MAIN_CHARACTER}}"]
+        },
+        {
+          "pageNumber": 5,
+          "text": "As the sun set in both worlds, {{MAIN_CHARACTER}} knew it was time to go home. \"{{VOICE_FAREWELL}}\" {{PRONOUN_SUBJECTIVE}} said to {{SIDE_CHARACTER}}. \"{{SIDE_VOICE_FAREWELL}}\" replied {{SIDE_CHARACTER}}. The magic would stay in {{MAIN_CHARACTER}}'s heart forever!",
+          "textVariants": [
+            "{{MAIN_CHARACTER}} stepped back through the portal, treasures in hand. \"{{VOICE_AGREEMENT}}\" {{PRONOUN_SUBJECTIVE}} said, looking back. \"{{SIDE_VOICE_FAREWELL}}\" waved {{SIDE_CHARACTER}}. The magical adventure would never be forgotten!"
           ],
           "suggestedImages": ["{{MAIN_CHARACTER}}", "{{SIDE_CHARACTER}}"]
         }
