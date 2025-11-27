@@ -69,30 +69,36 @@ class FallbackStoryService: ObservableObject {
     // Check if renderer is available
     guard let templateRenderer = renderer else {
       print("❌ [Fallback] Template renderer not available - templates could not be loaded")
+      print("   This usually means story_templates.json is missing or malformed")
+      
+      // User-friendly error message
       throw NSError(
         domain: "FallbackStoryService",
         code: -2,
         userInfo: [
-          NSLocalizedDescriptionKey: "Template-based story generation is not available. Story templates could not be loaded."
+          NSLocalizedDescriptionKey: "Story generation is temporarily unavailable. Please try again later."
         ]
       )
     }
 
-    // Find matching template
+    // Find matching template (with fallback logic)
     guard let template = templateRenderer.findTemplate(mood: mood, theme: theme) else {
+      // This should rarely happen now with fallback logic, but just in case
       let available = templateRenderer.availableCombinations()
       let availableStr = available.map { "\($0.mood.rawValue) + \($0.theme.rawValue)" }.joined(
         separator: ", ")
 
-      print("❌ [Fallback] No template for \(mood.rawValue) + \(theme.rawValue)")
+      print("❌ [Fallback] No template found even with fallbacks!")
+      print("   Requested: \(mood.rawValue) + \(theme.rawValue)")
       print("   Available combinations: \(availableStr)")
 
+      // User-friendly error message (don't expose internal details)
       throw NSError(
         domain: "FallbackStoryService",
         code: -1,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "No template available for \(mood.rawValue) + \(theme.rawValue). Available: \(availableStr)"
+            "Unable to create story. Please try a different combination."
         ]
       )
     }

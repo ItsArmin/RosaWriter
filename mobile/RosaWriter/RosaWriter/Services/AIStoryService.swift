@@ -14,7 +14,7 @@ import SwiftUI
 #endif
 
 // 🔧 DEBUG: Set to true to force fallback to template stories (even on devices with Apple Intelligence)
-private let forceUseFallback = true
+private let forceUseFallback = false
 
 enum AIStoryError: Error {
   case generationFailed

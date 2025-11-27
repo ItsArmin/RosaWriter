@@ -29,12 +29,127 @@ class TemplateRenderer {
   }
 
   // MARK: - Template Selection
+  
+  /// Explicit mapping of mood+theme combinations to template mood+theme
+  /// This ensures every user selection maps to an intentionally chosen template
+  private static let templateMappings: [String: (mood: StoryMood, theme: StoryTheme)] = [
+    // Fantasy mood mappings
+    "Fantasy+Birthday": (.adventure, .birthday),      // Birthday adventure with magical elements
+    "Fantasy+Adventure": (.fantasy, .adventure),      // Direct match
+    "Fantasy+Friendship": (.friendship, .friendship), // Friendship focus
+    "Fantasy+Mystery": (.mystery, .mystery),          // Mystery with wonder
+    "Fantasy+Learning": (.learning, .learning),       // Learning with imagination
+    "Fantasy+Celebration": (.silly, .celebration),    // Fun celebration
+    
+    // Silly mood mappings
+    "Silly+Birthday": (.adventure, .birthday),        // Fun birthday adventure
+    "Silly+Adventure": (.adventure, .adventure),      // Silly adventure
+    "Silly+Friendship": (.friendship, .adventure),    // Fun with friends
+    "Silly+Mystery": (.mystery, .mystery),            // Silly mystery
+    "Silly+Learning": (.learning, .learning),         // Fun learning
+    "Silly+Celebration": (.silly, .celebration),      // Direct match
+    
+    // Learning mood mappings
+    "Learning+Birthday": (.adventure, .birthday),     // Learning through birthday fun
+    "Learning+Adventure": (.adventure, .adventure),   // Learning expedition
+    "Learning+Friendship": (.friendship, .friendship),// Learning about friendship
+    "Learning+Mystery": (.mystery, .mystery),         // Mystery solving = learning
+    "Learning+Learning": (.learning, .learning),      // Direct match
+    "Learning+Celebration": (.silly, .celebration),   // Celebration of learning
+    
+    // Courage mood mappings
+    "Courage+Birthday": (.adventure, .birthday),      // Brave birthday quest
+    "Courage+Adventure": (.courage, .adventure),      // Direct match
+    "Courage+Friendship": (.kindness, .friendship),   // Courage to help friends
+    "Courage+Mystery": (.mystery, .mystery),          // Brave detective
+    "Courage+Learning": (.learning, .learning),       // Courage to learn new things
+    "Courage+Celebration": (.silly, .celebration),    // Celebrating bravery
+    
+    // Friendship mood mappings
+    "Friendship+Birthday": (.adventure, .birthday),   // Birthday with friends
+    "Friendship+Adventure": (.friendship, .adventure),// Direct match
+    "Friendship+Friendship": (.friendship, .friendship),// Direct match
+    "Friendship+Mystery": (.mystery, .mystery),       // Friends solve mystery together
+    "Friendship+Learning": (.learning, .learning),    // Learning together
+    "Friendship+Celebration": (.silly, .celebration), // Celebrating friendship
+    
+    // Adventure mood mappings
+    "Adventure+Birthday": (.adventure, .birthday),    // Direct match
+    "Adventure+Adventure": (.adventure, .adventure),  // Direct match
+    "Adventure+Friendship": (.friendship, .adventure),// Adventure with friends
+    "Adventure+Mystery": (.mystery, .mystery),        // Mystery adventure
+    "Adventure+Learning": (.learning, .learning),     // Learning adventure
+    "Adventure+Celebration": (.silly, .celebration),  // Adventure celebration
+    
+    // Mystery mood mappings
+    "Mystery+Birthday": (.adventure, .birthday),      // Birthday mystery hunt
+    "Mystery+Adventure": (.mystery, .mystery),        // Mystery adventure
+    "Mystery+Friendship": (.kindness, .friendship),   // Mystery with friends
+    "Mystery+Mystery": (.mystery, .mystery),          // Direct match
+    "Mystery+Learning": (.learning, .learning),       // Learning through mystery
+    "Mystery+Celebration": (.silly, .celebration),    // Mystery party
+    
+    // Kindness mood mappings
+    "Kindness+Birthday": (.adventure, .birthday),     // Kind birthday gestures
+    "Kindness+Adventure": (.kindness, .friendship),   // Helping on adventure
+    "Kindness+Friendship": (.kindness, .friendship),  // Direct match
+    "Kindness+Mystery": (.mystery, .mystery),         // Kind resolution to mystery
+    "Kindness+Learning": (.learning, .learning),      // Learning kindness
+    "Kindness+Celebration": (.silly, .celebration),   // Celebrating kindness
+  ]
 
   /// Find a template matching the given criteria
-  func findTemplate(mood: StoryMood, theme: StoryTheme) -> StoryTemplate? {
-    return templateBank.templates.first { template in
-      template.mood == mood && template.theme == theme
+  /// Priority: 1) Explicit mapping, 2) Exact match, 3) Mood match, 4) Theme match, 5) Random
+  func findTemplate(mood: StoryMood, theme: StoryTheme, preferredPageCount: Int? = nil) -> StoryTemplate? {
+    let templates = templateBank.templates
+    let key = "\(mood.rawValue)+\(theme.rawValue)"
+    
+    // 1. Check explicit mapping first
+    if let mapping = Self.templateMappings[key] {
+      let candidates = templates.filter { $0.mood == mapping.mood && $0.theme == mapping.theme }
+      if !candidates.isEmpty {
+        print("📖 [TemplateRenderer] Using mapped template: \(key) → \(mapping.mood.rawValue)+\(mapping.theme.rawValue)")
+        return selectByPageCount(from: candidates, preferredPageCount: preferredPageCount)
+      }
     }
+    
+    // 2. Try exact match (mood + theme)
+    var candidates = templates.filter { $0.mood == mood && $0.theme == theme }
+    if !candidates.isEmpty {
+      print("📖 [TemplateRenderer] Found exact match for \(key)")
+      return selectByPageCount(from: candidates, preferredPageCount: preferredPageCount)
+    }
+    
+    // 3. If no exact match, try mood match only
+    candidates = templates.filter { $0.mood == mood }
+    if !candidates.isEmpty {
+      print("⚠️ [TemplateRenderer] No exact match for \(key), using mood match")
+      return selectByPageCount(from: candidates, preferredPageCount: preferredPageCount)
+    }
+    
+    // 4. If still no match, try theme match only
+    candidates = templates.filter { $0.theme == theme }
+    if !candidates.isEmpty {
+      print("⚠️ [TemplateRenderer] No mood match, using theme match for \(theme.rawValue)")
+      return selectByPageCount(from: candidates, preferredPageCount: preferredPageCount)
+    }
+    
+    // 5. If still no match, use any template
+    print("⚠️ [TemplateRenderer] No mood/theme match, using random template")
+    return selectByPageCount(from: templates, preferredPageCount: preferredPageCount)
+  }
+  
+  /// Helper to select template by page count preference
+  private func selectByPageCount(from candidates: [StoryTemplate], preferredPageCount: Int?) -> StoryTemplate? {
+    guard !candidates.isEmpty else { return nil }
+    
+    if let pageCount = preferredPageCount {
+      let pageMatches = candidates.filter { $0.pageCount == pageCount }
+      if !pageMatches.isEmpty {
+        return pageMatches.randomElement()
+      }
+    }
+    return candidates.randomElement()
   }
 
   /// Get all available mood + theme combinations
