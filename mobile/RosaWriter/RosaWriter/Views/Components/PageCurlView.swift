@@ -179,9 +179,9 @@ struct PageContentView: View {
           // Regular page with images and text
           VStack(spacing: 0) {
             Spacer()
-              .frame(height: isLargeDevice ? 60 : 40)
+              .frame(height: isLargeDevice ? 150 : 100)
             
-            VStack(alignment: .center, spacing: isLargeDevice ? 20 : 12) {
+            VStack(alignment: .center, spacing: isLargeDevice ? 40 : 24) {
               // Render images based on layout
               switch page.imageLayout {
               case .none:
