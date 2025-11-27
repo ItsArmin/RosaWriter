@@ -129,6 +129,7 @@ struct StoryObject {
     let id: String
     let imageName: String
     let displayName: String
+    let displayNameWithArticle: String  // e.g., "an apple", "a book"
     let description: String
     let size: StoryAssetSize
 
@@ -136,12 +137,14 @@ struct StoryObject {
         id: String,
         imageName: String,
         displayName: String,
+        displayNameWithArticle: String,
         description: String = "",
         size: StoryAssetSize = .small
     ) {
         self.id = id
         self.imageName = imageName
         self.displayName = displayName
+        self.displayNameWithArticle = displayNameWithArticle
         self.description = description
         self.size = size
     }
@@ -213,58 +216,66 @@ struct StoryAssets {
     static let APPLE = StoryObject(
         id: "APPLE",
         imageName: "apple",
-        displayName: "Apple",
-        description: "A shiny red apple, healthy and delicious"
+        displayName: "apple",
+        displayNameWithArticle: "an apple",
+        description: "a shiny red apple, healthy and delicious"
     )
 
     static let BALLOON = StoryObject(
         id: "BALLOON",
         imageName: "balloon",
-        displayName: "Balloon",
-        description: "A colorful balloon that floats in the air",
+        displayName: "balloon",
+        displayNameWithArticle: "a balloon",
+        description: "a colorful balloon that floats in the air",
         size: .large
     )
 
     static let BASKETBALL = StoryObject(
         id: "BASKETBALL",
         imageName: "basketball",
-        displayName: "Basketball",
-        description: "An orange basketball for playing and bouncing"
+        displayName: "basketball",
+        displayNameWithArticle: "a basketball",
+        description: "an orange basketball for playing and bouncing"
     )
 
     static let BOOK = StoryObject(
         id: "BOOK",
         imageName: "book",
-        displayName: "Book",
-        description: "A book full of stories and knowledge"
+        displayName: "book",
+        displayNameWithArticle: "a book",
+        description: "a book full of stories and knowledge"
     )
 
     static let BURGER = StoryObject(
         id: "BURGER",
         imageName: "burger",
-        displayName: "Burger",
-        description: "A tasty burger with all the fixings"
+        displayName: "burger",
+        displayNameWithArticle: "a burger",
+        description: "a tasty burger with all the fixings"
     )
 
     static let CAKE = StoryObject(
         id: "CAKE",
         imageName: "cake",
-        displayName: "Cake",
-        description: "A delicious cake perfect for celebrations"
+        displayName: "cake",
+        displayNameWithArticle: "a cake",
+        description: "a delicious cake perfect for celebrations"
     )
 
     static let CRAYON = StoryObject(
         id: "CRAYON",
         imageName: "crayon",
-        displayName: "Crayon",
-        description: "A colorful crayon for drawing and creating art"
+        displayName: "crayon",
+        displayNameWithArticle: "a crayon",
+        description: "a colorful crayon for drawing and creating art"
     )
 
     static let TEDDY = StoryObject(
         id: "TEDDY",
         imageName: "teddy",
-        displayName: "Teddy Bear",
-        description: "A soft and cuddly teddy bear"
+        displayName: "teddy bear",
+        displayNameWithArticle: "a teddy bear",
+        description: "a soft and cuddly teddy bear"
     )
 
     static let allObjects: [StoryObject] = [

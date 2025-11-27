@@ -249,7 +249,27 @@ class TemplateRenderer {
       with: sideCharacter.voice.randomSurprise()
     )
 
-    // Object substitutions
+    // Object substitutions (with article - for first mention)
+    if objects.count > 0 {
+      result = result.replacingOccurrences(
+        of: TemplatePlaceholders.object1WithArticle,
+        with: objects[0].displayNameWithArticle
+      )
+    }
+    if objects.count > 1 {
+      result = result.replacingOccurrences(
+        of: TemplatePlaceholders.object2WithArticle,
+        with: objects[1].displayNameWithArticle
+      )
+    }
+    if objects.count > 2 {
+      result = result.replacingOccurrences(
+        of: TemplatePlaceholders.object3WithArticle,
+        with: objects[2].displayNameWithArticle
+      )
+    }
+    
+    // Object substitutions (without article - for subsequent mentions)
     if objects.count > 0 {
       result = result.replacingOccurrences(
         of: TemplatePlaceholders.object1,

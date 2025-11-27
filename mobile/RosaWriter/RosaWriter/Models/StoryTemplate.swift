@@ -72,8 +72,13 @@ struct TemplatePlaceholders {
   static let sideCharacterAgreement = "{{SIDE_VOICE_AGREEMENT}}"
   static let sideCharacterSurprise = "{{SIDE_VOICE_SURPRISE}}"
 
-  // Objects
+  // Objects (without article - for when object is already introduced)
   static let object1 = "{{OBJECT_1}}"
   static let object2 = "{{OBJECT_2}}"
   static let object3 = "{{OBJECT_3}}"
+  
+  // Objects with article (e.g., "an apple", "a book")
+  static let object1WithArticle = "{{A_OBJECT_1}}"
+  static let object2WithArticle = "{{A_OBJECT_2}}"
+  static let object3WithArticle = "{{A_OBJECT_3}}"
 }
