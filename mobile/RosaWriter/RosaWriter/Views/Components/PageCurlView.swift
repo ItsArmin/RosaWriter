@@ -178,10 +178,10 @@ struct PageContentView: View {
         } else {
           // Regular page with images and text
           VStack(spacing: 0) {
-            Spacer()
-              .frame(height: isLargeDevice ? 150 : 100)
-            
-            VStack(alignment: .center, spacing: isLargeDevice ? 40 : 24) {
+            Spacer(minLength: isLargeDevice ? 50 : 20)
+            // Image Section - Top 60%
+            VStack {
+              Spacer()
               // Render images based on layout
               switch page.imageLayout {
               case .none:
@@ -202,7 +202,7 @@ struct PageContentView: View {
                 let bottomSize = StoryAssets.size(forImageName: bottomImage)
                 
                 // Calculate widths based on imageMaxSize (flexible layout)
-                // Large: 0.7 (was 0.8), Small: 0.4
+                // Large: 0.7, Small: 0.4
                 let topWidth = imageMaxSize * (topSize == .large ? 0.7 : 0.4)
                 let bottomWidth = imageMaxSize * (bottomSize == .large ? 0.7 : 0.4)
 
@@ -236,24 +236,28 @@ struct PageContentView: View {
                   .padding(.horizontal, 20)
                 }
               }
-
-              // Text below images
+              Spacer()
+            }
+            .frame(height: geometry.size.height * 0.60)
+            
+            // Text Section - Bottom rest
+            ScrollView(showsIndicators: false) {
               Text(page.text)
                 .font(.system(size: fontSize, weight: .regular))
                 .lineSpacing(isLargeDevice ? 10 : 8)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, horizontalPadding)
+                .padding(.top, 20)
             }
-            .frame(maxWidth: isLargeDevice ? 900 : .infinity)
-
-            Spacer(minLength: 20)
+            
+            Spacer(minLength: 10)
 
             // Page number at bottom
             Text("\(pageNumber)")
               .font(.system(size: isLargeDevice ? 14 : 12))
               .foregroundColor(.secondary.opacity(0.5))
-              .padding(.bottom, 40)
+              .padding(.bottom, isLargeDevice ? 30 : 20)
           }
         }
       }
