@@ -115,7 +115,8 @@ class AIStoryService: ObservableObject {
         progress = 0.9
 
         // Convert to Book format
-        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        let randomCharacter = StoryAssets.allCharacters.randomElement() ?? StoryAssets.allCharacters[0]
+        let book = convertToBook(aiStory, mainCharacter: randomCharacter, coverColor: coverColor ?? .blue)
         progress = 1.0
 
         return book
@@ -168,7 +169,8 @@ class AIStoryService: ObservableObject {
         let aiStory = try parseAIResponse(response)
         progress = 0.9
 
-        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        let coverCharacter = characters.first ?? StoryAssets.allCharacters[0]
+        let book = convertToBook(aiStory, mainCharacter: coverCharacter, coverColor: coverColor ?? .blue)
         progress = 1.0
 
         return book
@@ -226,7 +228,7 @@ class AIStoryService: ObservableObject {
         let aiStory = try parseAIResponse(response)
         progress = 0.9
 
-        let book = convertToBook(aiStory, coverColor: coverColor ?? .blue)
+        let book = convertToBook(aiStory, mainCharacter: mainCharacter, coverColor: coverColor ?? .blue)
         progress = 1.0
 
         return book
@@ -323,16 +325,16 @@ class AIStoryService: ObservableObject {
 
   private func convertToBook(
     _ aiStory: AIStoryResponse,
+    mainCharacter: StoryCharacter,
     coverColor: CoverColor
   ) -> Book {
     var book = Book(title: aiStory.title)
 
-    // Create cover page
-    let coverImage = selectCoverImage(from: aiStory)
+    // Create cover page - always use the main character
     let coverPage = BookPage(
       text: aiStory.title,
       pageNumber: 0,
-      imageLayout: coverImage.map { .single(imageName: $0) } ?? .none,
+      imageLayout: .single(imageName: mainCharacter.imageName),
       isCover: true,
       coverColor: coverColor
     )
@@ -352,18 +354,6 @@ class AIStoryService: ObservableObject {
     return book
   }
 
-  private func selectCoverImage(from story: AIStoryResponse) -> String? {
-    // Try to find a main character from the first page
-    guard let firstPage = story.pages.first else { return nil }
-
-    for assetId in firstPage.suggestedImages {
-      if let character = StoryAssets.character(for: assetId) {
-        return character.imageName
-      }
-    }
-
-    return nil
-  }
 
   private func determineImageLayout(from suggestedImages: [String])
     -> PageImageLayout

@@ -140,6 +140,7 @@ class FallbackStoryService: ObservableObject {
     // Convert to Book format
     let book = convertToBook(
       renderedStory: renderedStory,
+      mainCharacter: mainCharacter,
       coverColor: coverColor ?? .blue
     )
 
@@ -151,24 +152,14 @@ class FallbackStoryService: ObservableObject {
 
   // MARK: - Private Helpers
 
-  private func convertToBook(renderedStory: RenderedStory, coverColor: CoverColor) -> Book {
+  private func convertToBook(renderedStory: RenderedStory, mainCharacter: StoryCharacter, coverColor: CoverColor) -> Book {
     var book = Book(title: renderedStory.title)
 
-    // Create cover page
-    let coverImageAssetId = renderedStory.pages.first?.suggestedImages.first
-    let coverImageName = coverImageAssetId.flatMap { assetId in
-      if let character = StoryAssets.character(for: assetId) {
-        return character.imageName
-      } else if let object = StoryAssets.object(for: assetId) {
-        return object.imageName
-      }
-      return nil
-    }
-
+    // Create cover page - always use the main character
     let coverPage = BookPage(
       text: renderedStory.title,
       pageNumber: 0,
-      imageLayout: coverImageName.map { .single(imageName: $0) } ?? .none,
+      imageLayout: .single(imageName: mainCharacter.imageName),
       isCover: true,
       coverColor: coverColor
     )
