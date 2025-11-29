@@ -137,14 +137,21 @@ struct StoryObject {
         id: String,
         imageName: String,
         displayName: String,
-        displayNameWithArticle: String,
+        displayNameWithArticle: String? = nil,
         description: String = "",
         size: StoryAssetSize = .small
     ) {
         self.id = id
         self.imageName = imageName
         self.displayName = displayName
-        self.displayNameWithArticle = displayNameWithArticle
+        // Use provided article form, or auto-generate from displayName
+        if let articleForm = displayNameWithArticle, !articleForm.trimmingCharacters(in: .whitespaces).isEmpty {
+            self.displayNameWithArticle = articleForm
+        } else {
+            // Auto-generate: use "an" for vowel sounds, "a" otherwise
+            let startsWithVowel = displayName.lowercased().first.map { "aeiou".contains($0) } ?? false
+            self.displayNameWithArticle = startsWithVowel ? "an \(displayName)" : "a \(displayName)"
+        }
         self.description = description
         self.size = size
     }
@@ -364,6 +371,9 @@ enum StoryMood: String, CaseIterable, Identifiable, Codable {
   }
 }
 
+/// Theme categorizes the story's central concept for template matching.
+/// Used by FallbackStoryService to find appropriate story templates when
+/// Apple Intelligence is not available.
 enum StoryTheme: String, Codable, CaseIterable, Identifiable {
   case birthday = "Birthday"
   case adventure = "Adventure"
