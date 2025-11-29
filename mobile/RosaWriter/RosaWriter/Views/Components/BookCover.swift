@@ -15,7 +15,7 @@ enum BookCoverConstants {
     static let cornerRadius: CGFloat = 8
     static let titleHeight: CGFloat = 36
     static let titleSpacing: CGFloat = 8
-    static let imagePadding: CGFloat = 16
+    static let imagePadding: CGFloat = 8
     static let innerShadowWidth: CGFloat = 8
 
     // Computed
@@ -253,7 +253,7 @@ struct BookCover: View {
             BookPage(
                 text: "Sample Book",
                 pageNumber: 1,
-                imageLayout: .single(imageName: "mario"),
+                imageLayout: .single(imageName: "mrDog"),
                 isCover: true,
                 coverColor: .red
             )

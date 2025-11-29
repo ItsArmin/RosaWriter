@@ -85,7 +85,7 @@ struct BookView: View {
     let page1 = BookPage(
         text: "Sample Book",
         pageNumber: 1,
-        imageLayout: .single(imageName: "mario"),
+        imageLayout: .single(imageName: "mrDog"),
         isCover: true,
         coverColor: .blue
     )
@@ -93,13 +93,13 @@ struct BookView: View {
         text:
             "This is the second page. You can see how the page curling animation works when you navigate between pages.",
         pageNumber: 2,
-        imageLayout: .single(imageName: "luigi")
+        imageLayout: .single(imageName: "sirWhiskers")
     )
     let page3 = BookPage(
         text:
             "This is the third and final page. The book view provides a nice reading experience similar to iBooks with smooth page curl transitions.",
         pageNumber: 3,
-        imageLayout: .staggered(topImage: "mario", bottomImage: "1up")
+        imageLayout: .staggered(topImage: "professorSeal", bottomImage: "apple")
     )
 
     book.addPage(page1)

@@ -190,7 +190,7 @@ struct BookshelfView: View {
                                 .frame(height: 24)
                             //                            // Only show text on larger devices (iPad)
                             //                            if isLargeDevice {
-                            Text("BETA")
+                            Text("Rosa Writer")
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             //                            }
