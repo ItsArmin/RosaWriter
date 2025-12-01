@@ -14,4 +14,12 @@ struct AppConstants {
   // Library Limits
   static let maxBooks = 50
   static let maxPagesPerBook = 20
+  
+  // AI Story Generation
+  static let aiBookPageOptions = [10, 12, 15, 17, 20]
+
+  /// Returns a random page count for AI-generated stories
+  static var randomAIBookPageCount: Int {
+    aiBookPageOptions.randomElement() ?? 15
+  }
 }

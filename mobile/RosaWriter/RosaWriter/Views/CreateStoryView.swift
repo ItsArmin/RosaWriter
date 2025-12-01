@@ -256,6 +256,10 @@ struct CreateStoryView: View {
             do {
         let book: Book
 
+        // Pick a random page count for this story
+        let pageCount = AppConstants.randomAIBookPageCount
+        print("📚 Selected page count: \(pageCount)")
+
         // Check if Apple Intelligence is available
         if AIStoryService.isAppleIntelligenceAvailable() {
           // Use Apple Intelligence for story generation
@@ -264,7 +268,7 @@ struct CreateStoryView: View {
             mainCharacter: selectedCharacter,
             mood: selectedMood,
             spark: selectedSpark,
-            pageCount: 5,
+            pageCount: pageCount,
             coverColor: selectedColor
           )
         } else {
