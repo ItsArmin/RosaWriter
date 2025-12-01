@@ -351,6 +351,18 @@ class AIStoryService: ObservableObject {
       book.addPage(page)
     }
 
+    // MARK: - "The End" Page
+    // Add a closing page to all AI-generated stories
+    do {
+      let endPage = BookPage(
+        text: "The End",
+        pageNumber: book.pages.count,
+        imageLayout: .none,
+        isCover: false,
+      )
+      book.addPage(endPage)
+    }
+
     return book
   }
 
