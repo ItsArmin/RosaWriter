@@ -161,7 +161,7 @@ struct PageCurlView: UIViewControllerRepresentable {
   }
 }
 
-/// A scrollable text view with a fade gradient at the bottom when content overflows
+/// A scrollable text view with fade gradients at top/bottom when content overflows
 struct FadingScrollText: View {
   let text: String
   let fontSize: CGFloat
@@ -170,28 +170,39 @@ struct FadingScrollText: View {
   let topPadding: CGFloat
   let backgroundColor: Color
   
-  @State private var showFade = false
+  @State private var hasOverflow = false
   @State private var contentHeight: CGFloat = 0
   @State private var containerHeight: CGFloat = 0
   @State private var scrollOffset: CGFloat = 0
   
+  private let fadeHeight: CGFloat = 40
+  private let scrollThreshold: CGFloat = 10
+  
+  /// User has scrolled down from the top
+  private var isScrolledFromTop: Bool {
+    scrollOffset > scrollThreshold
+  }
+  
+  /// User has scrolled to the bottom
   private var isAtBottom: Bool {
     let maxScroll = max(0, contentHeight - containerHeight)
-    return scrollOffset >= maxScroll - 10 // 10pt threshold
+    return scrollOffset >= maxScroll - scrollThreshold
   }
   
   var body: some View {
     GeometryReader { containerGeometry in
-      ZStack(alignment: .bottom) {
+      ZStack {
         ScrollView(showsIndicators: false) {
           Text(text)
             .font(.system(size: fontSize, weight: .regular))
             .lineSpacing(lineSpacing)
             .foregroundColor(.primary)
             .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity) // Ensure text takes full width for centering
             .padding(.horizontal, horizontalPadding)
             .padding(.top, topPadding)
             .padding(.bottom, 30) // Extra padding so text isn't hidden by fade
+            .frame(minHeight: containerGeometry.size.height) // Allow vertical centering for short text
             .background(
               GeometryReader { textGeometry in
                 Color.clear
@@ -203,25 +214,48 @@ struct FadingScrollText: View {
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ContentHeightKey.self) { height in
           contentHeight = height
-          showFade = height > containerGeometry.size.height
+          hasOverflow = height > containerGeometry.size.height
         }
         .onPreferenceChange(ScrollOffsetKey.self) { offset in
           scrollOffset = offset
         }
         
-        // Fade gradient overlay
-        if showFade && !isAtBottom {
-          LinearGradient(
-            colors: [
-              backgroundColor.opacity(0),
-              backgroundColor.opacity(0.8),
-              backgroundColor
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-          )
-          .frame(height: 50)
-          .allowsHitTesting(false)
+        // Top fade gradient - only show when scrolled down
+        if hasOverflow && isScrolledFromTop {
+          VStack {
+            LinearGradient(
+              colors: [
+                backgroundColor,
+                backgroundColor.opacity(0.8),
+                backgroundColor.opacity(0)
+              ],
+              startPoint: .top,
+              endPoint: .bottom
+            )
+            .frame(height: fadeHeight * 0.6)    // reduce top fade height for first line
+            .allowsHitTesting(false)
+            
+            Spacer()
+          }
+        }
+        
+        // Bottom fade gradient - only show when not at bottom
+        if hasOverflow && !isAtBottom {
+          VStack {
+            Spacer()
+            
+            LinearGradient(
+              colors: [
+                backgroundColor.opacity(0),
+                backgroundColor.opacity(0.8),
+                backgroundColor
+              ],
+              startPoint: .top,
+              endPoint: .bottom
+            )
+            .frame(height: fadeHeight)
+            .allowsHitTesting(false)
+          }
         }
       }
       .onAppear {
