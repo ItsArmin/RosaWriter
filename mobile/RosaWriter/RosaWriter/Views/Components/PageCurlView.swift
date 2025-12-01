@@ -73,7 +73,12 @@ struct PageCurlView: UIViewControllerRepresentable {
             totalPages: parent.pages.count
           )
         )
-        hostingController.view.backgroundColor = .systemBackground
+        // Page background: white in light mode, dark gray in dark mode
+        hostingController.view.backgroundColor = UIColor { traitCollection in
+          traitCollection.userInterfaceStyle == .dark
+            ? UIColor(white: 0.15, alpha: 1.0)
+            : UIColor.white
+        }
         return hostingController
       }
     }
@@ -127,6 +132,12 @@ struct PageContentView: View {
   let page: BookPage
   let pageNumber: Int
   let totalPages: Int
+  @Environment(\.colorScheme) private var colorScheme
+  
+  /// Page background: white in light mode, dark gray in dark mode
+  private var pageBackgroundColor: Color {
+    colorScheme == .dark ? Color(white: 0.15) : Color.white
+  }
 
   var body: some View {
     GeometryReader { geometry in
@@ -138,7 +149,7 @@ struct PageContentView: View {
       let fontSize: CGFloat = isLargeDevice ? 26 : 18
 
       ZStack {
-        Color(UIColor.systemBackground)
+        pageBackgroundColor
           .ignoresSafeArea()
 
         if page.isCover {
