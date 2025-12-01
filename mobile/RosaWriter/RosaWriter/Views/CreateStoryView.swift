@@ -5,10 +5,12 @@
 //  Created by Armin on 10/26/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var aiService = AIStoryService.shared
 
     // User selections
@@ -22,6 +24,7 @@ struct CreateStoryView: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var generatedBook: Book?
+    @State private var showLibraryFullAlert = false
 
     // Callback to pass generated book back to parent
     var onBookCreated: ((Book) -> Void)?
@@ -225,10 +228,28 @@ struct CreateStoryView: View {
             } message: {
                 Text(errorMessage)
             }
+            .alert("Library Full", isPresented: $showLibraryFullAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("You've reached the maximum of \(AppConstants.maxBooks) books. Please delete a book to create a new one.")
+            }
         }
     }
 
     private func createStory() {
+        // Check library limit before generating
+        do {
+            let canCreate = try StorageService.shared.canCreateBook(context: modelContext)
+            if !canCreate {
+                showLibraryFullAlert = true
+                return
+            }
+        } catch {
+            errorMessage = "Failed to check library: \(error.localizedDescription)"
+            showError = true
+            return
+        }
+        
         isGenerating = true
 
         Task {

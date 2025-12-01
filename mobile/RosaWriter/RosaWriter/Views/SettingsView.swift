@@ -94,9 +94,9 @@ struct SettingsView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Books: **20**")
+                        Text("Books: **\(AppConstants.maxBooks)**")
                             .font(.body)
-                        Text("Pages per book: **50**")
+                        Text("Pages per book: **\(AppConstants.maxPagesPerBook)**")
                             .font(.body)
                     }
                     .padding()

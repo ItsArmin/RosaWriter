@@ -10,4 +10,8 @@ import Foundation
 struct AppConstants {
   static let appName = "RosaWriter"
   static let appVersion = "1.0.0"
+  
+  // Library Limits
+  static let maxBooks = 50
+  static let maxPagesPerBook = 20
 }
