@@ -38,46 +38,43 @@ struct CreateStoryView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Create Your Story")
                                 .font(.system(size: 32, weight: .bold))
-                            Text("Choose your adventure!")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
                         }
                         .padding(.top, 24)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         // Character Selection
-                        VStack(alignment: .leading, spacing: 12) {
-                            Label("Main Character", systemImage: "person.fill")
-                                .font(.headline)
-
-                            HStack {
-                                Image(selectedCharacter.imageName)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40, height: 40)
-
-                                Picker(
-                                    "Character",
-                                    selection: $selectedCharacter
-                                ) {
-                                    ForEach(StoryAssets.allCharacters, id: \.id)
-                                    { character in
-                                        Text(character.displayName).tag(
-                                            character
-                                        )
+                            VStack(alignment: .leading, spacing: 12) {
+                                Label("Main Character", systemImage: "person.fill")
+                                    .font(.headline)
+                                
+                                HStack {
+                                    Image(selectedCharacter.imageName)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
+                                    Picker(
+                                        "Character",
+                                        selection: $selectedCharacter
+                                    ) {
+                                        ForEach(StoryAssets.allCharacters, id: \.id)
+                                        { character in
+                                            Text(character.displayName).tag(
+                                                character
+                                            )
+                                        }
                                     }
+                                    .pickerStyle(.menu)
                                 }
-                                .pickerStyle(.menu)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
 
-                            Text(selectedCharacter.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
-                        }
+//                            Text(selectedCharacter.description)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
+                            
 
                         // Mood Selection
                         VStack(alignment: .leading, spacing: 12) {
@@ -94,10 +91,10 @@ struct CreateStoryView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
 
-                            Text(selectedMood.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
+//                            Text(selectedMood.description)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
                         }
 
                         // Spark Selection
@@ -115,10 +112,10 @@ struct CreateStoryView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
 
-                            Text(selectedSpark.promptText)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
+//                            Text(selectedSpark.promptText)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
                         }
 
                         // Cover Color Selection
@@ -199,19 +196,23 @@ struct CreateStoryView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isGenerating ? Color.gray : Color.blue)
+//                        .background(isGenerating ? Color.gray : Color.blue)
                         .cornerRadius(16)
                         .shadow(radius: 4)
                     }
                     .disabled(isGenerating)
-                    .padding()
-                    .background(
-                        LinearGradient(
-                            colors: [Color.clear, Color(.systemBackground)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
+                    .glassEffect(
+                        .regular.tint(isGenerating ? .gray.opacity(0.8): .blue.opacity(0.8)).interactive(),
+                        in: .capsule
                     )
+                    .padding()
+//                    .background(
+//                        LinearGradient(
+//                            colors: [Color.clear, Color(.systemBackground)],
+//                            startPoint: .top,
+//                            endPoint: .bottom
+//                        )
+//                    )
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

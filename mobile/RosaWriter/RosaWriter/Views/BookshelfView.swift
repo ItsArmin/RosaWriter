@@ -142,7 +142,7 @@ struct BookshelfView: View {
                             showCreateStory = true
                         }) {
                             Label {
-                                Text("New Story")
+                                Text("Create Story")
                                     .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
