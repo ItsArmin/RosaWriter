@@ -342,7 +342,19 @@ class AIStoryService: ObservableObject {
 
     // Create content pages
     for aiPage in aiStory.pages {
-      let imageLayout = determineImageLayout(from: aiPage.suggestedImages)
+      var suggestedImages = aiPage.suggestedImages
+      
+      // Ensure page 1 always features the main character
+      if aiPage.pageNumber == 1 && !suggestedImages.contains(mainCharacter.id) {
+        // Insert main character at the beginning of suggested images
+        suggestedImages.insert(mainCharacter.id, at: 0)
+        // Limit to 2 images max
+        if suggestedImages.count > 2 {
+          suggestedImages = Array(suggestedImages.prefix(2))
+        }
+      }
+      
+      let imageLayout = determineImageLayout(from: suggestedImages)
       let page = BookPage(
         text: aiPage.text,
         pageNumber: aiPage.pageNumber,

@@ -142,6 +142,7 @@ struct StoryPrompts {
         return """
             STORY STRUCTURE:
             - Write exactly \(pageCount) content pages with meaningful narrative on each
+            - Page 1 MUST feature the main character prominently - include them in suggestedImages for page 1
             - Pace: introduction (pages 1-2), rising action (pages 2-\(max(pageCount - 2, 2))), climax (page \(max(pageCount - 1, 2))), resolution (page \(pageCount))
             - Do NOT write "The End" or any ending phrase - this is added automatically
             - Do NOT pad the story with filler if it concludes early - adjust pacing instead
