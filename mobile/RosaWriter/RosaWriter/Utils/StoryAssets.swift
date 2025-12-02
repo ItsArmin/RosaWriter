@@ -38,6 +38,19 @@ struct CharacterVoice: Equatable, Hashable {
         Surprise: \(surprise.joined(separator: ", "))
         """
     }
+    
+    /// Generates a concise list of signature phrases for prompt injection
+    /// Picks the most distinctive phrases that ONLY this character should use
+    func signaturePhrases() -> String {
+        // Pick 2-3 most distinctive phrases from key categories
+        let signatures = [
+            excited.first,
+            greeting.first,
+            surprise.first
+        ].compactMap { $0 }
+        
+        return signatures.prefix(3).map { "\"\($0)\"" }.joined(separator: ", ")
+    }
 }
 
 // MARK: - Predefined Character Voices
@@ -122,6 +135,13 @@ struct StoryCharacter: Equatable, Hashable {
         self.pronounPossessive = pronounPossessive
         self.pronounObjective = pronounObjective
         self.voice = voice
+    }
+    
+    /// Generates ownership rule for this character's unique voice
+    /// Example: "Mr. Dog: says "Oh boy!", "Woof!" - ONLY Mr. Dog uses these"
+    func voiceOwnershipRule() -> String {
+        let signatures = voice.signaturePhrases()
+        return "- \(displayName): says \(signatures) - ONLY \(displayName) uses these"
     }
 }
 
