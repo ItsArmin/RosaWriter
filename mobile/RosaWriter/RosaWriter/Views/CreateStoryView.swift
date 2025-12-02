@@ -5,10 +5,12 @@
 //  Created by Armin on 10/26/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var aiService = AIStoryService.shared
 
     // User selections
@@ -22,6 +24,7 @@ struct CreateStoryView: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var generatedBook: Book?
+    @State private var showLibraryFullAlert = false
 
     // Callback to pass generated book back to parent
     var onBookCreated: ((Book) -> Void)?
@@ -35,46 +38,43 @@ struct CreateStoryView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Create Your Story")
                                 .font(.system(size: 32, weight: .bold))
-                            Text("Choose your adventure!")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
                         }
                         .padding(.top, 24)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         // Character Selection
-                        VStack(alignment: .leading, spacing: 12) {
-                            Label("Main Character", systemImage: "person.fill")
-                                .font(.headline)
-
-                            HStack {
-                                Image(selectedCharacter.imageName)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40, height: 40)
-
-                                Picker(
-                                    "Character",
-                                    selection: $selectedCharacter
-                                ) {
-                                    ForEach(StoryAssets.allCharacters, id: \.id)
-                                    { character in
-                                        Text(character.displayName).tag(
-                                            character
-                                        )
+                            VStack(alignment: .leading, spacing: 12) {
+                                Label("Main Character", systemImage: "person.fill")
+                                    .font(.headline)
+                                
+                                HStack {
+                                    Image(selectedCharacter.imageName)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
+                                    Picker(
+                                        "Character",
+                                        selection: $selectedCharacter
+                                    ) {
+                                        ForEach(StoryAssets.allCharacters, id: \.id)
+                                        { character in
+                                            Text(character.displayName).tag(
+                                                character
+                                            )
+                                        }
                                     }
+                                    .pickerStyle(.menu)
                                 }
-                                .pickerStyle(.menu)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
 
-                            Text(selectedCharacter.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
-                        }
+//                            Text(selectedCharacter.description)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
+                            
 
                         // Mood Selection
                         VStack(alignment: .leading, spacing: 12) {
@@ -91,10 +91,10 @@ struct CreateStoryView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
 
-                            Text(selectedMood.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
+//                            Text(selectedMood.description)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
                         }
 
                         // Spark Selection
@@ -112,10 +112,10 @@ struct CreateStoryView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
 
-                            Text(selectedSpark.promptText)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 4)
+//                            Text(selectedSpark.promptText)
+//                                .font(.caption)
+//                                .foregroundColor(.secondary)
+//                                .padding(.horizontal, 4)
                         }
 
                         // Cover Color Selection
@@ -196,19 +196,23 @@ struct CreateStoryView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isGenerating ? Color.gray : Color.blue)
+//                        .background(isGenerating ? Color.gray : Color.blue)
                         .cornerRadius(16)
                         .shadow(radius: 4)
                     }
                     .disabled(isGenerating)
-                    .padding()
-                    .background(
-                        LinearGradient(
-                            colors: [Color.clear, Color(.systemBackground)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
+                    .glassEffect(
+                        .regular.tint(isGenerating ? .gray.opacity(0.8): .blue.opacity(0.8)).interactive(),
+                        in: .capsule
                     )
+                    .padding()
+//                    .background(
+//                        LinearGradient(
+//                            colors: [Color.clear, Color(.systemBackground)],
+//                            startPoint: .top,
+//                            endPoint: .bottom
+//                        )
+//                    )
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -225,15 +229,37 @@ struct CreateStoryView: View {
             } message: {
                 Text(errorMessage)
             }
+            .alert("Library Full", isPresented: $showLibraryFullAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("You've reached the maximum of \(AppConstants.maxBooks) books. Please delete a book to create a new one.")
+            }
         }
     }
 
     private func createStory() {
+        // Check library limit before generating
+        do {
+            let canCreate = try StorageService.shared.canCreateBook(context: modelContext)
+            if !canCreate {
+                showLibraryFullAlert = true
+                return
+            }
+        } catch {
+            errorMessage = "Failed to check library: \(error.localizedDescription)"
+            showError = true
+            return
+        }
+        
         isGenerating = true
 
         Task {
             do {
         let book: Book
+
+        // Pick a random page count for this story
+        let pageCount = AppConstants.randomAIBookPageCount
+        print("📚 Selected page count: \(pageCount)")
 
         // Check if Apple Intelligence is available
         if AIStoryService.isAppleIntelligenceAvailable() {
@@ -243,7 +269,7 @@ struct CreateStoryView: View {
             mainCharacter: selectedCharacter,
             mood: selectedMood,
             spark: selectedSpark,
-            pageCount: 5,
+            pageCount: pageCount,
             coverColor: selectedColor
           )
         } else {

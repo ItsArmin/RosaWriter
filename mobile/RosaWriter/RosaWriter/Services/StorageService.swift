@@ -159,6 +159,22 @@ class StorageService {
 
     return try context.fetch(fetchDescriptor)
   }
+  
+  /// Get count of user-created stories (excludes sample books)
+  func getUserBookCount(context: ModelContext) throws -> Int {
+    let fetchDescriptor = FetchDescriptor<StoryData>(
+      predicate: #Predicate { story in
+        story.isSample != true
+      }
+    )
+    return try context.fetchCount(fetchDescriptor)
+  }
+  
+  /// Check if user can create more books
+  func canCreateBook(context: ModelContext) throws -> Bool {
+    let count = try getUserBookCount(context: context)
+    return count < AppConstants.maxBooks
+  }
 
   /// Load only sample stories
   func loadSampleStoryData(context: ModelContext) throws -> [StoryData] {

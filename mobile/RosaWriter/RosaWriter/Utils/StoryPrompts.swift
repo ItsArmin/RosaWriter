@@ -10,7 +10,6 @@ import Foundation
 struct StoryPrompts {
 
     // MARK: - System Prompt
-    // TODO: improve prompts...
     static let systemPrompt = """
         You are a creative children's story writer. You write engaging, age-appropriate stories \
         for children aged 5-10 years old. Your stories should be:
@@ -50,11 +49,15 @@ struct StoryPrompts {
             - Use at least 2 of the available characters
             - Use at least 2 of the available objects
             - Each page should have 2-4 sentences (50-150 words per page)
-            - The story should have a clear beginning, middle, and end
             - Include specific moments where characters interact with the objects
             - Make it engaging and fun for children
-            - When characters speak, use their voice style phrases naturally in dialogue
-            - ALL character dialogue MUST be wrapped in quotation marks (e.g., "Hello!" said the character)
+            - ALL character dialogue MUST use straight double quotes ("), not curly quotes ("")
+              Example: "Hello!" said the character (correct)
+              NOT: "Hello!" said the character (wrong - curly quotes)
+            
+            \(voiceOwnershipRules(for: characters))
+            
+            \(storyStructureRules(pageCount: pageCount))
             """
 
         if let theme = theme {
@@ -97,6 +100,9 @@ struct StoryPrompts {
     }
 
     // MARK: - Helper Methods
+    
+    /// Maximum characters to include in voice ownership rules (to keep prompts lean)
+    private static let maxCharactersForVoiceRules = 5
 
     private static func availableAssetIDs() -> [String] {
         StoryAssets.allCharacters.map { $0.id }
@@ -115,6 +121,33 @@ struct StoryPrompts {
     /// Formats all characters with their voice info
     private static func allCharactersWithVoice() -> String {
         StoryAssets.allCharacters.map { characterDescription($0) }.joined(separator: "\n")
+    }
+    
+    /// Generates character voice ownership rules for only the characters in the story
+    /// This prevents catchphrase mixing by explicitly stating which phrases belong to which character
+    private static func voiceOwnershipRules(for characters: [StoryCharacter]) -> String {
+        let limitedCharacters = Array(characters.prefix(maxCharactersForVoiceRules))
+        let rules = limitedCharacters.map { $0.voiceOwnershipRule() }.joined(separator: "\n")
+        
+        return """
+            CRITICAL - CHARACTER VOICE RULES:
+            - Each character has UNIQUE phrases that belong ONLY to them - NEVER swap them
+            \(rules)
+            - Match each character's dialogue STRICTLY to their assigned voice
+            """
+    }
+    
+    /// Generates story structure guidance based on page count
+    private static func storyStructureRules(pageCount: Int) -> String {
+        return """
+            STORY STRUCTURE:
+            - Write exactly \(pageCount) content pages with meaningful narrative on each
+            - Page 1 MUST feature the main character prominently - include them in suggestedImages for page 1
+            - Pace: introduction (pages 1-2), rising action (pages 2-\(max(pageCount - 2, 2))), climax (page \(max(pageCount - 1, 2))), resolution (page \(pageCount))
+            - Do NOT write "The End" or any ending phrase - this is added automatically
+            - Do NOT pad the story with filler if it concludes early - adjust pacing instead
+            - Every single page must move the story forward
+            """
     }
 
     /// Generates a prompt for a random story with random assets
@@ -159,6 +192,16 @@ struct StoryPrompts {
     spark: StorySpark,
     pageCount: Int = 5
   ) -> String {
+    // Build a focused character set: main character + up to (maxCharactersForVoiceRules - 1) supporting
+    let supportingCharacters = StoryAssets.allCharacters
+        .filter { $0.id != mainCharacter.id }
+        .shuffled()
+        .prefix(maxCharactersForVoiceRules - 1)
+    let storyCharacters = [mainCharacter] + Array(supportingCharacters)
+    
+    // Format character list for the prompt
+    let characterList = storyCharacters.map { characterDescription($0) }.joined(separator: "\n")
+    
     // All available objects
     let allObjectsList = StoryAssets.allObjects.map {
       "- \($0.displayName): \($0.description)"
@@ -167,8 +210,8 @@ struct StoryPrompts {
     let prompt = """
       Create a children's story with exactly \(pageCount) pages (excluding the cover page).
 
-      CHARACTER REFERENCE (with voice styles for dialogue):
-      \(allCharactersWithVoice())
+      AVAILABLE CHARACTERS:
+      \(characterList)
 
       AVAILABLE OBJECTS TO USE IN THE STORY:
       \(allObjectsList)
@@ -177,8 +220,7 @@ struct StoryPrompts {
 
       Main Character: \(mainCharacter.displayName)
       - This character MUST be the protagonist and appear throughout the story
-      - When \(mainCharacter.displayName) speaks, use their voice style phrases naturally
-      - Other characters can appear as supporting characters (use their voice styles too)
+      - Other characters can appear as supporting characters
 
       Story Mood: \(mood.rawValue)
       - \(mood.description)
@@ -191,11 +233,15 @@ struct StoryPrompts {
       Additional Requirements:
       - Use at least 2-3 of the available objects naturally in the story
       - Each page should have 2-4 sentences (50-150 words per page)
-      - The story should have a clear beginning, middle, and end
       - Make it engaging and fun for children aged 5-10
       - Include moments where characters interact with the objects
-      - When characters speak, incorporate their unique voice style phrases
-      - ALL character dialogue MUST be wrapped in quotation marks (e.g., "Hello!" said Mr. Dog)
+      - ALL character dialogue MUST use straight double quotes ("), not curly quotes ("")
+        Example: "Hello!" said Mr. Dog (correct)
+        NOT: "Hello!" said Mr. Dog (wrong - curly quotes)
+      
+      \(voiceOwnershipRules(for: storyCharacters))
+      
+      \(storyStructureRules(pageCount: pageCount))
 
       RESPONSE FORMAT:
       You MUST respond with ONLY a valid JSON object, no additional text before or after.
