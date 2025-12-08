@@ -196,7 +196,7 @@ struct FadingScrollText: View {
           Text(text)
             .font(.system(size: fontSize, weight: .regular))
             .lineSpacing(lineSpacing)
-            .foregroundColor(.primary)
+            .foregroundStyle(.primary)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity) // Ensure text takes full width for centering
             .padding(.horizontal, horizontalPadding)
@@ -333,7 +333,7 @@ struct PageContentView: View {
               Text(page.text)
                 .font(.system(size: isLargeDevice ? 52 : 32, weight: .bold))
                 .multilineTextAlignment(.center)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                 .padding(.horizontal, horizontalPadding)
 
@@ -360,7 +360,7 @@ struct PageContentView: View {
             // Page number at bottom
             Text("\(pageNumber)")
               .font(.system(size: isLargeDevice ? 14 : 12))
-              .foregroundColor(.secondary.opacity(0.5))
+              .foregroundStyle(.secondary.opacity(0.5))
               .padding(.bottom, isLargeDevice ? 30 : 20)
           }
         } else {
@@ -443,7 +443,7 @@ struct PageContentView: View {
             // Page number at bottom
             Text("\(pageNumber)")
               .font(.system(size: isLargeDevice ? 14 : 12))
-              .foregroundColor(.secondary.opacity(0.5))
+              .foregroundStyle(.secondary.opacity(0.5))
               .padding(.bottom, isLargeDevice ? 30 : 20)
           }
         }

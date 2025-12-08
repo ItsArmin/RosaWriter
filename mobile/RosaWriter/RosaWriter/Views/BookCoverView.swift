@@ -36,7 +36,7 @@ struct BookCoverView: View {
               Text(book.title)
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .padding()
 
@@ -44,7 +44,7 @@ struct BookCoverView: View {
 
               Text("by Author")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
+                .foregroundStyle(.white.opacity(0.8))
                 .padding(.bottom)
             }
           )
@@ -59,7 +59,7 @@ struct BookCoverView: View {
           .font(.headline)
         Text("Created: \(book.createdAt.formatted(date: .abbreviated, time: .omitted))")
           .font(.subheadline)
-          .foregroundColor(.gray)
+          .foregroundStyle(.gray)
       }
       .padding()
 

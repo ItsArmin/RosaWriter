@@ -1,0 +1,78 @@
+//
+//  StorageErrorView.swift
+//  RosaWriter
+//
+//  Created by Armin on 12/8/25.
+//
+
+import SwiftUI
+
+/// A blocking error view shown when the app cannot initialize persistent storage.
+/// This prevents users from creating stories that would be lost.
+struct StorageErrorView: View {
+  let error: Error?
+
+  var body: some View {
+    VStack(spacing: 24) {
+      Spacer()
+
+      Image(systemName: "externaldrive.fill.trianglebadge.exclamationmark")
+        .font(.system(size: 64))
+        .foregroundStyle(.orange)
+
+      Text("Unable to Open Library")
+        .font(.title)
+        .fontWeight(.bold)
+
+      Text(
+        "Rosa Writer couldn't access your story library. This is usually caused by low storage space on your device."
+      )
+      .multilineTextAlignment(.center)
+      .foregroundStyle(.secondary)
+      .padding(.horizontal, 40)
+
+      VStack(alignment: .leading, spacing: 12) {
+        Label("Free up storage space on your device", systemImage: "arrow.up.trash")
+        Label("Restart the app", systemImage: "arrow.clockwise")
+        Label("If the problem persists, reinstall the app", systemImage: "arrow.down.app")
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .padding(.horizontal, 40)
+      .padding(.top, 8)
+
+      Spacer()
+
+      // Technical details for support (collapsed by default)
+      if let error {
+        DisclosureGroup("Technical Details") {
+          Text(error.localizedDescription)
+            .font(.caption)
+            .foregroundStyle(.tertiary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 4)
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 40)
+        .padding(.bottom, 32)
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color(.systemBackground))
+  }
+}
+
+#Preview {
+  StorageErrorView(error: nil)
+}
+
+#Preview("With Error") {
+  StorageErrorView(
+    error: NSError(
+      domain: "SwiftData",
+      code: -1,
+      userInfo: [NSLocalizedDescriptionKey: "The database could not be opened."]
+    )
+  )
+}

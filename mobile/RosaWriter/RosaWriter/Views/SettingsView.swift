@@ -44,7 +44,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "circle.lefthalf.filled")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Color Theme")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -67,7 +67,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "text.quote")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Language")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -78,7 +78,7 @@ struct SettingsView: View {
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
+            .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -87,7 +87,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "doc.text")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Library Limits")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -102,7 +102,7 @@ struct SettingsView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -111,7 +111,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "arrow.counterclockwise.circle")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Reset Sample Books")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -122,7 +122,7 @@ struct SettingsView: View {
                             "Restore the default sample books to their original state. This will delete any modifications to sample books."
                         )
                         .font(.body)
-                        .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
                         Button(action: {
                             showResetConfirmation = true
@@ -130,11 +130,11 @@ struct SettingsView: View {
                             Text("Reset Sample Books")
                                 .font(.body)
                                 .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
 //                                .background(Color.red)
-                                .cornerRadius(12)
+                .clipShape(.rect(cornerRadius: 12))
                         }
                         .glassEffect(
                             .regular.tint(.blue.opacity(1.0)).interactive(),
@@ -145,7 +145,7 @@ struct SettingsView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -154,7 +154,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "exclamationmark.circle")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Disclaimer")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -167,7 +167,7 @@ struct SettingsView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -178,7 +178,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("© AMTech LLC. All rights reserved.")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
                     Link(
                         destination: URL(
@@ -188,7 +188,7 @@ struct SettingsView: View {
                     ) {
                         Text("Privacy Policy")
                             .font(.caption)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                     }
                 }
                 .frame(maxWidth: .infinity)

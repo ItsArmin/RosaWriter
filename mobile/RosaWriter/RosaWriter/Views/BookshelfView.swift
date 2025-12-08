@@ -99,7 +99,7 @@ struct BookshelfView: View {
                                     "\(books.count) \(books.count == 1 ? "story" : "stories")"
                                 )
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -145,12 +145,12 @@ struct BookshelfView: View {
                                 Text("Create Story")
                                     .font(.headline)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                  .foregroundStyle(.white)
                             } icon: {
                                 Image(systemName: "sparkles")
                                     .font(.title2)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                  .foregroundStyle(.white)
                                     .shadow(
                                         color: Color.black.opacity(0.3),
                                         radius: 8,
@@ -218,7 +218,7 @@ struct BookshelfView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: { showDeleteConfirmation = true }) {
                             Image(systemName: "trash")
-                                .foregroundColor(.red)
+                .foregroundStyle(.red)
                         }
                         .disabled(selectedBooks.isEmpty)
                     }
@@ -326,7 +326,7 @@ struct BookshelfView: View {
 
             Image(systemName: "books.vertical")
                 .font(.system(size: 60))
-                .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
 
             Text("No Books Yet")
                 .font(.title2)
@@ -334,7 +334,7 @@ struct BookshelfView: View {
 
             Text("Create your first story to get started!")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
             Button(action: {
@@ -342,7 +342,7 @@ struct BookshelfView: View {
             }) {
                 Label("Create Story", systemImage: "sparkles")
                     .font(.headline)
-                    .foregroundColor(.white)
+          .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -352,7 +352,7 @@ struct BookshelfView: View {
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
             }
             .padding(.top, 8)
 
@@ -389,7 +389,7 @@ struct BookshelfView: View {
                     if selectedBooks.contains(book.id) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
+              .foregroundStyle(.white)
                     }
                 }
                 .offset(x: 8, y: -8)

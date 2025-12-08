@@ -125,7 +125,7 @@ class AIStoryService: ObservableObject {
         print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
         if attempt < 3 {
           print("🔄 Retrying...")
-          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+          try? await Task.sleep(for: .milliseconds(500))
         }
       }
     }
@@ -179,7 +179,7 @@ class AIStoryService: ObservableObject {
         print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
         if attempt < 3 {
           print("🔄 Retrying...")
-          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+          try? await Task.sleep(for: .milliseconds(500))
         }
       }
     }
@@ -237,7 +237,7 @@ class AIStoryService: ObservableObject {
         print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")
         if attempt < 3 {
           print("🔄 Retrying...")
-          try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 second delay
+          try? await Task.sleep(for: .milliseconds(500))
         }
       }
     }

@@ -15,10 +15,10 @@ struct CustomButton: View {
     Button(action: action) {
       Text(title)
         .font(.headline)
-        .foregroundColor(.white)
+        .foregroundStyle(.white)
         .padding()
         .background(Color.blue)
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
     }
   }
 }
