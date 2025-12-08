@@ -90,7 +90,7 @@ struct BookshelfView: View {
                     VStack(spacing: 0) {
                         // Custom "My Library" header that scrolls away
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("My Library")
+              Text(Strings.myLibrary)
                                 .font(.system(size: 34, weight: .bold))
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -142,7 +142,7 @@ struct BookshelfView: View {
                             showCreateStory = true
                         }) {
                             Label {
-                                Text("Create Story")
+                Text(Strings.createStory)
                                     .font(.headline)
                                     .fontWeight(.bold)
                   .foregroundStyle(.white)
@@ -190,13 +190,13 @@ struct BookshelfView: View {
                                 .frame(height: 24)
                             //                            // Only show text on larger devices (iPad)
                             //                            if isLargeDevice {
-                            Text("Rosa Writer")
+              Text(Strings.appName)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             //                            }
                         }
                     } else {
-                        Text("My Library")
+            Text(Strings.myLibrary)
                             .font(.headline)
                             .fontWeight(.semibold)
                     }
@@ -231,7 +231,7 @@ struct BookshelfView: View {
                             Button {
                                 withAnimation { isSelectionMode = true }
                             } label: {
-                                Text("Select")
+                Text(Strings.select)
                             }
                         }
                     }
@@ -328,11 +328,11 @@ struct BookshelfView: View {
                 .font(.system(size: 60))
         .foregroundStyle(.secondary)
 
-            Text("No Books Yet")
+      Text(Strings.noBooksYet)
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("Create your first story to get started!")
+      Text(Strings.createFirstStory)
                 .font(.subheadline)
         .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -340,7 +340,7 @@ struct BookshelfView: View {
             Button(action: {
                 showCreateStory = true
             }) {
-                Label("Create Story", systemImage: "sparkles")
+        Label(Strings.createStory, systemImage: "sparkles")
                     .font(.headline)
           .foregroundStyle(.white)
                     .padding(.horizontal, 24)

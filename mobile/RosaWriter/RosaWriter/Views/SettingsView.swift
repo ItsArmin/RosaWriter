@@ -8,22 +8,6 @@
 import SwiftData
 import SwiftUI
 
-enum AppTheme: String, CaseIterable, Identifiable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-
-    var id: String { rawValue }
-
-    var colorScheme: ColorScheme? {
-        switch self {
-        case .system: return nil
-        case .light: return .light
-        case .dark: return .dark
-        }
-    }
-}
-
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
 
@@ -112,22 +96,20 @@ struct SettingsView: View {
                         Image(systemName: "arrow.counterclockwise.circle")
                             .font(.title2)
               .foregroundStyle(.blue)
-                        Text("Reset Sample Books")
+            Text(Strings.resetSampleBooks)
                             .font(.title2)
                             .fontWeight(.semibold)
                     }
 
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(
-                            "Restore the default sample books to their original state. This will delete any modifications to sample books."
-                        )
-                        .font(.body)
-            .foregroundStyle(.secondary)
+            Text(Strings.resetSampleBooksDescription)
+              .font(.body)
+              .foregroundStyle(.secondary)
 
                         Button(action: {
                             showResetConfirmation = true
                         }) {
-                            Text("Reset Sample Books")
+              Text(Strings.resetSampleBooks)
                                 .font(.body)
                                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
@@ -209,12 +191,12 @@ struct SettingsView: View {
             )
         }
         .alert("Success", isPresented: $showResetSuccess) {
-            Button("OK", role: .cancel) {}
+      Button(Strings.ok, role: .cancel) {}
         } message: {
-            Text("Sample books have been reset successfully.")
-        }
-        .alert("Error", isPresented: .constant(resetError != nil)) {
-            Button("OK", role: .cancel) {
+      Text(Strings.sampleBooksResetSuccess)
+    }
+    .alert(Strings.error, isPresented: .constant(resetError != nil)) {
+      Button(Strings.ok, role: .cancel) {
                 resetError = nil
             }
         } message: {

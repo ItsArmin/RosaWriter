@@ -36,7 +36,7 @@ struct CreateStoryView: View {
                     VStack(alignment: .leading, spacing: 32) {
                         // Header
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Create Your Story")
+              Text(Strings.createYourStory)
                                 .font(.system(size: 32, weight: .bold))
                         }
                         .padding(.top, 24)
@@ -188,10 +188,10 @@ struct CreateStoryView: View {
                                     .progressViewStyle(
                                         CircularProgressViewStyle(tint: .white)
                                     )
-                                Text("Creating Story...")
+                Text(Strings.creatingStory)
                             } else {
                                 Image(systemName: "wand.and.stars")
-                                Text("Create Story!")
+                Text(Strings.createStoryExclaim)
                             }
                         }
                         .font(.headline)
@@ -220,21 +220,21 @@ struct CreateStoryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+          Button(Strings.cancel) {
                         dismiss()
                     }
                     .disabled(isGenerating)
                 }
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
+      .alert(Strings.error, isPresented: $showError) {
+        Button(Strings.ok, role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
-            .alert("Library Full", isPresented: $showLibraryFullAlert) {
-                Button("OK", role: .cancel) {}
+      .alert(Strings.libraryFull, isPresented: $showLibraryFullAlert) {
+        Button(Strings.ok, role: .cancel) {}
             } message: {
-                Text("You've reached the maximum of \(AppConstants.maxBooks) books. Please delete a book to create a new one.")
+        Text(Strings.libraryFullMessage(maxBooks: AppConstants.maxBooks))
             }
         }
     }

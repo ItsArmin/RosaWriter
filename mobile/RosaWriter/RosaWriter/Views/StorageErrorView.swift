@@ -20,21 +20,19 @@ struct StorageErrorView: View {
         .font(.system(size: 64))
         .foregroundStyle(.orange)
 
-      Text("Unable to Open Library")
+      Text(Strings.unableToOpenLibrary)
         .font(.title)
         .fontWeight(.bold)
 
-      Text(
-        "Rosa Writer couldn't access your story library. This is usually caused by low storage space on your device."
-      )
-      .multilineTextAlignment(.center)
-      .foregroundStyle(.secondary)
-      .padding(.horizontal, 40)
+      Text(Strings.storageErrorMessage)
+        .multilineTextAlignment(.center)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 40)
 
       VStack(alignment: .leading, spacing: 12) {
-        Label("Free up storage space on your device", systemImage: "arrow.up.trash")
-        Label("Restart the app", systemImage: "arrow.clockwise")
-        Label("If the problem persists, reinstall the app", systemImage: "arrow.down.app")
+        Label(Strings.freeUpStorage, systemImage: "arrow.up.trash")
+        Label(Strings.restartApp, systemImage: "arrow.clockwise")
+        Label(Strings.reinstallApp, systemImage: "arrow.down.app")
       }
       .font(.subheadline)
       .foregroundStyle(.secondary)
@@ -45,7 +43,7 @@ struct StorageErrorView: View {
 
       // Technical details for support (collapsed by default)
       if let error {
-        DisclosureGroup("Technical Details") {
+        DisclosureGroup(Strings.technicalDetails) {
           Text(error.localizedDescription)
             .font(.caption)
             .foregroundStyle(.tertiary)
