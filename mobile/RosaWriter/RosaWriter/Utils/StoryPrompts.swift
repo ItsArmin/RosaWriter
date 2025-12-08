@@ -10,154 +10,108 @@ import Foundation
 struct StoryPrompts {
 
     // MARK: - System Prompt
+    
     static let systemPrompt = """
-        You are a creative children's story writer. You write engaging, age-appropriate stories \
-        for children aged 5-10 years old. Your stories should be:
-        - Simple and easy to understand
-        - Positive and uplifting with clear moral lessons
-        - Appropriate for young children
-        - Fun and engaging with vivid descriptions
-        - Well-structured with a clear beginning, middle, and end
+        You write simple, folksy children's stories. \
+        Short sentences. Clear words. No fancy language. \
+        Like a grandparent telling a bedtime story.
         """
 
-    // MARK: - Story Generation Prompt
-
-    /// Generates a prompt for creating a complete story
+    // MARK: - Story Generation Prompts
+    
+    /// Generates a prompt for creating a story with specific characters and objects
     static func generateStoryPrompt(
         characters: [StoryCharacter],
         objects: [StoryObject],
         pageCount: Int = 5,
         theme: String? = nil
     ) -> String {
-        let characterList = characters.map { characterDescription($0) }.joined(separator: "\n")
-        let objectList = objects.map {
-            "- \($0.displayName): \($0.description)"
-        }.joined(
-            separator: "\n"
-        )
+        let characterList = characters.map { simpleCharacterDescription($0) }.joined(separator: "\n")
+    let objectList = objects.map { $0.displayName }.joined(separator: ", ")
+        let mainCharacter = characters.first ?? StoryAssets.allCharacters[0]
 
         var prompt = """
-            Create a children's story with exactly \(pageCount) pages (excluding the cover page).
+            Write a \(pageCount)-page children's story featuring \(mainCharacter.displayName) as the main character.
 
-            AVAILABLE CHARACTERS:
+            CHARACTERS:
             \(characterList)
 
-            AVAILABLE OBJECTS:
-            \(objectList)
-
-            REQUIREMENTS:
-            - Use at least 2 of the available characters
-            - Use at least 2 of the available objects
-            - Each page should have 2-4 sentences (50-150 words per page)
-            - Include specific moments where characters interact with the objects
-            - Make it engaging and fun for children
-            - ALL character dialogue MUST use straight double quotes ("), not curly quotes ("")
-              Example: "Hello!" said the character (correct)
-              NOT: "Hello!" said the character (wrong - curly quotes)
-            
-            \(voiceOwnershipRules(for: characters))
-            
-            \(storyStructureRules(pageCount: pageCount))
+            OBJECTS TO INCLUDE: \(objectList)
             """
-
+        
         if let theme = theme {
-            prompt += "\n- Story theme: \(theme)"
+            prompt += "\nTHEME: \(theme)"
         }
-
+        
         prompt += """
 
 
-            RESPONSE FORMAT:
-            You MUST respond with ONLY a valid JSON object, no additional text before or after.
-            Use proper JSON escaping for quotes and special characters in the text field.
-            
-            Format:
-            {
-              "title": "Story Title",
-              "pages": [
-                {
-                  "pageNumber": 1,
-                  "text": "Once upon a time...",
-                  "suggestedImages": ["MR_DOG", "APPLE"]
-                },
-                {
-                  "pageNumber": 2,
-                  "text": "The next day...",
-                  "suggestedImages": ["SIR_WHISKERS"]
-                }
-              ]
-            }
+            WRITING STYLE: Short sentences. Simple words. Clear and folksy, like a bedtime story.
 
-            IMPORTANT:
-            - Respond with ONLY the JSON object, nothing else
-            - Use proper JSON string escaping (escape quotes with backslash)
-            - For suggestedImages, use these IDs: \(availableAssetIDs().joined(separator: ", "))
-            - Each page can have 0-2 suggested images
-            - Make sure all JSON is valid and properly closed
+            GUIDELINES:
+            - Beginning, middle, and a nice ending
+            - \(mainCharacter.displayName) is the main character (show on page 1)
+            - Each character sounds different based on their personality
+            - Use "straight quotes" for dialogue
+            - Don't write "The End"
+
+            \(jsonFormatInstructions())
             """
 
         return prompt
     }
 
-    // MARK: - Helper Methods
-    
-    /// Maximum characters to include in voice ownership rules (to keep prompts lean)
-    private static let maxCharactersForVoiceRules = 5
-
-    private static func availableAssetIDs() -> [String] {
-        StoryAssets.allCharacters.map { $0.id }
-            + StoryAssets.allObjects.map { $0.id }
-    }
-    
-    /// Formats character info including voice/lexicon for prompts
-    private static func characterDescription(_ character: StoryCharacter) -> String {
-        """
-        - \(character.displayName): \(character.description)
-          Pronouns: \(character.pronounSubjective)/\(character.pronounPossessive)/\(character.pronounObjective)
-          Voice style - \(character.voice.promptDescription.replacingOccurrences(of: "\n", with: "; "))
-        """
-    }
-    
-    /// Formats all characters with their voice info
-    private static func allCharactersWithVoice() -> String {
-        StoryAssets.allCharacters.map { characterDescription($0) }.joined(separator: "\n")
-    }
-    
-    /// Generates character voice ownership rules for only the characters in the story
-    /// This prevents catchphrase mixing by explicitly stating which phrases belong to which character
-    private static func voiceOwnershipRules(for characters: [StoryCharacter]) -> String {
-        let limitedCharacters = Array(characters.prefix(maxCharactersForVoiceRules))
-        let rules = limitedCharacters.map { $0.voiceOwnershipRule() }.joined(separator: "\n")
+    /// Generates a custom story prompt with user-selected options
+    static func generateCustomStoryPrompt(
+        mainCharacter: StoryCharacter,
+        mood: StoryMood,
+        spark: StorySpark,
+        pageCount: Int = 5
+    ) -> String {
+        // Include main character + 2-3 supporting characters
+        let supportingCharacters = StoryAssets.allCharacters
+            .filter { $0.id != mainCharacter.id }
+            .shuffled()
+            .prefix(3)
+        let storyCharacters = [mainCharacter] + Array(supportingCharacters)
         
-        return """
-            CRITICAL - CHARACTER VOICE RULES:
-            - Each character has UNIQUE phrases that belong ONLY to them - NEVER swap them
-            \(rules)
-            - Match each character's dialogue STRICTLY to their assigned voice
+        let characterList = storyCharacters.map { simpleCharacterDescription($0) }.joined(separator: "\n")
+        let objectList = StoryAssets.allObjects.map { $0.displayName }.joined(separator: ", ")
+
+        let prompt = """
+            Write a \(pageCount)-page children's story.
+
+            MAIN CHARACTER: \(mainCharacter.displayName) - the protagonist of this story
+            
+            OTHER CHARACTERS:
+            \(characterList)
+
+            AVAILABLE OBJECTS: \(objectList)
+
+            STORY SETUP:
+            - Mood: \(mood.rawValue) - \(mood.description)
+            - Premise: \(spark.promptText)
+
+            WRITING STYLE: Short sentences. Simple words. Clear and folksy, like a bedtime story.
+
+            GUIDELINES:
+            - Beginning, middle, and a nice ending
+            - \(mainCharacter.displayName) is the hero (show on page 1)
+            - Each character sounds different based on their personality
+            - Include 2-3 objects naturally
+            - Use "straight quotes" for dialogue
+            - Don't write "The End"
+
+            \(jsonFormatInstructions())
             """
-    }
-    
-    /// Generates story structure guidance based on page count
-    private static func storyStructureRules(pageCount: Int) -> String {
-        return """
-            STORY STRUCTURE:
-            - Write exactly \(pageCount) content pages with meaningful narrative on each
-            - Page 1 MUST feature the main character prominently - include them in suggestedImages for page 1
-            - Pace: introduction (pages 1-2), rising action (pages 2-\(max(pageCount - 2, 2))), climax (page \(max(pageCount - 1, 2))), resolution (page \(pageCount))
-            - Do NOT write "The End" or any ending phrase - this is added automatically
-            - Do NOT pad the story with filler if it concludes early - adjust pacing instead
-            - Every single page must move the story forward
-            """
+
+        return prompt
     }
 
     /// Generates a prompt for a random story with random assets
-    static func randomStoryPrompt(pageCount: Int = 5, theme: String? = nil)
-        -> String
-    {
-        let characters = StoryAssets.randomCharacters(
-            count: Int.random(in: 2...3)
-        )
-        let objects = StoryAssets.randomObjects(count: Int.random(in: 2...4))
+    static func randomStoryPrompt(pageCount: Int = 5, theme: String? = nil) -> String {
+        let characters = StoryAssets.randomCharacters(count: Int.random(in: 2...3))
+        let objects = StoryAssets.randomObjects(count: Int.random(in: 2...3))
         return generateStoryPrompt(
             characters: characters,
             objects: objects,
@@ -167,114 +121,51 @@ struct StoryPrompts {
     }
 
     /// Generates a prompt for refining a specific page
-    static func refinePagePrompt(originalText: String, instruction: String)
-        -> String
-    {
+    static func refinePagePrompt(originalText: String, instruction: String) -> String {
         return """
-            Refine the following story page text based on this instruction: "\(instruction)"
+            Refine the following story page based on this instruction: "\(instruction)"
 
             Original text:
             \(originalText)
 
-            Provide the refined version that:
-            - Maintains the story's flow and context
-            - Is appropriate for children aged 5-10
-            - Keeps a similar length (50-150 words)
+            Keep it:
+            - Natural and engaging
+            - Age-appropriate (5-10 years old)
+            - Similar length to the original
 
-            Respond with only the refined text, no additional formatting or explanation.
+            Respond with only the refined text.
             """
     }
+
+    // MARK: - Helper Methods
     
-  /// Generates a custom story prompt with user-selected options
-  static func generateCustomStoryPrompt(
-    mainCharacter: StoryCharacter,
-    mood: StoryMood,
-    spark: StorySpark,
-    pageCount: Int = 5
-  ) -> String {
-    // Build a focused character set: main character + up to (maxCharactersForVoiceRules - 1) supporting
-    let supportingCharacters = StoryAssets.allCharacters
-        .filter { $0.id != mainCharacter.id }
-        .shuffled()
-        .prefix(maxCharactersForVoiceRules - 1)
-    let storyCharacters = [mainCharacter] + Array(supportingCharacters)
+    /// Simple character description for prompts - uses speakingStyle instead of full voice
+    private static func simpleCharacterDescription(_ character: StoryCharacter) -> String {
+        "- \(character.displayName) (\(character.pronounSubjective)/\(character.pronounPossessive)): \(character.description). Voice: \(character.speakingStyle)"
+    }
     
-    // Format character list for the prompt
-    let characterList = storyCharacters.map { characterDescription($0) }.joined(separator: "\n")
+    /// Available asset IDs for image suggestions
+    private static func availableAssetIDs() -> [String] {
+        StoryAssets.allCharacters.map { $0.id } + StoryAssets.allObjects.map { $0.id }
+    }
     
-    // All available objects
-    let allObjectsList = StoryAssets.allObjects.map {
-      "- \($0.displayName): \($0.description)"
-    }.joined(separator: "\n")
+    /// JSON format instructions - kept separate for clarity
+    private static func jsonFormatInstructions() -> String {
+        """
+        RESPONSE FORMAT:
+        Respond with ONLY valid JSON, no other text:
+        {
+          "title": "Story Title",
+          "pages": [
+            {"pageNumber": 1, "text": "Story text...", "suggestedImages": ["CHARACTER_ID"]},
+            {"pageNumber": 2, "text": "More story...", "suggestedImages": ["OBJECT_ID"]}
+          ]
+        }
 
-    let prompt = """
-      Create a children's story with exactly \(pageCount) pages (excluding the cover page).
-
-      AVAILABLE CHARACTERS:
-      \(characterList)
-
-      AVAILABLE OBJECTS TO USE IN THE STORY:
-      \(allObjectsList)
-
-      STORY REQUIREMENTS:
-
-      Main Character: \(mainCharacter.displayName)
-      - This character MUST be the protagonist and appear throughout the story
-      - Other characters can appear as supporting characters
-
-      Story Mood: \(mood.rawValue)
-      - \(mood.description)
-      - The tone and feel of the story should match this mood
-
-      Story Premise: \(spark.rawValue)
-      - \(spark.promptText)
-      - Build the story around this central idea
-
-      Additional Requirements:
-      - Use at least 2-3 of the available objects naturally in the story
-      - Each page should have 2-4 sentences (50-150 words per page)
-      - Make it engaging and fun for children aged 5-10
-      - Include moments where characters interact with the objects
-      - ALL character dialogue MUST use straight double quotes ("), not curly quotes ("")
-        Example: "Hello!" said Mr. Dog (correct)
-        NOT: "Hello!" said Mr. Dog (wrong - curly quotes)
-      
-      \(voiceOwnershipRules(for: storyCharacters))
-      
-      \(storyStructureRules(pageCount: pageCount))
-
-      RESPONSE FORMAT:
-      You MUST respond with ONLY a valid JSON object, no additional text before or after.
-      Use proper JSON escaping for quotes and special characters in the text field.
-
-      Format:
-      {
-        "title": "Story Title",
-        "pages": [
-          {
-            "pageNumber": 1,
-            "text": "Once upon a time...",
-            "suggestedImages": ["MR_DOG", "APPLE"]
-          },
-          {
-            "pageNumber": 2,
-            "text": "The next day...",
-            "suggestedImages": ["SIR_WHISKERS"]
-          }
-        ]
-      }
-
-      IMPORTANT:
-      - Respond with ONLY the JSON object, nothing else
-      - Use proper JSON string escaping (escape quotes with backslash)
-      - For suggestedImages, use these IDs: \(availableAssetIDs().joined(separator: ", "))
-      - Each page can have 0-2 suggested images
-      - Make sure all JSON is valid and properly closed
-      - Feature \(mainCharacter.displayName) prominently as the main character
-      """
-
-    return prompt
-  }
+        For suggestedImages, use these IDs: \(availableAssetIDs().joined(separator: ", "))
+        Each page can have 0-2 images. Escape quotes in text with backslash.
+        """
+    }
 }
 
 // MARK: - Story Response Model

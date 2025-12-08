@@ -110,10 +110,11 @@ struct StoryCharacter: Equatable, Hashable {
     let displayName: String
     let description: String
     let size: StoryAssetSize
-    let pronounSubjective: String  // he, she, they
+    let pronounSubjective: String   // he, she, they
     let pronounPossessive: String   // his, her, their
     let pronounObjective: String    // him, her, them
-    let voice: CharacterVoice       // Character-specific phrases/lexicon
+    let speakingStyle: String       // Simple voice description for AI prompts
+    let voice: CharacterVoice       // Full phrase lists for fallback templates
 
     init(
         id: String,
@@ -124,6 +125,7 @@ struct StoryCharacter: Equatable, Hashable {
         pronounSubjective: String,
         pronounPossessive: String,
         pronounObjective: String,
+        speakingStyle: String,
         voice: CharacterVoice
     ) {
         self.id = id
@@ -134,14 +136,8 @@ struct StoryCharacter: Equatable, Hashable {
         self.pronounSubjective = pronounSubjective
         self.pronounPossessive = pronounPossessive
         self.pronounObjective = pronounObjective
+        self.speakingStyle = speakingStyle
         self.voice = voice
-    }
-    
-    /// Generates ownership rule for this character's unique voice
-    /// Example: "Mr. Dog: says "Oh boy!", "Woof!" - ONLY Mr. Dog uses these"
-    func voiceOwnershipRule() -> String {
-        let signatures = voice.signaturePhrases()
-        return "- \(displayName): says \(signatures) - ONLY \(displayName) uses these"
     }
 }
 
@@ -192,6 +188,7 @@ struct StoryAssets {
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him",
+        speakingStyle: "enthusiastic and friendly, speaks with excitement and energy",
         voice: .mrDog
     )
 
@@ -199,11 +196,12 @@ struct StoryAssets {
         id: "SIR_WHISKERS",
         imageName: "sirWhiskers",
         displayName: "Sir Whiskers",
-        description: "A prim and proper cat who speaks with a whimsical British accent",
+        description: "A prim and proper cat with refined manners",
         size: .small,
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him",
+        speakingStyle: "refined British accent, polite and proper",
         voice: .sirWhiskers
     )
 
@@ -211,11 +209,12 @@ struct StoryAssets {
         id: "PROFESSOR_SEAL",
         imageName: "professorSeal",
         displayName: "Professor Seal",
-        description: "A wise and logical educator seal",
+        description: "A wise and thoughtful educator",
         size: .large,
         pronounSubjective: "he",
         pronounPossessive: "his",
         pronounObjective: "him",
+        speakingStyle: "thoughtful and academic, speaks with curiosity and wisdom",
         voice: .professorSeal
     )
 
@@ -223,11 +222,12 @@ struct StoryAssets {
         id: "MS_COW",
         imageName: "msCow",
         displayName: "Ms. Cow",
-        description: "A kind and simple cow who speaks with a southern accent",
+        description: "A kind and nurturing cow with a warm heart",
         size: .large,
         pronounSubjective: "she",
         pronounPossessive: "her",
         pronounObjective: "her",
+        speakingStyle: "warm country accent, speaks with kindness and Southern charm",
         voice: .msCow
     )
 
