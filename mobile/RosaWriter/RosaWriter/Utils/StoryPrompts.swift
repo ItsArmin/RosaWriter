@@ -27,7 +27,7 @@ struct StoryPrompts {
         theme: String? = nil
     ) -> String {
         let characterList = characters.map { simpleCharacterDescription($0) }.joined(separator: "\n")
-        let objectList = objects.map { "- \($0.displayName)" }.joined(separator: ", ")
+    let objectList = objects.map { $0.displayName }.joined(separator: ", ")
         let mainCharacter = characters.first ?? StoryAssets.allCharacters[0]
 
         var prompt = """
