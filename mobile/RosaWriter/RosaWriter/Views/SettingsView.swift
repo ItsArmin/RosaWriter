@@ -8,22 +8,6 @@
 import SwiftData
 import SwiftUI
 
-enum AppTheme: String, CaseIterable, Identifiable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-
-    var id: String { rawValue }
-
-    var colorScheme: ColorScheme? {
-        switch self {
-        case .system: return nil
-        case .light: return .light
-        case .dark: return .dark
-        }
-    }
-}
-
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
 
@@ -44,7 +28,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "circle.lefthalf.filled")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Color Theme")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -67,7 +51,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "text.quote")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Language")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -78,7 +62,7 @@ struct SettingsView: View {
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
+            .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -87,7 +71,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "doc.text")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Library Limits")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -102,50 +86,50 @@ struct SettingsView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
-                // Reset Sample Books Section
+        // Apple Intelligence Section
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(spacing: 12) {
-                        Image(systemName: "arrow.counterclockwise.circle")
+            Image(systemName: "brain")
                             .font(.title2)
-                            .foregroundColor(.blue)
-                        Text("Reset Sample Books")
+              .foregroundStyle(.blue)
+            Text(Strings.appleIntelligence)
                             .font(.title2)
                             .fontWeight(.semibold)
                     }
 
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(
-                            "Restore the default sample books to their original state. This will delete any modifications to sample books."
-                        )
-                        .font(.body)
-                        .foregroundColor(.secondary)
+            HStack {
+              Text("Status:")
+                .font(.body)
+              if AIStoryService.isAppleIntelligenceAvailable() {
+                Label(Strings.aiStatusAvailable, systemImage: "checkmark.circle.fill")
+                  .font(.body)
+                  .fontWeight(.medium)
+                  .foregroundStyle(.green)
+              } else {
+                Label(Strings.aiStatusNotAvailable, systemImage: "xmark.circle.fill")
+                  .font(.body)
+                  .fontWeight(.medium)
+                  .foregroundStyle(.secondary)
+              }
+            }
 
-                        Button(action: {
-                            showResetConfirmation = true
-                        }) {
-                            Text("Reset Sample Books")
-                                .font(.body)
-                                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-//                                .background(Color.red)
-                                .cornerRadius(12)
-                        }
-                        .glassEffect(
-                            .regular.tint(.blue.opacity(1.0)).interactive(),
-                            in: .buttonBorder
-                        )
+            Text(Strings.aiDescription)
+              .font(.body)
+              .foregroundStyle(.secondary)
 
+            Text(Strings.aiRequirements)
+              .font(.caption)
+              .foregroundStyle(.tertiary)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
@@ -154,7 +138,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "exclamationmark.circle")
                             .font(.title2)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                         Text("Disclaimer")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -167,28 +151,66 @@ struct SettingsView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.horizontal)
 
-                Spacer()
+        // Reset Sample Books Section
+        VStack(alignment: .leading, spacing: 16) {
+          HStack(spacing: 12) {
+            Image(systemName: "arrow.counterclockwise.circle")
+              .font(.title2)
+              .foregroundStyle(.blue)
+            Text(Strings.resetSampleBooks)
+              .font(.title2)
+              .fontWeight(.semibold)
+          }
+
+          VStack(alignment: .leading, spacing: 12) {
+            Text(Strings.resetSampleBooksDescription)
+              .font(.body)
+              .foregroundStyle(.secondary)
+
+            Button(action: {
+              showResetConfirmation = true
+            }) {
+              Text(Strings.resetSampleBooks)
+                .font(.body)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .clipShape(.rect(cornerRadius: 12))
+            }
+            .glassEffect(
+              .regular.tint(.blue.opacity(1.0)).interactive(),
+              in: .buttonBorder
+            )
+          }
+          .padding()
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .background(Color(.secondarySystemGroupedBackground))
+          .clipShape(.rect(cornerRadius: 12))
+        }
+        .padding(.horizontal)
+
+        Spacer()
                     .frame(height: 20)
 
                 // Footer
-                VStack(spacing: 8) {
+        HStack(spacing: 4) {
                     Text("© AMTech LLC. All rights reserved.")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
                     Link(
                         destination: URL(
-                            string:
-                                "https://amtech-llc.com/privacy-policy/rosa-writer"
+              string: "https://amtech-llc.com/privacy-policy/rosa-writer"
                         )!
                     ) {
                         Text("Privacy Policy")
                             .font(.caption)
-                            .foregroundColor(.blue)
+              .foregroundStyle(.blue)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -209,12 +231,12 @@ struct SettingsView: View {
             )
         }
         .alert("Success", isPresented: $showResetSuccess) {
-            Button("OK", role: .cancel) {}
+      Button(Strings.ok, role: .cancel) {}
         } message: {
-            Text("Sample books have been reset successfully.")
-        }
-        .alert("Error", isPresented: .constant(resetError != nil)) {
-            Button("OK", role: .cancel) {
+      Text(Strings.sampleBooksResetSuccess)
+    }
+    .alert(Strings.error, isPresented: .constant(resetError != nil)) {
+      Button(Strings.ok, role: .cancel) {
                 resetError = nil
             }
         } message: {

@@ -90,7 +90,7 @@ struct BookshelfView: View {
                     VStack(spacing: 0) {
                         // Custom "My Library" header that scrolls away
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("My Library")
+              Text(Strings.myLibrary)
                                 .font(.system(size: 34, weight: .bold))
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -99,7 +99,7 @@ struct BookshelfView: View {
                                     "\(books.count) \(books.count == 1 ? "story" : "stories")"
                                 )
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -142,15 +142,15 @@ struct BookshelfView: View {
                             showCreateStory = true
                         }) {
                             Label {
-                                Text("Create Story")
+                Text(Strings.createStory)
                                     .font(.headline)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                  .foregroundStyle(.white)
                             } icon: {
                                 Image(systemName: "sparkles")
                                     .font(.title2)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                  .foregroundStyle(.white)
                                     .shadow(
                                         color: Color.black.opacity(0.3),
                                         radius: 8,
@@ -190,13 +190,13 @@ struct BookshelfView: View {
                                 .frame(height: 24)
                             //                            // Only show text on larger devices (iPad)
                             //                            if isLargeDevice {
-                            Text("Rosa Writer")
+              Text(Strings.appName)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             //                            }
                         }
                     } else {
-                        Text("My Library")
+            Text(Strings.myLibrary)
                             .font(.headline)
                             .fontWeight(.semibold)
                     }
@@ -218,7 +218,7 @@ struct BookshelfView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: { showDeleteConfirmation = true }) {
                             Image(systemName: "trash")
-                                .foregroundColor(.red)
+                .foregroundStyle(.red)
                         }
                         .disabled(selectedBooks.isEmpty)
                     }
@@ -231,7 +231,7 @@ struct BookshelfView: View {
                             Button {
                                 withAnimation { isSelectionMode = true }
                             } label: {
-                                Text("Select")
+                Text(Strings.select)
                             }
                         }
                     }
@@ -326,23 +326,23 @@ struct BookshelfView: View {
 
             Image(systemName: "books.vertical")
                 .font(.system(size: 60))
-                .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
 
-            Text("No Books Yet")
+      Text(Strings.noBooksYet)
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("Create your first story to get started!")
+      Text(Strings.createFirstStory)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
             Button(action: {
                 showCreateStory = true
             }) {
-                Label("Create Story", systemImage: "sparkles")
+        Label(Strings.createStory, systemImage: "sparkles")
                     .font(.headline)
-                    .foregroundColor(.white)
+          .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -352,7 +352,7 @@ struct BookshelfView: View {
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(12)
+          .clipShape(.rect(cornerRadius: 12))
             }
             .padding(.top, 8)
 
@@ -389,7 +389,7 @@ struct BookshelfView: View {
                     if selectedBooks.contains(book.id) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
+              .foregroundStyle(.white)
                     }
                 }
                 .offset(x: 8, y: -8)

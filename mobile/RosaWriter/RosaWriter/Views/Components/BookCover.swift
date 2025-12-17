@@ -178,7 +178,7 @@ struct BookCover: View {
                             // Book icon if no cover image
                             Image(systemName: "book.fill")
                                 .font(.system(size: 44))
-                                .foregroundColor(.white.opacity(0.8))
+                .foregroundStyle(.white.opacity(0.8))
                         }
 
                         // Inner shadow on left edge for depth
@@ -221,7 +221,7 @@ struct BookCover: View {
 
                             Image(systemName: "gift.fill")
                                 .font(.system(size: 14))
-                                .foregroundColor(.white.opacity(0.8))
+                .foregroundStyle(.white.opacity(0.8))
                         }
                         .offset(x: 16, y: 8)
                     }
@@ -231,7 +231,7 @@ struct BookCover: View {
                 Text(book.title)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.primary)
+          .foregroundStyle(.primary)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .frame(

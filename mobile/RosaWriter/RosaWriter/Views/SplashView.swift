@@ -45,7 +45,7 @@ struct SplashView: View {
           await initializeApp()
           
           // Wait for animation to finish, then transition
-          try? await Task.sleep(nanoseconds: 1_500_000_000)  // 1.5 seconds
+          try? await Task.sleep(for: .seconds(1.5))
 
           withAnimation(.easeInOut(duration: 0.4)) {
             isActive = true

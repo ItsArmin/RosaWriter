@@ -30,13 +30,13 @@ struct CreateStoryView: View {
     var onBookCreated: ((Book) -> Void)?
 
     var body: some View {
-        NavigationView {
+    NavigationStack {
             ZStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 32) {
                         // Header
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Create Your Story")
+              Text(Strings.createYourStory)
                                 .font(.system(size: 32, weight: .bold))
                         }
                         .padding(.top, 24)
@@ -67,12 +67,12 @@ struct CreateStoryView: View {
                                 }
                                 .padding()
                                 .background(Color(.systemGray6))
-                                .cornerRadius(12)
+              .clipShape(.rect(cornerRadius: 12))
                             }
 
 //                            Text(selectedCharacter.description)
 //                                .font(.caption)
-//                                .foregroundColor(.secondary)
+            //                                .foregroundStyle(.secondary)
 //                                .padding(.horizontal, 4)
                             
 
@@ -89,11 +89,11 @@ struct CreateStoryView: View {
                             .pickerStyle(.menu)
                             .padding()
                             .background(Color(.systemGray6))
-                            .cornerRadius(12)
+              .clipShape(.rect(cornerRadius: 12))
 
 //                            Text(selectedMood.description)
 //                                .font(.caption)
-//                                .foregroundColor(.secondary)
+              //                                .foregroundStyle(.secondary)
 //                                .padding(.horizontal, 4)
                         }
 
@@ -110,11 +110,11 @@ struct CreateStoryView: View {
                             .pickerStyle(.menu)
                             .padding()
                             .background(Color(.systemGray6))
-                            .cornerRadius(12)
+              .clipShape(.rect(cornerRadius: 12))
 
 //                            Text(selectedSpark.promptText)
 //                                .font(.caption)
-//                                .foregroundColor(.secondary)
+              //                                .foregroundStyle(.secondary)
 //                                .padding(.horizontal, 4)
                         }
 
@@ -130,40 +130,42 @@ struct CreateStoryView: View {
                                 HStack(spacing: 16) {
                                     ForEach(CoverColor.allCases, id: \.rawValue)
                                     { color in
-                                        VStack {
-                                            Circle()
-                                                .fill(
-                                                    LinearGradient(
-                                                        colors: [
-                                                            color.lightColor,
-                                                            color.darkColor,
-                                                        ],
-                                                        startPoint: .topLeading,
-                                                        endPoint:
-                                                            .bottomTrailing
-                                                    )
-                                                )
-                                                .frame(width: 50, height: 50)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(
-                                                            selectedColor
-                                                                == color
-                                                                ? Color.primary
-                                                                : Color.clear,
-                                                            lineWidth: 3
-                                                        )
-                                                )
-                                            Text(color.rawValue.capitalized)
-                                                .font(.caption)
-                                                .foregroundColor(
-                                                    selectedColor == color
-                                                        ? .primary : .secondary
-                                                )
+                    Button {
+                      selectedColor = color
+                    } label: {
+                      VStack {
+                        Circle()
+                          .fill(
+                            LinearGradient(
+                              colors: [
+                                color.lightColor,
+                                color.darkColor,
+                              ],
+                              startPoint: .topLeading,
+                              endPoint:
+                                .bottomTrailing
+                            )
+                          )
+                          .frame(width: 50, height: 50)
+                          .overlay(
+                            Circle()
+                              .stroke(
+                                selectedColor
+                                  == color
+                                  ? Color.primary
+                                  : Color.clear,
+                                lineWidth: 3
+                              )
+                          )
+                        Text(color.rawValue.capitalized)
+                          .font(.caption)
+                          .foregroundStyle(
+                            selectedColor == color
+                              ? .primary : .secondary
+                          )
+                      }
                                         }
-                                        .onTapGesture {
-                                            selectedColor = color
-                                        }
+                    .buttonStyle(.plain)
                                     }
                                 }
                                 .padding(.horizontal)
@@ -186,18 +188,18 @@ struct CreateStoryView: View {
                                     .progressViewStyle(
                                         CircularProgressViewStyle(tint: .white)
                                     )
-                                Text("Creating Story...")
+                Text(Strings.creatingStory)
                             } else {
                                 Image(systemName: "wand.and.stars")
-                                Text("Create Story!")
+                Text(Strings.createStoryExclaim)
                             }
                         }
                         .font(.headline)
-                        .foregroundColor(.white)
+            .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
 //                        .background(isGenerating ? Color.gray : Color.blue)
-                        .cornerRadius(16)
+            .clipShape(.rect(cornerRadius: 16))
                         .shadow(radius: 4)
                     }
                     .disabled(isGenerating)
@@ -218,21 +220,21 @@ struct CreateStoryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+          Button(Strings.cancel) {
                         dismiss()
                     }
                     .disabled(isGenerating)
                 }
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
+      .alert(Strings.error, isPresented: $showError) {
+        Button(Strings.ok, role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
-            .alert("Library Full", isPresented: $showLibraryFullAlert) {
-                Button("OK", role: .cancel) {}
+      .alert(Strings.libraryFull, isPresented: $showLibraryFullAlert) {
+        Button(Strings.ok, role: .cancel) {}
             } message: {
-                Text("You've reached the maximum of \(AppConstants.maxBooks) books. Please delete a book to create a new one.")
+        Text(Strings.libraryFullMessage(maxBooks: AppConstants.maxBooks))
             }
         }
     }
