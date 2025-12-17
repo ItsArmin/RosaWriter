@@ -61,4 +61,14 @@ enum Strings {
   static let resetSampleBooksDescription =
     "Restore the default sample books to their original state. This will delete any modifications to sample books."
   static let sampleBooksResetSuccess = "Sample books have been reset successfully."
+
+  // MARK: - Apple Intelligence
+
+  static let appleIntelligence = "Apple Intelligence"
+  static let aiStatusAvailable = "Available"
+  static let aiStatusNotAvailable = "Not Available"
+  static let aiDescription =
+    "Rosa Writer uses Apple Intelligence to create unique, personalized stories. Without it, stories are generated from templates."
+  static let aiRequirements =
+    "Requires iPhone 15 Pro or newer with Apple Intelligence enabled in Settings."
 }

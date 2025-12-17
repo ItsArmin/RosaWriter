@@ -37,8 +37,8 @@ struct RosaWriterApp: App {
   var body: some Scene {
     WindowGroup {
       if let container = sharedModelContainer {
-        SplashView()
-          .preferredColorScheme(theme.colorScheme)
+      SplashView()
+        .preferredColorScheme(theme.colorScheme)
           .modelContainer(container)
       } else {
         StorageErrorView(error: storageError)
