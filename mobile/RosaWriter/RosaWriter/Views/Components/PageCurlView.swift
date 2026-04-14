@@ -88,11 +88,11 @@ struct PageCurlView: UIViewControllerRepresentable {
         )
       )
       
-      // Page background: white in light mode, dark gray in dark mode
+      // Page background: warm cream in light mode, soft dark gray in dark mode
       hostingController.view.backgroundColor = UIColor { traitCollection in
         traitCollection.userInterfaceStyle == .dark
-          ? UIColor(white: 0.15, alpha: 1.0)
-          : UIColor.white
+          ? UIColor(red: 0.12, green: 0.12, blue: 0.13, alpha: 1.0)
+          : UIColor(red: 0.98, green: 0.97, blue: 0.94, alpha: 1.0)
       }
       
       // Add to cache
@@ -194,7 +194,7 @@ struct FadingScrollText: View {
       ZStack {
         ScrollView(showsIndicators: false) {
           Text(text)
-            .font(.system(size: fontSize, weight: .regular))
+            .font(.system(size: fontSize, weight: .regular, design: .serif))
             .lineSpacing(lineSpacing)
             .foregroundStyle(.primary)
             .multilineTextAlignment(.center)
@@ -288,9 +288,9 @@ struct PageContentView: View {
   let totalPages: Int
   @Environment(\.colorScheme) private var colorScheme
   
-  /// Page background: white in light mode, dark gray in dark mode
+  /// Page background: warm cream in light mode, soft dark gray in dark mode
   private var pageBackgroundColor: Color {
-    colorScheme == .dark ? Color(white: 0.15) : Color.white
+    colorScheme == .dark ? Color(red: 0.12, green: 0.12, blue: 0.13) : Color(red: 0.98, green: 0.97, blue: 0.94)
   }
 
   var body: some View {
@@ -331,7 +331,7 @@ struct PageContentView: View {
               }
 
               Text(page.text)
-                .font(.system(size: isLargeDevice ? 52 : 32, weight: .bold))
+                .font(.system(size: isLargeDevice ? 52 : 32, weight: .bold, design: .serif))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white)
                 .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
