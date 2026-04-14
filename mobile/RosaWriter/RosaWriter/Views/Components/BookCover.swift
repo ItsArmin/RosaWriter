@@ -202,20 +202,19 @@ struct BookCover: View {
                             .fill(
                                 LinearGradient(
                                     colors: [
-                                        Color.clear,
-                                        Color.white.opacity(0.3),
+                                        Color.black.opacity(0.2),
+                                        Color.white.opacity(0.15),
                                         Color.clear,
                                     ],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
-                            .frame(width: 3)
+                            .frame(width: 4)
                             .offset(
                                 x:
-                                    -(BookCoverConstants.coverWidth / 2) + 2
+                                    -(BookCoverConstants.coverWidth / 2) + 6
                             )
-                            .blendMode(.overlay)
                     }
                     .frame(
                         width: BookCoverConstants.coverWidth,

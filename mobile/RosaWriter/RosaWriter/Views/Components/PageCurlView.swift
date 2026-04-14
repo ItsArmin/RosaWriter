@@ -92,7 +92,7 @@ struct PageCurlView: UIViewControllerRepresentable {
       hostingController.view.backgroundColor = UIColor { traitCollection in
         traitCollection.userInterfaceStyle == .dark
           ? UIColor(red: 0.12, green: 0.12, blue: 0.13, alpha: 1.0)
-          : UIColor(red: 0.98, green: 0.97, blue: 0.94, alpha: 1.0)
+          : UIColor(red: 0.98, green: 0.95, blue: 0.90, alpha: 1.0)
       }
       
       // Add to cache
@@ -290,7 +290,7 @@ struct PageContentView: View {
   
   /// Page background: warm cream in light mode, soft dark gray in dark mode
   private var pageBackgroundColor: Color {
-    colorScheme == .dark ? Color(red: 0.12, green: 0.12, blue: 0.13) : Color(red: 0.98, green: 0.97, blue: 0.94)
+    colorScheme == .dark ? Color(red: 0.12, green: 0.12, blue: 0.13) : Color(red: 0.98, green: 0.95, blue: 0.90)
   }
 
   var body: some View {

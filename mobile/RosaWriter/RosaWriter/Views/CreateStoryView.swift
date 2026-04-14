@@ -15,8 +15,8 @@ struct CreateStoryView: View {
 
     // User selections
   @State private var selectedCharacter: StoryCharacter = StoryAssets.MR_DOG
-    @State private var selectedMood: StoryMood = .adventure
-    @State private var selectedSpark: StorySpark = .random
+    @State private var selectedMood: StoryMood = .fantasy
+    @State private var selectedSpark: StorySpark = .treasureHunt
     @State private var selectedColor: CoverColor = .blue
 
     // State management
@@ -115,12 +115,13 @@ struct CreateStoryView: View {
                                                 .background(selectedMood == mood ? selectedColor.lightColor : Color(.systemGray6))
                                                 .foregroundStyle(selectedMood == mood ? .white : .primary)
                                                 .clipShape(.capsule)
+                                                .shadow(color: selectedMood == mood ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
                                         }
                                         .buttonStyle(.plain)
                                     }
                                 }
-                                .padding(.horizontal)
                             }
+                            .safeAreaPadding(.horizontal, 16)
                             .padding(.horizontal, -16) // Edge-to-edge scroll
 
                             Text(selectedMood.description)
@@ -151,12 +152,13 @@ struct CreateStoryView: View {
                                                 .background(selectedSpark == spark ? selectedColor.lightColor : Color(.systemGray6))
                                                 .foregroundStyle(selectedSpark == spark ? .white : .primary)
                                                 .clipShape(.capsule)
+                                                .shadow(color: selectedSpark == spark ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
                                         }
                                         .buttonStyle(.plain)
                                     }
                                 }
-                                .padding(.horizontal)
                             }
+                            .safeAreaPadding(.horizontal, 16)
                             .padding(.horizontal, -16) // Edge-to-edge scroll
 
                             Text(selectedSpark.promptText)
@@ -206,6 +208,7 @@ struct CreateStoryView: View {
                                 lineWidth: 3
                               )
                           )
+                          .shadow(color: selectedColor == color ? color.darkColor.opacity(0.4) : .clear, radius: 4, x: 0, y: 2)
                         Text(color.rawValue.capitalized)
                           .font(.caption)
                           .foregroundStyle(
@@ -217,8 +220,8 @@ struct CreateStoryView: View {
                     .buttonStyle(.plain)
                                     }
                                 }
-                                .padding(.horizontal)
                             }
+                            .safeAreaPadding(.horizontal, 16)
                             .padding(.horizontal, -16) // Edge-to-edge scroll
                         }
 
