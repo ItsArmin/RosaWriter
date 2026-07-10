@@ -30,6 +30,13 @@ enum Strings {
   static let delete = "Delete"
   static let resetSampleBooks = "Reset Sample Books"
 
+  // MARK: - Create Story
+
+  static let mainCharacter = "Main Character"
+  static let storyMood = "Story Mood"
+  static let storyIdea = "Story Idea"
+  static let coverColor = "Cover Color"
+
   // MARK: - Empty State
 
   static let noBooksYet = "No Books Yet"

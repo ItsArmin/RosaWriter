@@ -7,6 +7,7 @@
 
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
@@ -15,8 +16,8 @@ struct CreateStoryView: View {
 
     // User selections
   @State private var selectedCharacter: StoryCharacter = StoryAssets.MR_DOG
-    @State private var selectedMood: StoryMood = .adventure
-    @State private var selectedSpark: StorySpark = .random
+    @State private var selectedMood: StoryMood = .fantasy
+    @State private var selectedSpark: StorySpark = .treasureHunt
     @State private var selectedColor: CoverColor = .blue
 
     // State management
@@ -32,8 +33,20 @@ struct CreateStoryView: View {
     var body: some View {
     NavigationStack {
             ZStack {
+                // Magical gradient background tied to cover color
+                LinearGradient(
+                    colors: [
+                        selectedColor.lightColor.opacity(0.2),
+                        selectedColor.darkColor.opacity(0.05),
+                        Color(UIColor.systemBackground)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 32) {
+                    VStack(alignment: .leading, spacing: 24) {
                         // Header
                         VStack(alignment: .leading, spacing: 8) {
               Text(Strings.createYourStory)
@@ -44,7 +57,7 @@ struct CreateStoryView: View {
 
                         // Character Selection
                             VStack(alignment: .leading, spacing: 12) {
-                                Label("Main Character", systemImage: "person.fill")
+                                Label(Strings.mainCharacter, systemImage: "person.fill")
                                     .font(.headline)
                                 
                                 HStack {
@@ -64,74 +77,113 @@ struct CreateStoryView: View {
                                         }
                                     }
                                     .pickerStyle(.menu)
+                                    .onChange(of: selectedCharacter) { _, _ in
+                                        #if os(iOS)
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        #endif
+                                    }
                                 }
                                 .padding()
                                 .background(Color(.systemGray6))
               .clipShape(.rect(cornerRadius: 12))
                             }
 
-//                            Text(selectedCharacter.description)
-//                                .font(.caption)
-            //                                .foregroundStyle(.secondary)
-//                                .padding(.horizontal, 4)
+                            Text(selectedCharacter.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
                             
 
                         // Mood Selection
                         VStack(alignment: .leading, spacing: 12) {
-                            Label("Story Mood", systemImage: "sparkles")
+                            Label(Strings.storyMood, systemImage: "sparkles")
                                 .font(.headline)
 
-                            Picker("Mood", selection: $selectedMood) {
-                                ForEach(StoryMood.allCases) { mood in
-                                    Text(mood.rawValue).tag(mood)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 12) {
+                                    ForEach(StoryMood.allCases) { mood in
+                                        Button {
+                                            selectedMood = mood
+                                            #if os(iOS)
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                            #endif
+                                        } label: {
+                                            Text(mood.rawValue)
+                                                .font(.subheadline)
+                                                .fontWeight(selectedMood == mood ? .semibold : .regular)
+                                                .padding(.horizontal, 16)
+                                                .padding(.vertical, 8)
+                                                .background(selectedMood == mood ? selectedColor.lightColor : Color(.systemGray6))
+                                                .foregroundStyle(selectedMood == mood ? .white : .primary)
+                                                .clipShape(.capsule)
+                                                .shadow(color: selectedMood == mood ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .padding()
-                            .background(Color(.systemGray6))
-              .clipShape(.rect(cornerRadius: 12))
+                            .safeAreaPadding(.horizontal, 16)
+                            .padding(.horizontal, -16) // Edge-to-edge scroll
 
-//                            Text(selectedMood.description)
-//                                .font(.caption)
-              //                                .foregroundStyle(.secondary)
-//                                .padding(.horizontal, 4)
+                            Text(selectedMood.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
                         }
 
                         // Spark Selection
                         VStack(alignment: .leading, spacing: 12) {
-                            Label("Story Idea", systemImage: "lightbulb.fill")
+                            Label(Strings.storyIdea, systemImage: "lightbulb.fill")
                                 .font(.headline)
 
-                            Picker("Spark", selection: $selectedSpark) {
-                                ForEach(StorySpark.allCases) { spark in
-                                    Text(spark.rawValue).tag(spark)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 12) {
+                                    ForEach(StorySpark.allCases) { spark in
+                                        Button {
+                                            selectedSpark = spark
+                                            #if os(iOS)
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                            #endif
+                                        } label: {
+                                            Text(spark.rawValue)
+                                                .font(.subheadline)
+                                                .fontWeight(selectedSpark == spark ? .semibold : .regular)
+                                                .padding(.horizontal, 16)
+                                                .padding(.vertical, 8)
+                                                .background(selectedSpark == spark ? selectedColor.lightColor : Color(.systemGray6))
+                                                .foregroundStyle(selectedSpark == spark ? .white : .primary)
+                                                .clipShape(.capsule)
+                                                .shadow(color: selectedSpark == spark ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .padding()
-                            .background(Color(.systemGray6))
-              .clipShape(.rect(cornerRadius: 12))
+                            .safeAreaPadding(.horizontal, 16)
+                            .padding(.horizontal, -16) // Edge-to-edge scroll
 
-//                            Text(selectedSpark.promptText)
-//                                .font(.caption)
-              //                                .foregroundStyle(.secondary)
-//                                .padding(.horizontal, 4)
+                            Text(selectedSpark.promptText)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
                         }
 
                         // Cover Color Selection
                         VStack(alignment: .leading, spacing: 12) {
                             Label(
-                                "Cover Color",
+                                Strings.coverColor,
                                 systemImage: "paintpalette.fill"
                             )
                             .font(.headline)
                             ScrollView(.horizontal, showsIndicators: false) {
-                                Spacer()
                                 HStack(spacing: 16) {
                                     ForEach(CoverColor.allCases, id: \.rawValue)
                                     { color in
                     Button {
                       selectedColor = color
+                      #if os(iOS)
+                      UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                      #endif
                     } label: {
                       VStack {
                         Circle()
@@ -157,6 +209,7 @@ struct CreateStoryView: View {
                                 lineWidth: 3
                               )
                           )
+                          .shadow(color: selectedColor == color ? color.darkColor.opacity(0.4) : .clear, radius: 4, x: 0, y: 2)
                         Text(color.rawValue.capitalized)
                           .font(.caption)
                           .foregroundStyle(
@@ -168,13 +221,16 @@ struct CreateStoryView: View {
                     .buttonStyle(.plain)
                                     }
                                 }
-                                .padding(.horizontal)
+                                .padding(.vertical, 6)
                             }
+                            .safeAreaPadding(.horizontal, 16)
+                            .padding(.horizontal, -16) // Edge-to-edge scroll
                         }
 
                         Spacer(minLength: 100)
                     }
                     .padding()
+                    .disabled(isGenerating)
                 }
 
                 // Create Button (Fixed at bottom)
@@ -204,7 +260,7 @@ struct CreateStoryView: View {
                     }
                     .disabled(isGenerating)
                     .glassEffect(
-                        .regular.tint(isGenerating ? .gray.opacity(0.8): .blue.opacity(0.8)).interactive(),
+                        .regular.tint(isGenerating ? .gray.opacity(0.8) : selectedColor.darkColor.opacity(0.8)).interactive(),
                         in: .capsule
                     )
                     .padding()
@@ -253,6 +309,11 @@ struct CreateStoryView: View {
             return
         }
         
+        let character = selectedCharacter
+        let mood = selectedMood
+        let spark = selectedSpark
+        let color = selectedColor
+
         isGenerating = true
 
         Task {
@@ -268,27 +329,30 @@ struct CreateStoryView: View {
           // Use Apple Intelligence for story generation
           print("📚 Using Apple Intelligence for story generation")
           book = try await AIStoryService.shared.generateCustomStory(
-            mainCharacter: selectedCharacter,
-            mood: selectedMood,
-            spark: selectedSpark,
+            mainCharacter: character,
+            mood: mood,
+            spark: spark,
             pageCount: pageCount,
-            coverColor: selectedColor
+            coverColor: color
           )
         } else {
           // Use template-based fallback
           print("📚 Using template-based fallback for story generation")
           // Map StorySpark to StoryTheme for fallback
-          let theme = mapSparkToTheme(selectedSpark)
+          let theme = mapSparkToTheme(spark)
           book = try await FallbackStoryService.shared.generateCustomStory(
-            mainCharacter: selectedCharacter,
-            mood: selectedMood,
+            mainCharacter: character,
+            mood: mood,
             theme: theme,
-            coverColor: selectedColor
+            coverColor: color
           )
         }
 
                 // Success! Pass book back and dismiss
                 await MainActor.run {
+                    #if os(iOS)
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    #endif
                     generatedBook = book
                     onBookCreated?(book)
                     dismiss()

@@ -13,7 +13,7 @@ enum BookCoverConstants {
     static let coverWidth: CGFloat = 110
     static let coverHeight: CGFloat = 165
     static let cornerRadius: CGFloat = 8
-    static let titleHeight: CGFloat = 36
+    static let titleHeight: CGFloat = 48
     static let titleSpacing: CGFloat = 8
     static let imagePadding: CGFloat = 8
     static let innerShadowWidth: CGFloat = 8
@@ -136,12 +136,8 @@ struct BookCover: View {
                                         )
                                     )
                             )
-                            .shadow(
-                                color: .black.opacity(0.3),
-                                radius: 8,
-                                x: 4,
-                                y: 4
-                            )
+                            .shadow(color: .black.opacity(0.15), radius: 1, x: 1, y: 1) // tight
+                            .shadow(color: .black.opacity(0.2), radius: 6, x: 3, y: 4) // soft
                     }
                     .offset(x: 0)
 
@@ -186,18 +182,38 @@ struct BookCover: View {
                             .fill(
                                 LinearGradient(
                                     colors: [
-                                        Color.black.opacity(0.3),
+                                        Color.black.opacity(0.4),
+                                        Color.black.opacity(0.1),
                                         Color.clear,
                                     ],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
-                            .frame(width: BookCoverConstants.innerShadowWidth)
+                            .frame(width: BookCoverConstants.innerShadowWidth * 1.5)
                             .offset(
                                 x:
                                     -(BookCoverConstants.coverWidth / 2
-                                    - BookCoverConstants.innerShadowWidth / 2)
+                                    - (BookCoverConstants.innerShadowWidth * 1.5) / 2)
+                            )
+                            
+                        // Subtle inner highlight to simulate book binding crease
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.black.opacity(0.2),
+                                        Color.white.opacity(0.15),
+                                        Color.clear,
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: 4)
+                            .offset(
+                                x:
+                                    -(BookCoverConstants.coverWidth / 2) + 6
                             )
                     }
                     .frame(
@@ -205,7 +221,8 @@ struct BookCover: View {
                         height: BookCoverConstants.coverHeight
                     )
                     .offset(x: BookCoverConstants.spineWidth)
-                    .shadow(color: .black.opacity(0.3), radius: 8, x: 4, y: 4)
+                    .shadow(color: .black.opacity(0.2), radius: 2, x: 1, y: 1) // tight shadow
+                    .shadow(color: .black.opacity(0.25), radius: 10, x: 4, y: 6) // soft drop shadow
                 }
                 .frame(
                     width: BookCoverConstants.totalWidth,
@@ -227,12 +244,13 @@ struct BookCover: View {
                     }
                 }
 
-                // Book title - fixed height for 2 lines
+                // Book title - fixed height for up to 3 lines
                 Text(book.title)
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .font(.system(.caption, design: .serif))
+                    .fontWeight(.semibold)
           .foregroundStyle(.primary)
-                    .lineLimit(2)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.9)
                     .multilineTextAlignment(.center)
                     .frame(
                         width: BookCoverConstants.totalWidth,
