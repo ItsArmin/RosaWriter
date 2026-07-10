@@ -220,6 +220,7 @@ struct CreateStoryView: View {
                     .buttonStyle(.plain)
                                     }
                                 }
+                                .padding(.vertical, 6)
                             }
                             .safeAreaPadding(.horizontal, 16)
                             .padding(.horizontal, -16) // Edge-to-edge scroll
