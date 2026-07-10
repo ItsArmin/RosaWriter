@@ -7,6 +7,7 @@
 
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
@@ -229,6 +230,7 @@ struct CreateStoryView: View {
                         Spacer(minLength: 100)
                     }
                     .padding()
+                    .disabled(isGenerating)
                 }
 
                 // Create Button (Fixed at bottom)
@@ -307,6 +309,11 @@ struct CreateStoryView: View {
             return
         }
         
+        let character = selectedCharacter
+        let mood = selectedMood
+        let spark = selectedSpark
+        let color = selectedColor
+
         isGenerating = true
 
         Task {
@@ -322,22 +329,22 @@ struct CreateStoryView: View {
           // Use Apple Intelligence for story generation
           print("📚 Using Apple Intelligence for story generation")
           book = try await AIStoryService.shared.generateCustomStory(
-            mainCharacter: selectedCharacter,
-            mood: selectedMood,
-            spark: selectedSpark,
+            mainCharacter: character,
+            mood: mood,
+            spark: spark,
             pageCount: pageCount,
-            coverColor: selectedColor
+            coverColor: color
           )
         } else {
           // Use template-based fallback
           print("📚 Using template-based fallback for story generation")
           // Map StorySpark to StoryTheme for fallback
-          let theme = mapSparkToTheme(selectedSpark)
+          let theme = mapSparkToTheme(spark)
           book = try await FallbackStoryService.shared.generateCustomStory(
-            mainCharacter: selectedCharacter,
-            mood: selectedMood,
+            mainCharacter: character,
+            mood: mood,
             theme: theme,
-            coverColor: selectedColor
+            coverColor: color
           )
         }
 
