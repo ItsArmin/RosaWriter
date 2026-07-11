@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-enum CustomCharacterKind: String, CaseIterable, Codable, Identifiable {
+enum CustomCharacterKind: String, CaseIterable, Codable, Identifiable, Sendable {
   case person
   case pet
   case animal
@@ -20,7 +20,7 @@ enum CustomCharacterKind: String, CaseIterable, Codable, Identifiable {
   var displayName: String { rawValue.capitalized }
 }
 
-enum CharacterPronouns: String, CaseIterable, Codable, Identifiable {
+enum CharacterPronouns: String, CaseIterable, Codable, Identifiable, Sendable {
   case heHim
   case sheHer
   case theyThem
@@ -60,7 +60,7 @@ enum CharacterPronouns: String, CaseIterable, Codable, Identifiable {
   }
 }
 
-enum CharacterPersonality: String, CaseIterable, Codable, Identifiable {
+enum CharacterPersonality: String, CaseIterable, Codable, Identifiable, Sendable {
   case cheerful
   case brave
   case silly
@@ -74,7 +74,7 @@ enum CharacterPersonality: String, CaseIterable, Codable, Identifiable {
   var displayName: String { rawValue.capitalized }
 }
 
-enum CharacterVoicePreset: String, CaseIterable, Codable, Identifiable {
+enum CharacterVoicePreset: String, CaseIterable, Codable, Identifiable, Sendable {
   case upbeat
   case gentle
   case playful
@@ -125,7 +125,7 @@ enum CharacterVoicePreset: String, CaseIterable, Codable, Identifiable {
   }
 }
 
-enum CharacterPhotoAspect: String, CaseIterable, Codable, Identifiable {
+enum CharacterPhotoAspect: String, CaseIterable, Codable, Identifiable, Sendable {
   case square
   case portrait
 
@@ -137,6 +137,13 @@ enum CharacterPhotoAspect: String, CaseIterable, Codable, Identifiable {
     case .portrait: "Portrait"
     }
   }
+}
+
+struct CharacterPhotoCrop: Equatable, Sendable {
+  let centerX: Double
+  let centerY: Double
+  let scale: Double
+  let aspect: CharacterPhotoAspect
 }
 
 @Model
@@ -232,6 +239,15 @@ final class CustomCharacter {
 
   var storyCharacterID: String {
     "CUSTOM_\(id.uuidString.replacingOccurrences(of: "-", with: "_"))"
+  }
+
+  var photoCrop: CharacterPhotoCrop {
+    CharacterPhotoCrop(
+      centerX: cropCenterX,
+      centerY: cropCenterY,
+      scale: cropScale,
+      aspect: photoAspect
+    )
   }
 
   func makeStoryCharacter(imageName: String) -> StoryCharacter {
