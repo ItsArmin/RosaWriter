@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FoundationModels
 
 struct StoryPrompts {
 
@@ -55,7 +56,7 @@ struct StoryPrompts {
             - Use "straight quotes" for dialogue
             - Don't write "The End"
 
-            \(jsonFormatInstructions())
+            Select up to two available story images for each page.
             """
 
         return prompt
@@ -102,7 +103,7 @@ struct StoryPrompts {
             - Use "straight quotes" for dialogue
             - Don't write "The End"
 
-            \(jsonFormatInstructions())
+            Select up to two available story images for each page.
             """
 
         return prompt
@@ -144,39 +145,68 @@ struct StoryPrompts {
         "- \(character.displayName) (\(character.pronounSubjective)/\(character.pronounPossessive)): \(character.description). Voice: \(character.speakingStyle)"
     }
     
-    /// Available asset IDs for image suggestions
-    private static func availableAssetIDs() -> [String] {
-        StoryAssets.allCharacters.map { $0.id } + StoryAssets.allObjects.map { $0.id }
-    }
-    
-    /// JSON format instructions - kept separate for clarity
-    private static func jsonFormatInstructions() -> String {
-        """
-        RESPONSE FORMAT:
-        Respond with ONLY valid JSON, no other text:
-        {
-          "title": "Story Title",
-          "pages": [
-            {"pageNumber": 1, "text": "Story text...", "suggestedImages": ["CHARACTER_ID"]},
-            {"pageNumber": 2, "text": "More story...", "suggestedImages": ["OBJECT_ID"]}
-          ]
-        }
-
-        For suggestedImages, use these IDs: \(availableAssetIDs().joined(separator: ", "))
-        Each page can have 0-2 images. Escape quotes in text with backslash.
-        """
-    }
 }
 
 // MARK: - Story Response Model
 
-struct AIStoryResponse: Codable {
-    let title: String
-    let pages: [AIStoryPage]
+@Generable(description: "A complete children's story")
+struct AIStoryResponse {
+    @Guide(description: "A short, playful book title")
+    var title: String
+
+    @Guide(
+        description: "Story pages in numerical order",
+        .maximumCount(10)
+    )
+    var pages: [AIStoryPage]
 }
 
-struct AIStoryPage: Codable {
-    let pageNumber: Int
-    let text: String
-    let suggestedImages: [String]
+@Generable(description: "One page of a children's story")
+struct AIStoryPage {
+    @Guide(description: "The page number", .range(1...10))
+    var pageNumber: Int
+
+    @Guide(description: "Two to four short, age-appropriate sentences")
+    var text: String
+
+    @Guide(
+        description: "Visuals that match this page",
+        .maximumCount(2)
+    )
+    var suggestedImages: [GeneratedStoryImage]
+}
+
+@Generable(description: "An illustration available inside Rosa Writer")
+enum GeneratedStoryImage {
+    case mainCharacter
+    case mrDog
+    case sirWhiskers
+    case professorSeal
+    case msCow
+    case apple
+    case balloon
+    case basketball
+    case book
+    case burger
+    case cake
+    case crayon
+    case teddy
+
+    func assetID(mainCharacterID: String) -> String {
+        switch self {
+        case .mainCharacter: mainCharacterID
+        case .mrDog: StoryAssets.MR_DOG.id
+        case .sirWhiskers: StoryAssets.SIR_WHISKERS.id
+        case .professorSeal: StoryAssets.PROFESSOR_SEAL.id
+        case .msCow: StoryAssets.MS_COW.id
+        case .apple: StoryAssets.APPLE.id
+        case .balloon: StoryAssets.BALLOON.id
+        case .basketball: StoryAssets.BASKETBALL.id
+        case .book: StoryAssets.BOOK.id
+        case .burger: StoryAssets.BURGER.id
+        case .cake: StoryAssets.CAKE.id
+        case .crayon: StoryAssets.CRAYON.id
+        case .teddy: StoryAssets.TEDDY.id
+        }
+    }
 }

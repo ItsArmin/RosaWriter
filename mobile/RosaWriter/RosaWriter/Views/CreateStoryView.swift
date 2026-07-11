@@ -491,25 +491,33 @@ struct CreateStoryView: View {
 
         // Check if Apple Intelligence is available
         if AIStoryService.isAppleIntelligenceAvailable() {
-          // Use Apple Intelligence for story generation
-          print("📚 Using Apple Intelligence for story generation")
-          book = try await AIStoryService.shared.generateCustomStory(
-            mainCharacter: character,
+          do {
+            print("📚 Using Apple Intelligence for story generation")
+            book = try await AIStoryService.shared.generateCustomStory(
+              mainCharacter: character,
+              mood: mood,
+              spark: spark,
+              pageCount: pageCount,
+              coverColor: color
+            )
+          } catch {
+            print(
+              "⚠️ Apple Intelligence generation failed; using classic stories: \(error)"
+            )
+            book = try await generateFallbackStory(
+              character: character,
+              mood: mood,
+              spark: spark,
+              color: color
+            )
+          }
+        } else {
+          print("📚 Using template-based fallback for story generation")
+          book = try await generateFallbackStory(
+            character: character,
             mood: mood,
             spark: spark,
-            pageCount: pageCount,
-            coverColor: color
-          )
-        } else {
-          // Use template-based fallback
-          print("📚 Using template-based fallback for story generation")
-          // Map StorySpark to StoryTheme for fallback
-          let theme = mapSparkToTheme(spark)
-          book = try await FallbackStoryService.shared.generateCustomStory(
-            mainCharacter: character,
-            mood: mood,
-            theme: theme,
-            coverColor: color
+            color: color
           )
         }
 
@@ -544,6 +552,20 @@ struct CreateStoryView: View {
                 }
             }
     }
+  }
+
+  private func generateFallbackStory(
+    character: StoryCharacter,
+    mood: StoryMood,
+    spark: StorySpark,
+    color: CoverColor
+  ) async throws -> Book {
+    try await FallbackStoryService.shared.generateCustomStory(
+      mainCharacter: character,
+      mood: mood,
+      theme: mapSparkToTheme(spark),
+      coverColor: color
+    )
   }
 
   /// Map StorySpark to StoryTheme for fallback service

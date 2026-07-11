@@ -18,7 +18,6 @@ private let forceUseFallback = false
 
 enum AIStoryError: Error {
   case generationFailed
-  case parsingFailed
   case invalidResponse
   case notAvailable
 
@@ -26,8 +25,6 @@ enum AIStoryError: Error {
     switch self {
     case .generationFailed:
       return "Failed to generate story"
-    case .parsingFailed:
-      return "Failed to parse AI response"
     case .invalidResponse:
       return "Invalid response from AI"
     case .notAvailable:
@@ -106,12 +103,13 @@ class AIStoryService: ObservableObject {
       do {
         print("📝 Generation attempt \(attempt)/3")
 
-        // Call Apple Intelligence API
-        let response = try await callAppleIntelligence(prompt: prompt)
+        // Call Apple Intelligence with a guided response schema.
+        let aiStory = try await callAppleIntelligence(
+          prompt: prompt,
+          expectedPageCount: pageCount
+        )
         progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-        // Parse the response
-        let aiStory = try parseAIResponse(response)
         progress = 0.9
 
         // Convert to Book format
@@ -163,10 +161,12 @@ class AIStoryService: ObservableObject {
       do {
         print("📝 Generation attempt \(attempt)/3")
 
-        let response = try await callAppleIntelligence(prompt: prompt)
+        let aiStory = try await callAppleIntelligence(
+          prompt: prompt,
+          expectedPageCount: pageCount
+        )
         progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-        let aiStory = try parseAIResponse(response)
         progress = 0.9
 
         let coverCharacter = characters.first ?? StoryAssets.allCharacters[0]
@@ -222,10 +222,12 @@ class AIStoryService: ObservableObject {
       do {
         print("📝 Generation attempt \(attempt)/3")
 
-        let response = try await callAppleIntelligence(prompt: prompt)
+        let aiStory = try await callAppleIntelligence(
+          prompt: prompt,
+          expectedPageCount: pageCount
+        )
         progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-        let aiStory = try parseAIResponse(response)
         progress = 0.9
 
         let book = convertToBook(aiStory, mainCharacter: mainCharacter, coverColor: coverColor ?? .blue)
@@ -248,7 +250,10 @@ class AIStoryService: ObservableObject {
 
   // MARK: - Private Methods
 
-  private func callAppleIntelligence(prompt: String) async throws -> String {
+  private func callAppleIntelligence(
+    prompt: String,
+    expectedPageCount: Int
+  ) async throws -> AIStoryResponse {
     #if canImport(FoundationModels)
       // Use Apple Intelligence on-device model
       let model = SystemLanguageModel.default
@@ -260,24 +265,23 @@ class AIStoryService: ObservableObject {
 
       print("✅ Apple Intelligence is available, generating story...")
 
-      // Create a language model session
-      let session = LanguageModelSession()
-
-      // Build the full prompt with system context
-      let fullPrompt = """
-        \(StoryPrompts.systemPrompt)
-
-        \(prompt)
-        """
+      let session = LanguageModelSession {
+        StoryPrompts.systemPrompt
+      }
 
       print("📝 Sending prompt to Apple Intelligence...")
 
-      // Get response from Apple Intelligence
-      let response = try await session.respond(to: fullPrompt)
+      let response = try await session.respond(
+        to: prompt,
+        generating: AIStoryResponse.self
+      )
 
       print("✅ Received response from Apple Intelligence")
 
-      return response.content
+      return try validated(
+        response.content,
+        expectedPageCount: expectedPageCount
+      )
     #else
       // FoundationModels not available in this build
       print("❌ FoundationModels framework not available")
@@ -285,43 +289,29 @@ class AIStoryService: ObservableObject {
     #endif
   }
 
-  private func parseAIResponse(_ response: String) throws -> AIStoryResponse {
-    print("📖 Parsing AI response...")
-    print("📏 Response length: \(response.count) characters")
-
-    // Remove markdown code blocks if present
-    var cleanedResponse =
-      response
-      .replacingOccurrences(of: "```json", with: "")
-      .replacingOccurrences(of: "```", with: "")
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-
-    // Try to extract JSON if there's extra text before/after
-    if let jsonStart = cleanedResponse.firstIndex(of: "{"),
-      let jsonEnd = cleanedResponse.lastIndex(of: "}")
-    {
-      cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
+  private func validated(
+    _ story: AIStoryResponse,
+    expectedPageCount: Int
+  ) throws -> AIStoryResponse {
+    guard !story.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+      story.pages.count == expectedPageCount
+    else {
+      throw AIStoryError.invalidResponse
     }
 
-    // Parse JSON
-    guard let data = cleanedResponse.data(using: .utf8) else {
-      print("❌ Failed to convert response to UTF-8 data")
-      throw AIStoryError.parsingFailed
+    let sortedPages = story.pages.sorted { $0.pageNumber < $1.pageNumber }
+    for (index, page) in sortedPages.enumerated() {
+      guard page.pageNumber == index + 1,
+        !page.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      else {
+        throw AIStoryError.invalidResponse
+      }
     }
 
-    let decoder = JSONDecoder()
-    do {
-      let aiStory = try decoder.decode(AIStoryResponse.self, from: data)
-      print("✅ Successfully parsed story: '\(aiStory.title)' with \(aiStory.pages.count) pages")
-      return aiStory
-    } catch {
-      print("❌ JSON parsing failed: \(error)")
-      print("📄 Full response:")
-      print(cleanedResponse)
-      print("---")
-      throw AIStoryError.parsingFailed
-        }
-    }
+    var validatedStory = story
+    validatedStory.pages = sortedPages
+    return validatedStory
+  }
 
   private func convertToBook(
     _ aiStory: AIStoryResponse,
@@ -342,7 +332,9 @@ class AIStoryService: ObservableObject {
 
     // Create content pages
     for aiPage in aiStory.pages {
-      var suggestedImages = aiPage.suggestedImages
+      var suggestedImages = aiPage.suggestedImages.map {
+        $0.assetID(mainCharacterID: mainCharacter.id)
+      }
       
       // Ensure page 1 always features the main character
       if aiPage.pageNumber == 1 && !suggestedImages.contains(mainCharacter.id) {
