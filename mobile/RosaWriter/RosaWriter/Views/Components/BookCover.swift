@@ -160,9 +160,11 @@ struct BookCover: View {
 
                         // Cover image if available
                         if let imageName = coverImageName {
-                            Image(imageName)
-                                .resizable()
-                                .scaledToFit()
+                            StoryImage(
+                                storedValue: imageName,
+                                accessibilityLabel: "\(book.title) cover",
+                                presentation: .paper(rotation: .degrees(-1.5))
+                            )
                                 .padding(BookCoverConstants.imagePadding)
                                 .clipShape(
                                     BookCoverShape(

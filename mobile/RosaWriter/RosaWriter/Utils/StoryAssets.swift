@@ -392,6 +392,9 @@ struct StoryAssets {
 
     /// Get size for a given image name
     static func size(forImageName name: String) -> StoryAssetSize {
+        if StoryImageReference(storedValue: name).isCustomImage {
+            return .large
+        }
         if let char = allCharacters.first(where: { $0.imageName == name }) {
             return char.size
         }
