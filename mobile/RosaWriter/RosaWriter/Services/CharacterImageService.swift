@@ -153,7 +153,7 @@ actor CharacterImageService {
     self.fileManager = fileManager
   }
 
-  func saveImageData(_ data: Data, characterID: UUID) throws -> String {
+  func saveImageData(_ data: Data, fileID: UUID) throws -> String {
     guard let image = UIImage(data: data) else {
       throw CharacterImageError.invalidImage
     }
@@ -167,7 +167,7 @@ actor CharacterImageService {
       throw CharacterImageError.encodingFailed
     }
 
-    let fileName = "\(characterID.uuidString.lowercased()).jpg"
+    let fileName = "\(fileID.uuidString.lowercased()).jpg"
     let url = try StoryImageStorage.characterImageURL(
       fileName: fileName,
       fileManager: fileManager
