@@ -62,13 +62,10 @@ actor BookImageSnapshotService {
   }
 
   func deleteSnapshots(bookID: UUID) throws {
-    let directory = try StoryImageStorage.bookDirectory(
+    try StoryImageStorage.deleteBookImages(
       bookID: bookID,
       fileManager: fileManager
     )
-
-    guard fileManager.fileExists(atPath: directory.path) else { return }
-    try fileManager.removeItem(at: directory)
   }
 
   private static func croppedImage(

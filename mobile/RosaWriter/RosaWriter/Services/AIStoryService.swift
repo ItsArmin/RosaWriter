@@ -354,7 +354,10 @@ class AIStoryService: ObservableObject {
         }
       }
       
-      let imageLayout = determineImageLayout(from: suggestedImages)
+      let imageLayout = determineImageLayout(
+        from: suggestedImages,
+        mainCharacter: mainCharacter
+      )
       let page = BookPage(
         text: aiPage.text,
         pageNumber: aiPage.pageNumber,
@@ -379,11 +382,16 @@ class AIStoryService: ObservableObject {
   }
 
 
-  private func determineImageLayout(from suggestedImages: [String])
+  private func determineImageLayout(
+    from suggestedImages: [String],
+    mainCharacter: StoryCharacter
+  )
     -> PageImageLayout
   {
     let validImages = suggestedImages.compactMap { assetId -> String? in
-      if let character = StoryAssets.character(for: assetId) {
+      if assetId == mainCharacter.id {
+        return mainCharacter.imageName
+      } else if let character = StoryAssets.character(for: assetId) {
         return character.imageName
       } else if let object = StoryAssets.object(for: assetId) {
         return object.imageName

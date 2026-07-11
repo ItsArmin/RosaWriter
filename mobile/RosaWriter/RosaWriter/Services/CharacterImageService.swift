@@ -96,6 +96,19 @@ enum StoryImageStorage {
     return fileManager.fileExists(atPath: url.path) ? url : nil
   }
 
+  static func deleteBookImages(
+    bookID: UUID,
+    fileManager: FileManager = .default
+  ) throws {
+    let directory = try bookDirectory(
+      bookID: bookID,
+      fileManager: fileManager
+    )
+
+    guard fileManager.fileExists(atPath: directory.path) else { return }
+    try fileManager.removeItem(at: directory)
+  }
+
   private static func charactersDirectory(
     fileManager: FileManager
   ) throws -> URL {

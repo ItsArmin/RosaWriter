@@ -167,7 +167,10 @@ class FallbackStoryService: ObservableObject {
 
     // Create content pages
     for renderedPage in renderedStory.pages {
-      let imageLayout = determineImageLayout(from: renderedPage.suggestedImages)
+      let imageLayout = determineImageLayout(
+        from: renderedPage.suggestedImages,
+        mainCharacter: mainCharacter
+      )
       let bookPage = BookPage(
         text: renderedPage.text,
         pageNumber: renderedPage.pageNumber,
@@ -179,9 +182,14 @@ class FallbackStoryService: ObservableObject {
     return book
   }
 
-  private func determineImageLayout(from assetIds: [String]) -> PageImageLayout {
+  private func determineImageLayout(
+    from assetIds: [String],
+    mainCharacter: StoryCharacter
+  ) -> PageImageLayout {
     let validImages = assetIds.compactMap { assetId -> String? in
-      if let character = StoryAssets.character(for: assetId) {
+      if assetId == mainCharacter.id {
+        return mainCharacter.imageName
+      } else if let character = StoryAssets.character(for: assetId) {
         return character.imageName
       } else if let object = StoryAssets.object(for: assetId) {
         return object.imageName

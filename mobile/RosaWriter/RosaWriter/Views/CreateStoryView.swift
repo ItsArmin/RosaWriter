@@ -13,9 +13,11 @@ struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @StateObject private var aiService = AIStoryService.shared
+    @Query(sort: \CustomCharacter.createdAt) private var customCharacters:
+      [CustomCharacter]
 
     // User selections
-  @State private var selectedCharacter: StoryCharacter = StoryAssets.MR_DOG
+    @State private var selectedCharacterID = StoryAssets.MR_DOG.id
     @State private var selectedMood: StoryMood = .fantasy
     @State private var selectedSpark: StorySpark = .treasureHunt
     @State private var selectedColor: CoverColor = .blue
@@ -26,9 +28,28 @@ struct CreateStoryView: View {
     @State private var errorMessage = ""
     @State private var generatedBook: Book?
     @State private var showLibraryFullAlert = false
+    @State private var showCharacterCreator = false
 
     // Callback to pass generated book back to parent
     var onBookCreated: ((Book) -> Void)?
+
+    private var selectedCustomCharacter: CustomCharacter? {
+      customCharacters.first { $0.storyCharacterID == selectedCharacterID }
+    }
+
+    private var selectedCharacter: StoryCharacter {
+      if let customCharacter = selectedCustomCharacter {
+        let imageReference = StoryImageReference.characterFile(
+          name: customCharacter.imageFileName
+        )
+        return customCharacter.makeStoryCharacter(
+          imageName: imageReference.storedValue
+        )
+      }
+
+      return StoryAssets.character(for: selectedCharacterID)
+        ?? StoryAssets.MR_DOG
+    }
 
     var body: some View {
     NavigationStack {
@@ -56,37 +77,33 @@ struct CreateStoryView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         // Character Selection
-                            VStack(alignment: .leading, spacing: 12) {
-                                Label(Strings.mainCharacter, systemImage: "person.fill")
-                                    .font(.headline)
-                                
-                                HStack {
-                                    Image(selectedCharacter.imageName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 40, height: 40)
-                                    Picker(
-                                        "Character",
-                                        selection: $selectedCharacter
-                                    ) {
-                                        ForEach(StoryAssets.allCharacters, id: \.id)
-                                        { character in
-                                            Text(character.displayName).tag(
-                                                character
-                                            )
-                                        }
-                                    }
-                                    .pickerStyle(.menu)
-                                    .onChange(of: selectedCharacter) { _, _ in
-                                        #if os(iOS)
-                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                        #endif
-                                    }
-                                }
-                                .padding()
-                                .background(Color(.systemGray6))
-              .clipShape(.rect(cornerRadius: 12))
+                        VStack(alignment: .leading, spacing: 12) {
+                          Label(
+                            Strings.mainCharacter,
+                            systemImage: "person.fill"
+                          )
+                          .font(.headline)
+
+                          ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .top, spacing: 12) {
+                              ForEach(
+                                StoryAssets.allCharacters,
+                                id: \.id
+                              ) { character in
+                                builtInCharacterCard(character)
+                              }
+
+                              ForEach(customCharacters) { character in
+                                customCharacterCard(character)
+                              }
+
+                              addCharacterCard
                             }
+                            .padding(.vertical, 8)
+                          }
+                          .safeAreaPadding(.horizontal, 16)
+                          .padding(.horizontal, -16)
+                        }
 
                             Text(selectedCharacter.description)
                                 .font(.caption)
@@ -292,7 +309,152 @@ struct CreateStoryView: View {
             } message: {
         Text(Strings.libraryFullMessage(maxBooks: AppConstants.maxBooks))
             }
+      .sheet(isPresented: $showCharacterCreator) {
+        CharacterCreatorView()
+      }
         }
+    }
+
+    private func builtInCharacterCard(
+      _ character: StoryCharacter
+    ) -> some View {
+      Button {
+        selectCharacter(character.id)
+      } label: {
+        VStack(spacing: 7) {
+          ZStack {
+            RoundedRectangle(cornerRadius: 5)
+              .fill(Color(red: 1, green: 0.985, blue: 0.94))
+              .shadow(color: .black.opacity(0.16), radius: 4, x: 1, y: 3)
+
+            Image(character.imageName)
+              .resizable()
+              .scaledToFit()
+              .padding(7)
+          }
+          .frame(width: 72, height: 82)
+          .overlay {
+            RoundedRectangle(cornerRadius: 5)
+              .stroke(
+                selectedCharacterID == character.id
+                  ? Color.blue : Color.clear,
+                lineWidth: 3
+              )
+          }
+
+          Text(character.displayName)
+            .font(.caption)
+            .fontWeight(
+              selectedCharacterID == character.id ? .bold : .regular
+            )
+            .foregroundStyle(.primary)
+            .lineLimit(2)
+            .multilineTextAlignment(.center)
+        }
+        .frame(width: 82)
+      }
+      .buttonStyle(.plain)
+      .accessibilityHint(
+        selectedCharacterID == character.id ? "Selected" : "Select character"
+      )
+    }
+
+    private func customCharacterCard(
+      _ character: CustomCharacter
+    ) -> some View {
+      Button {
+        selectCharacter(character.storyCharacterID)
+      } label: {
+        VStack(spacing: 7) {
+          CustomCharacterImageView(character: character)
+            .frame(width: 62, height: 72)
+            .padding(5)
+            .background {
+              RoundedRectangle(cornerRadius: 4)
+                .fill(Color(red: 1, green: 0.985, blue: 0.94))
+                .shadow(color: .black.opacity(0.18), radius: 5, x: 1, y: 3)
+            }
+            .overlay(alignment: .top) {
+              RoundedRectangle(cornerRadius: 1)
+                .fill(
+                  Color(red: 0.92, green: 0.86, blue: 0.70).opacity(0.84)
+                )
+                .frame(width: 34, height: 11)
+                .rotationEffect(.degrees(1.5))
+                .offset(y: -6)
+            }
+            .overlay {
+              RoundedRectangle(cornerRadius: 4)
+                .stroke(
+                  selectedCharacterID == character.storyCharacterID
+                    ? Color.blue : Color.clear,
+                  lineWidth: 3
+                )
+            }
+            .padding(.top, 6)
+
+          Text(character.name)
+            .font(.caption)
+            .fontWeight(
+              selectedCharacterID == character.storyCharacterID
+                ? .bold : .regular
+            )
+            .foregroundStyle(.primary)
+            .lineLimit(2)
+            .multilineTextAlignment(.center)
+        }
+        .frame(width: 82)
+      }
+      .buttonStyle(.plain)
+      .accessibilityHint(
+        selectedCharacterID == character.storyCharacterID
+          ? "Selected" : "Select character"
+      )
+    }
+
+    private var addCharacterCard: some View {
+      Button {
+        showCharacterCreator = true
+      } label: {
+        VStack(spacing: 7) {
+          ZStack {
+            RoundedRectangle(cornerRadius: 5)
+              .fill(Color.primary.opacity(0.055))
+              .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                  .stroke(
+                    Color.primary.opacity(0.25),
+                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])
+                  )
+              }
+
+            Image(systemName: "plus")
+              .font(.title2.weight(.bold))
+              .foregroundStyle(.blue)
+          }
+          .frame(width: 72, height: 82)
+
+          Text(
+            customCharacters.count < CustomCharacter.maximumCount
+              ? "Add Yours" : "Character Limit"
+          )
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .lineLimit(2)
+          .multilineTextAlignment(.center)
+        }
+        .frame(width: 82)
+      }
+      .buttonStyle(.plain)
+      .disabled(
+        isGenerating
+          || customCharacters.count >= CustomCharacter.maximumCount
+      )
+    }
+
+    private func selectCharacter(_ id: String) {
+      selectedCharacterID = id
+      UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     private func createStory() {
@@ -313,12 +475,15 @@ struct CreateStoryView: View {
         let mood = selectedMood
         let spark = selectedSpark
         let color = selectedColor
+        let customPhoto = selectedCustomCharacter.map {
+          (fileName: $0.imageFileName, crop: $0.photoCrop)
+        }
 
         isGenerating = true
 
         Task {
             do {
-        let book: Book
+        var book: Book
 
         // Pick a random page count for this story
         let pageCount = AppConstants.randomAIBookPageCount
@@ -345,6 +510,19 @@ struct CreateStoryView: View {
             mood: mood,
             theme: theme,
             coverColor: color
+          )
+        }
+
+        if let customPhoto {
+          let snapshot = try await BookImageSnapshotService.shared
+            .createSnapshot(
+              sourceFileName: customPhoto.fileName,
+              crop: customPhoto.crop,
+              bookID: book.id
+            )
+          book.replaceImageReference(
+            character.imageName,
+            with: snapshot.storedValue
           )
         }
 
