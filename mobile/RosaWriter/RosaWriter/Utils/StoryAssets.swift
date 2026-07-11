@@ -95,6 +95,53 @@ extension CharacterVoice {
         agreement: ["Bless your heart, yes!", "You got that right!", "Mhm, sure thing!"],
         surprise: ["Oh my stars!", "Well, I never!", "Goodness gracious!"]
     )
+
+    // Generic voices give custom characters personality without assigning a
+    // real person's photo a dialect or identity the user didn't choose.
+    static let upbeat = CharacterVoice(
+        greeting: ["Hello there!", "Hi, friend!", "I'm so glad you're here!"],
+        farewell: ["See you soon!", "Until next time!", "What a wonderful day!"],
+        excited: ["Hooray!", "This is amazing!", "What fun!"],
+        thinking: ["Hmm, let me think...", "I have an idea!", "Let's look closely."],
+        agreement: ["Absolutely!", "Let's do it!", "Good idea!"],
+        surprise: ["Oh, wow!", "What a surprise!", "I didn't expect that!"]
+    )
+
+    static let gentle = CharacterVoice(
+        greeting: ["Hello, friend.", "It's lovely to see you.", "Welcome!"],
+        farewell: ["Take care.", "See you again soon.", "Goodbye, friend."],
+        excited: ["How wonderful!", "That makes me so happy!", "What a lovely surprise!"],
+        thinking: ["Let's think about it.", "Maybe we can try this.", "I wonder..."],
+        agreement: ["Of course.", "That sounds just right.", "I'd be happy to help."],
+        surprise: ["Oh, my!", "Well, look at that!", "How unexpected!"]
+    )
+
+    static let playful = CharacterVoice(
+        greeting: ["Hey, hey!", "Ready for some fun?", "Hello, adventure buddy!"],
+        farewell: ["Catch you later!", "Keep being silly!", "See you next adventure!"],
+        excited: ["Woo-hoo!", "This is too much fun!", "Let's go!"],
+        thinking: ["Hmm... what if we tried something silly?", "I've got a funny idea!", "Let me thinkety-think."],
+        agreement: ["You got it!", "Sounds fun to me!", "I'm in!"],
+        surprise: ["Whoa!", "Well, that was unexpected!", "What in the world?"]
+    )
+
+    static let thoughtful = CharacterVoice(
+        greeting: ["Hello.", "I'm glad you're here.", "Let's discover something together."],
+        farewell: ["Keep wondering.", "Until our next discovery.", "There's always more to learn."],
+        excited: ["How interesting!", "What a discovery!", "I knew we'd find something!"],
+        thinking: ["Let's consider the clues.", "There must be another way.", "I need a moment to think."],
+        agreement: ["That makes sense.", "I think you're right.", "A thoughtful choice."],
+        surprise: ["Curious!", "How unexpected.", "Now that's interesting!"]
+    )
+
+    static let bold = CharacterVoice(
+        greeting: ["Hello, adventurer!", "Ready to go?", "A new adventure begins!"],
+        farewell: ["On to the next adventure!", "Stay brave!", "We did it!"],
+        excited: ["Adventure awaits!", "This is our moment!", "Forward!"],
+        thinking: ["Let's make a plan.", "There has to be a way through.", "What would a brave friend do?"],
+        agreement: ["I'm ready!", "Let's face it together.", "We can do this!"],
+        surprise: ["What a twist!", "I didn't see that coming!", "Hold on!"]
+    )
 }
 
 // MARK: - Story Asset Models
