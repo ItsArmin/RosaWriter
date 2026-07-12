@@ -134,6 +134,24 @@ extension CharacterVoice {
         surprise: ["Curious!", "How unexpected.", "Now that's interesting!"]
     )
 
+    static let formal = CharacterVoice(
+        greeting: ["A pleasure to meet you.", "Welcome, my friend.", "Good day."],
+        farewell: ["Until we meet again.", "Farewell for now.", "It has been a pleasure."],
+        excited: ["How marvelous!", "What excellent news!", "This is truly wonderful!"],
+        thinking: ["Let us consider this carefully.", "Perhaps another approach is in order.", "I have a thought."],
+        agreement: ["Certainly.", "I quite agree.", "That is an excellent plan."],
+        surprise: ["How remarkable!", "What an unexpected turn!", "My goodness!"]
+    )
+
+    static let western = CharacterVoice(
+        greeting: ["Howdy, friend!", "Good to see you, partner!", "Welcome to the trail!"],
+        farewell: ["Happy trails!", "See you down the road!", "Until the next adventure!"],
+        excited: ["Yee-haw!", "Now that's something!", "What a day for an adventure!"],
+        thinking: ["Let's size this up.", "There must be another trail.", "I've got a hunch."],
+        agreement: ["You bet!", "Sounds good, partner.", "Let's ride!"],
+        surprise: ["Well, I'll be!", "Would you look at that!", "Hold your horses!"]
+    )
+
     static let bold = CharacterVoice(
         greeting: ["Hello, adventurer!", "Ready to go?", "A new adventure begins!"],
         farewell: ["On to the next adventure!", "Stay brave!", "We did it!"],

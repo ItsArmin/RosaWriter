@@ -25,7 +25,11 @@ struct CharacterCreatorView: View {
   @State private var biography: String
   @State private var primaryPersonality: CharacterPersonality
   @State private var secondaryPersonality: CharacterPersonality?
-  @State private var voicePreset: CharacterVoicePreset
+  @State private var primaryInterest: CharacterInterest?
+  @State private var secondaryInterest: CharacterInterest?
+  @State private var adventureStyle: CharacterAdventureStyle
+  @State private var dialogueStyle: CharacterDialogueStyle
+  @State private var catchphrase: String
   @State private var photoAspect: CharacterPhotoAspect
   @State private var cropCenterX: Double
   @State private var cropCenterY: Double
@@ -51,7 +55,15 @@ struct CharacterCreatorView: View {
     _secondaryPersonality = State(
       initialValue: character?.secondaryPersonality
     )
-    _voicePreset = State(initialValue: character?.voicePreset ?? .upbeat)
+    _primaryInterest = State(initialValue: character?.primaryInterest)
+    _secondaryInterest = State(initialValue: character?.secondaryInterest)
+    _adventureStyle = State(
+      initialValue: character?.adventureStyle ?? .explorer
+    )
+    _dialogueStyle = State(
+      initialValue: character?.dialogueStyle ?? .casual
+    )
+    _catchphrase = State(initialValue: character?.catchphrase ?? "")
     _photoAspect = State(initialValue: character?.photoAspect ?? .portrait)
     _cropCenterX = State(initialValue: character?.cropCenterX ?? 0.5)
     _cropCenterY = State(initialValue: character?.cropCenterY ?? 0.5)
@@ -62,10 +74,26 @@ struct CharacterCreatorView: View {
 
   private var canSave: Bool {
     !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-      && !biography.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       && previewImage != nil
       && !isSaving
       && (isEditing || customCharacters.count < CustomCharacter.maximumCount)
+  }
+
+  private var suggestedBiography: String {
+    CustomCharacter.suggestedBiography(
+      name: name,
+      pronouns: pronouns,
+      primaryPersonality: primaryPersonality,
+      secondaryPersonality: secondaryPersonality,
+      primaryInterest: primaryInterest,
+      secondaryInterest: secondaryInterest,
+      adventureStyle: adventureStyle
+    )
+  }
+
+  private var biographyForSaving: String {
+    let trimmed = biography.trimmingCharacters(in: .whitespacesAndNewlines)
+    return trimmed.isEmpty ? suggestedBiography : trimmed
   }
 
   private var background: some View {
@@ -124,7 +152,7 @@ struct CharacterCreatorView: View {
         }
       }
       .onChange(of: primaryPersonality) { _, personality in
-        voicePreset = .suggested(for: personality)
+        dialogueStyle = .suggested(for: personality)
         if secondaryPersonality == personality {
           secondaryPersonality = nil
         }
@@ -226,14 +254,14 @@ struct CharacterCreatorView: View {
         }
 
         VStack(alignment: .leading, spacing: 10) {
-          Text("Pronouns")
+          Text("In the story, which sounds right?")
             .font(.caption.weight(.semibold))
             .foregroundStyle(.secondary)
 
-          HStack(spacing: 8) {
+          VStack(spacing: 8) {
             ForEach(CharacterPronouns.allCases) { option in
               choiceChip(
-                option.displayName,
+                storyWordExample(option),
                 isSelected: pronouns == option
               ) {
                 pronouns = option
@@ -243,7 +271,12 @@ struct CharacterCreatorView: View {
         }
 
         VStack(alignment: .leading, spacing: 8) {
-          Text("Short Bio")
+          HStack {
+            Text("Short Bio")
+            Spacer()
+            Text("Optional")
+              .foregroundStyle(.tertiary)
+          }
             .font(.caption.weight(.semibold))
             .foregroundStyle(.secondary)
 
@@ -256,6 +289,29 @@ struct CharacterCreatorView: View {
           .textFieldStyle(.plain)
           .padding(10)
           .background(.primary.opacity(0.045), in: .rect(cornerRadius: 4))
+
+          if biography.trimmingCharacters(
+            in: .whitespacesAndNewlines
+          ).isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+              Text("Suggested Bio")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+              Text(suggestedBiography)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+              Button("Use This Bio") {
+                biography = suggestedBiography
+              }
+              .font(.caption.weight(.semibold))
+            }
+            .padding(10)
+            .background(
+              Color.blue.opacity(0.08),
+              in: .rect(cornerRadius: 4)
+            )
+          }
         }
       }
     }
@@ -264,8 +320,21 @@ struct CharacterCreatorView: View {
   private var personalitySection: some View {
     PaperPanel(rotation: .degrees(0.3)) {
       VStack(alignment: .leading, spacing: 18) {
-        Label("Personality & Voice", systemImage: "quote.bubble")
-          .font(.title3.weight(.bold))
+        HStack {
+          Label("Personality & Voice", systemImage: "quote.bubble")
+            .font(.title3.weight(.bold))
+
+          Spacer()
+
+          Button {
+            surpriseCharacterDetails()
+          } label: {
+            Label("Surprise Me", systemImage: "dice")
+              .font(.caption.weight(.semibold))
+          }
+          .buttonStyle(.plain)
+          .foregroundStyle(.blue)
+        }
 
         VStack(alignment: .leading, spacing: 10) {
           Text("Choose one or two traits")
@@ -289,20 +358,77 @@ struct CharacterCreatorView: View {
         }
 
         VStack(alignment: .leading, spacing: 8) {
-          Text("Voice")
+          Text("What do they love?")
             .font(.caption.weight(.semibold))
             .foregroundStyle(.secondary)
 
-          Picker("Voice", selection: $voicePreset) {
-            ForEach(CharacterVoicePreset.allCases) { preset in
-              Text(preset.displayName).tag(preset)
+          LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
+            alignment: .leading,
+            spacing: 8
+          ) {
+            ForEach(CharacterInterest.allCases) { interest in
+              choiceChip(
+                interest.displayName,
+                isSelected: isInterestSelected(interest)
+              ) {
+                toggleInterest(interest)
+              }
+            }
+          }
+        }
+
+        VStack(alignment: .leading, spacing: 8) {
+          Text("How do they approach adventures?")
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+
+          Picker("Adventure Style", selection: $adventureStyle) {
+            ForEach(CharacterAdventureStyle.allCases) { style in
+              Text(style.displayName).tag(style)
             }
           }
           .pickerStyle(.menu)
 
-          Text(voicePreset.speakingStyle.capitalized + ".")
+          Text(adventureStyle.promptDescription.capitalized + ".")
             .font(.caption)
             .foregroundStyle(.secondary)
+        }
+
+        VStack(alignment: .leading, spacing: 8) {
+          Text("How do they talk?")
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+
+          Picker("Talking Style", selection: $dialogueStyle) {
+            ForEach(CharacterDialogueStyle.allCases) { style in
+              Text(style.displayName).tag(style)
+            }
+          }
+          .pickerStyle(.menu)
+
+          Text(dialogueStyle.speakingStyle.capitalized + ".")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Text("Catchphrase")
+            Spacer()
+            Text("Optional")
+              .foregroundStyle(.tertiary)
+          }
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.secondary)
+
+          TextField(
+            "Adventure awaits!",
+            text: $catchphrase
+          )
+          .textFieldStyle(.plain)
+          .padding(10)
+          .background(.primary.opacity(0.045), in: .rect(cornerRadius: 4))
         }
       }
     }
@@ -393,6 +519,14 @@ struct CharacterCreatorView: View {
     primaryPersonality == personality || secondaryPersonality == personality
   }
 
+  private func storyWordExample(_ option: CharacterPronouns) -> String {
+    switch option {
+    case .heHim: "He found a clue."
+    case .sheHer: "She found a clue."
+    case .theyThem: "They found a clue."
+    }
+  }
+
   private func togglePersonality(_ personality: CharacterPersonality) {
     if primaryPersonality == personality {
       if let secondaryPersonality {
@@ -409,6 +543,42 @@ struct CharacterCreatorView: View {
     } else {
       secondaryPersonality = personality
     }
+  }
+
+  private func isInterestSelected(_ interest: CharacterInterest) -> Bool {
+    primaryInterest == interest || secondaryInterest == interest
+  }
+
+  private func toggleInterest(_ interest: CharacterInterest) {
+    if primaryInterest == interest {
+      primaryInterest = secondaryInterest
+      secondaryInterest = nil
+      return
+    }
+
+    if secondaryInterest == interest {
+      secondaryInterest = nil
+    } else if primaryInterest == nil {
+      primaryInterest = interest
+    } else {
+      secondaryInterest = interest
+    }
+  }
+
+  private func surpriseCharacterDetails() {
+    let personalities = CharacterPersonality.allCases.shuffled()
+    primaryPersonality = personalities[0]
+    secondaryPersonality = personalities[1]
+
+    let interests = CharacterInterest.allCases.shuffled()
+    primaryInterest = interests[0]
+    secondaryInterest = interests[1]
+    adventureStyle =
+      CharacterAdventureStyle.allCases.randomElement() ?? .explorer
+    dialogueStyle =
+      CharacterDialogueStyle.allCases.randomElement() ?? .casual
+
+    UIImpactFeedbackGenerator(style: .light).impactOccurred()
   }
 
   private func loadExistingPhotoIfNeeded() async {
@@ -472,12 +642,18 @@ struct CharacterCreatorView: View {
           character.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
           character.kind = kind
           character.pronouns = pronouns
-          character.biography = biography.trimmingCharacters(
-            in: .whitespacesAndNewlines
-          )
+          character.biography = biographyForSaving
           character.primaryPersonality = primaryPersonality
           character.secondaryPersonality = secondaryPersonality
-          character.voicePreset = voicePreset
+          character.primaryInterest = primaryInterest
+          character.secondaryInterest = secondaryInterest
+          character.adventureStyle = adventureStyle
+          character.dialogueStyle = dialogueStyle
+          let trimmedCatchphrase = catchphrase.trimmingCharacters(
+            in: .whitespacesAndNewlines
+          )
+          character.catchphrase = trimmedCatchphrase.isEmpty
+            ? nil : trimmedCatchphrase
           character.imageFileName = imageFileName
           character.updateCrop(
             centerX: cropCenterX,
@@ -491,10 +667,14 @@ struct CharacterCreatorView: View {
             name: name,
             kind: kind,
             pronouns: pronouns,
-            biography: biography,
+            biography: biographyForSaving,
             primaryPersonality: primaryPersonality,
             secondaryPersonality: secondaryPersonality,
-            voicePreset: voicePreset,
+            dialogueStyle: dialogueStyle,
+            primaryInterest: primaryInterest,
+            secondaryInterest: secondaryInterest,
+            adventureStyle: adventureStyle,
+            catchphrase: catchphrase,
             imageFileName: imageFileName,
             photoAspect: photoAspect,
             cropCenterX: cropCenterX,

@@ -74,26 +74,41 @@ enum CharacterPersonality: String, CaseIterable, Codable, Identifiable, Sendable
   var displayName: String { rawValue.capitalized }
 }
 
-enum CharacterVoicePreset: String, CaseIterable, Codable, Identifiable, Sendable {
-  case upbeat
+enum CharacterDialogueStyle: String, CaseIterable, Codable, Identifiable,
+  Sendable
+{
+  case casual
+  case formal
+  case western
+  case silly
   case gentle
-  case playful
-  case thoughtful
   case bold
 
   var id: String { rawValue }
-  var displayName: String { rawValue.capitalized }
+
+  var displayName: String {
+    switch self {
+    case .casual: "Friendly & Casual"
+    case .formal: "Formal & Proper"
+    case .western: "Western & Folksy"
+    case .silly: "Silly & Playful"
+    case .gentle: "Soft & Gentle"
+    case .bold: "Bold & Adventurous"
+    }
+  }
 
   var speakingStyle: String {
     switch self {
-    case .upbeat:
-      "bright, optimistic, and encouraging"
+    case .casual:
+      "friendly, relaxed, and conversational"
+    case .formal:
+      "polite, proper, and carefully spoken"
+    case .western:
+      "folksy Western style with light trail expressions"
+    case .silly:
+      "silly, energetic, and lighthearted"
     case .gentle:
       "warm, patient, and reassuring"
-    case .playful:
-      "silly, energetic, and lighthearted"
-    case .thoughtful:
-      "curious, observant, and careful"
     case .bold:
       "brave, direct, and adventurous"
     }
@@ -101,26 +116,91 @@ enum CharacterVoicePreset: String, CaseIterable, Codable, Identifiable, Sendable
 
   var voice: CharacterVoice {
     switch self {
-    case .upbeat: .upbeat
+    case .casual: .upbeat
+    case .formal: .formal
+    case .western: .western
+    case .silly: .playful
     case .gentle: .gentle
-    case .playful: .playful
-    case .thoughtful: .thoughtful
     case .bold: .bold
     }
   }
 
-  static func suggested(for personality: CharacterPersonality) -> CharacterVoicePreset {
+  static func suggested(
+    for personality: CharacterPersonality
+  ) -> CharacterDialogueStyle {
     switch personality {
     case .cheerful:
-      .upbeat
+      .casual
     case .kind, .calm, .shy:
       .gentle
     case .silly:
-      .playful
+      .silly
     case .curious, .clever:
-      .thoughtful
+      .formal
     case .brave:
       .bold
+    }
+  }
+
+  static func fromStoredValue(_ value: String) -> CharacterDialogueStyle {
+    if let style = CharacterDialogueStyle(rawValue: value) {
+      return style
+    }
+
+    return switch value {
+    case "upbeat": .casual
+    case "playful": .silly
+    case "thoughtful": .formal
+    default: .casual
+    }
+  }
+}
+
+enum CharacterInterest: String, CaseIterable, Codable, Identifiable, Sendable {
+  case animals
+  case art
+  case books
+  case building
+  case cooking
+  case exploring
+  case magic
+  case music
+  case nature
+  case science
+  case sports
+  case helpingOthers
+
+  var id: String { rawValue }
+
+  var displayName: String {
+    switch self {
+    case .helpingOthers: "Helping Others"
+    default: rawValue.capitalized
+    }
+  }
+}
+
+enum CharacterAdventureStyle: String, CaseIterable, Codable, Identifiable,
+  Sendable
+{
+  case explorer
+  case helper
+  case inventor
+  case detective
+  case dreamer
+  case jokester
+
+  var id: String { rawValue }
+  var displayName: String { rawValue.capitalized }
+
+  var promptDescription: String {
+    switch self {
+    case .explorer: "eager to discover new places"
+    case .helper: "quick to notice when someone needs help"
+    case .inventor: "always ready to build a clever solution"
+    case .detective: "curious about clues and mysteries"
+    case .dreamer: "guided by imagination and wonder"
+    case .jokester: "fond of solving problems with humor"
     }
   }
 }
@@ -160,6 +240,10 @@ final class CustomCharacter {
   var primaryPersonalityRawValue: String
   var secondaryPersonalityRawValue: String?
   var voicePresetRawValue: String
+  var primaryInterestRawValue: String?
+  var secondaryInterestRawValue: String?
+  var adventureStyleRawValue: String?
+  var catchphrase: String?
   var imageFileName: String
   var photoAspectRawValue: String
   var cropCenterX: Double
@@ -175,7 +259,11 @@ final class CustomCharacter {
     biography: String,
     primaryPersonality: CharacterPersonality,
     secondaryPersonality: CharacterPersonality? = nil,
-    voicePreset: CharacterVoicePreset? = nil,
+    dialogueStyle: CharacterDialogueStyle? = nil,
+    primaryInterest: CharacterInterest? = nil,
+    secondaryInterest: CharacterInterest? = nil,
+    adventureStyle: CharacterAdventureStyle = .explorer,
+    catchphrase: String? = nil,
     imageFileName: String,
     photoAspect: CharacterPhotoAspect = .portrait,
     cropCenterX: Double = 0.5,
@@ -193,7 +281,16 @@ final class CustomCharacter {
     self.secondaryPersonalityRawValue =
       secondaryPersonality == primaryPersonality ? nil : secondaryPersonality?.rawValue
     self.voicePresetRawValue =
-      (voicePreset ?? .suggested(for: primaryPersonality)).rawValue
+      (dialogueStyle ?? .suggested(for: primaryPersonality)).rawValue
+    self.primaryInterestRawValue = primaryInterest?.rawValue
+    self.secondaryInterestRawValue =
+      secondaryInterest == primaryInterest ? nil : secondaryInterest?.rawValue
+    self.adventureStyleRawValue = adventureStyle.rawValue
+    let trimmedCatchphrase = catchphrase?.trimmingCharacters(
+      in: .whitespacesAndNewlines
+    )
+    self.catchphrase = trimmedCatchphrase?.isEmpty == true
+      ? nil : trimmedCatchphrase
     self.imageFileName = imageFileName
     self.photoAspectRawValue = photoAspect.rawValue
     self.cropCenterX = min(max(cropCenterX, 0), 1)
@@ -227,9 +324,37 @@ final class CustomCharacter {
     }
   }
 
-  var voicePreset: CharacterVoicePreset {
-    get { CharacterVoicePreset(rawValue: voicePresetRawValue) ?? .upbeat }
+  var dialogueStyle: CharacterDialogueStyle {
+    get { CharacterDialogueStyle.fromStoredValue(voicePresetRawValue) }
     set { voicePresetRawValue = newValue.rawValue }
+  }
+
+  var primaryInterest: CharacterInterest? {
+    get {
+      guard let primaryInterestRawValue else { return nil }
+      return CharacterInterest(rawValue: primaryInterestRawValue)
+    }
+    set { primaryInterestRawValue = newValue?.rawValue }
+  }
+
+  var secondaryInterest: CharacterInterest? {
+    get {
+      guard let secondaryInterestRawValue else { return nil }
+      return CharacterInterest(rawValue: secondaryInterestRawValue)
+    }
+    set {
+      secondaryInterestRawValue =
+        newValue == primaryInterest ? nil : newValue?.rawValue
+    }
+  }
+
+  var adventureStyle: CharacterAdventureStyle {
+    get {
+      guard let adventureStyleRawValue else { return .explorer }
+      return CharacterAdventureStyle(rawValue: adventureStyleRawValue)
+        ?? .explorer
+    }
+    set { adventureStyleRawValue = newValue.rawValue }
   }
 
   var photoAspect: CharacterPhotoAspect {
@@ -254,20 +379,70 @@ final class CustomCharacter {
     let personalityDescription = [primaryPersonality, secondaryPersonality]
       .compactMap { $0?.displayName.lowercased() }
       .joined(separator: " and ")
+    let interests = [primaryInterest, secondaryInterest]
+      .compactMap { $0?.displayName.lowercased() }
+      .joined(separator: " and ")
+    var profileDescription = biography
+    if !interests.isEmpty {
+      profileDescription += " Loves \(interests)."
+    }
+    profileDescription += " \(adventureStyle.promptDescription.capitalized)."
+
+    var storyVoice = dialogueStyle.voice
+    if let catchphrase, !catchphrase.isEmpty {
+      storyVoice = CharacterVoice(
+        greeting: storyVoice.greeting,
+        farewell: storyVoice.farewell,
+        excited: [catchphrase] + storyVoice.excited,
+        thinking: storyVoice.thinking,
+        agreement: storyVoice.agreement,
+        surprise: storyVoice.surprise
+      )
+    }
 
     return StoryCharacter(
       id: storyCharacterID,
       imageName: imageName,
       displayName: name,
-      description: biography,
+      description: profileDescription,
       size: .large,
       pronounSubjective: pronouns.subjective,
       pronounPossessive: pronouns.possessive,
       pronounObjective: pronouns.objective,
       speakingStyle:
-        "\(voicePreset.speakingStyle); \(personalityDescription)",
-      voice: voicePreset.voice
+        "\(dialogueStyle.speakingStyle); \(personalityDescription)"
+          + (catchphrase.map { "; catchphrase: \"\($0)\"" } ?? ""),
+      voice: storyVoice
     )
+  }
+
+  static func suggestedBiography(
+    name: String,
+    pronouns: CharacterPronouns,
+    primaryPersonality: CharacterPersonality,
+    secondaryPersonality: CharacterPersonality?,
+    primaryInterest: CharacterInterest?,
+    secondaryInterest: CharacterInterest?,
+    adventureStyle: CharacterAdventureStyle
+  ) -> String {
+    let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+    let displayName = trimmedName.isEmpty ? "This character" : trimmedName
+    let traits = [primaryPersonality, secondaryPersonality]
+      .compactMap { $0?.displayName.lowercased() }
+      .joined(separator: " and ")
+    let interests = [primaryInterest, secondaryInterest]
+      .compactMap { $0?.displayName.lowercased() }
+      .joined(separator: " and ")
+    let subject = pronouns.subjective.capitalized
+
+    var sentences = ["\(displayName) is \(traits)."]
+    if !interests.isEmpty {
+      sentences.append("\(subject) loves \(interests).")
+    }
+    sentences.append(
+      "\(subject) is \(adventureStyle.promptDescription)."
+    )
+    return sentences.joined(separator: " ")
   }
 
   func updateCrop(
