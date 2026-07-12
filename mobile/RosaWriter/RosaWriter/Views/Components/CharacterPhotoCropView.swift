@@ -51,6 +51,10 @@ struct CharacterPhotoCropView: View {
 
         cropGrid
       }
+      .frame(
+        width: viewportSize.width,
+        height: viewportSize.height
+      )
       .clipShape(.rect(cornerRadius: 3))
       .contentShape(.rect)
       .gesture(
