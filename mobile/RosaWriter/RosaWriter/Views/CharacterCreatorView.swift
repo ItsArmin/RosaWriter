@@ -11,7 +11,6 @@ import SwiftUI
 import UIKit
 
 struct CharacterCreatorView: View {
-  @Environment(\.colorScheme) private var colorScheme
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
   @Query(sort: \CustomCharacter.createdAt) private var customCharacters:
@@ -96,39 +95,26 @@ struct CharacterCreatorView: View {
     return trimmed.isEmpty ? suggestedBiography : trimmed
   }
 
-  private var background: some View {
-    LinearGradient(
-      colors: colorScheme == .dark
-        ? [
-          Color(red: 0.08, green: 0.09, blue: 0.11),
-          Color(red: 0.14, green: 0.13, blue: 0.12),
-        ]
-        : [
-          Color(red: 0.80, green: 0.75, blue: 0.65),
-          Color(red: 0.93, green: 0.90, blue: 0.83),
-        ],
-      startPoint: .topLeading,
-      endPoint: .bottomTrailing
-    )
-  }
-
   var body: some View {
     NavigationStack {
-      ZStack {
-        background.ignoresSafeArea()
-
-        ScrollView {
-          VStack(spacing: 24) {
-            photoSection
-            profileSection
-            personalitySection
-          }
-          .padding(.horizontal, 20)
-          .padding(.vertical, 24)
-          .padding(.bottom, 90)
+      Form {
+        Section("Photo") {
+          photoSection
+            .frame(maxWidth: .infinity)
+            .listRowInsets(
+              EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18)
+            )
         }
-        .scrollDismissesKeyboard(.interactively)
+
+        basicsSection
+        biographySection
+        personalitySection
+        voiceSection
       }
+      .formStyle(.grouped)
+      .scrollDismissesKeyboard(.interactively)
+      .scrollContentBackground(.hidden)
+      .background(Color(.systemGroupedBackground).ignoresSafeArea())
       .navigationTitle(isEditing ? "Edit Character" : "New Character")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
@@ -192,39 +178,23 @@ struct CharacterCreatorView: View {
         .disabled(isLoadingPhoto || isSaving)
       } else {
         PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-          VStack(spacing: 12) {
+          Group {
             if isLoadingPhoto {
-              ProgressView()
+              ProgressView("Loading Photo")
             } else {
-              Image(systemName: "photo.badge.plus")
-                .font(.system(size: 38))
-            }
-
-            Text("Choose a Photo or Drawing")
-              .font(.headline)
-            Text("You can crop and position it next.")
-              .font(.caption)
-              .foregroundStyle(.secondary)
-          }
-          .foregroundStyle(.primary)
-          .frame(maxWidth: .infinity)
-          .frame(height: 190)
-          .background {
-            RoundedRectangle(cornerRadius: 4)
-              .fill(
-                colorScheme == .dark
-                  ? Color(red: 0.18, green: 0.17, blue: 0.15)
-                  : Color(red: 1, green: 0.985, blue: 0.94)
-              )
-              .overlay {
-                RoundedRectangle(cornerRadius: 4)
-                  .stroke(
-                    .secondary.opacity(0.45),
-                    style: StrokeStyle(lineWidth: 1.5, dash: [7, 6])
-                  )
+              ContentUnavailableView {
+                Label(
+                  "Choose a Photo or Drawing",
+                  systemImage: "photo.badge.plus"
+                )
+              } description: {
+                Text("You can crop and position it next.")
               }
-              .shadow(color: .black.opacity(0.18), radius: 8, x: 2, y: 5)
+            }
           }
+          .frame(maxWidth: .infinity)
+          .frame(height: 180)
+          .foregroundStyle(.primary)
         }
         .buttonStyle(.plain)
         .disabled(isLoadingPhoto || isSaving)
@@ -232,85 +202,50 @@ struct CharacterCreatorView: View {
     }
   }
 
-  private var profileSection: some View {
-    PaperPanel(rotation: .degrees(-0.35)) {
-      VStack(alignment: .leading, spacing: 20) {
-        Label("Character Profile", systemImage: "person.text.rectangle")
-          .font(.title3.weight(.bold))
+  private var basicsSection: some View {
+    Section {
+      TextField("Name", text: $name)
 
-        linedTextField("Name", text: $name)
-
-        VStack(alignment: .leading, spacing: 8) {
-          Text("Character Kind")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          Picker("Character Kind", selection: $kind) {
-            ForEach(CustomCharacterKind.allCases) { kind in
-              Text(kind.displayName).tag(kind)
-            }
-          }
-          .pickerStyle(.menu)
+      Picker("Kind", selection: $kind) {
+        ForEach(CustomCharacterKind.allCases) { kind in
+          Text(kind.displayName).tag(kind)
         }
+      }
 
-        VStack(alignment: .leading, spacing: 10) {
-          Text("In the story, which sounds right?")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          VStack(spacing: 8) {
-            ForEach(CharacterPronouns.allCases) { option in
-              choiceChip(
-                storyWordExample(option),
-                isSelected: pronouns == option
-              ) {
-                pronouns = option
-              }
-            }
-          }
+      Picker("Story Wording", selection: $pronouns) {
+        ForEach(CharacterPronouns.allCases) { option in
+          Text(storyWordExample(option)).tag(option)
         }
+      }
+    } header: {
+      Text("Character")
+    } footer: {
+      Text("Choose the sentence you want stories to use.")
+    }
+  }
 
-        VStack(alignment: .leading, spacing: 8) {
-          HStack {
-            Text("Short Bio")
-            Spacer()
-            Text("Optional")
-              .foregroundStyle(.tertiary)
-          }
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
+  private var biographySection: some View {
+    Section("About") {
+      TextField(
+        "Short bio (optional)",
+        text: $biography,
+        axis: .vertical
+      )
+      .lineLimit(3...5)
 
-          TextField(
-            "A curious kid who loves looking at the stars...",
-            text: $biography,
-            axis: .vertical
-          )
-          .lineLimit(3...5)
-          .textFieldStyle(.plain)
-          .padding(10)
-          .background(.primary.opacity(0.045), in: .rect(cornerRadius: 4))
-
-          if biography.trimmingCharacters(
-            in: .whitespacesAndNewlines
-          ).isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-              Text("Suggested Bio")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
-              Text(suggestedBiography)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-              Button("Use This Bio") {
-                biography = suggestedBiography
-              }
-              .font(.caption.weight(.semibold))
-            }
-            .padding(10)
-            .background(
-              Color.blue.opacity(0.08),
-              in: .rect(cornerRadius: 4)
-            )
+      if biography.trimmingCharacters(
+        in: .whitespacesAndNewlines
+      ).isEmpty {
+        Button {
+          biography = suggestedBiography
+        } label: {
+          VStack(alignment: .leading, spacing: 5) {
+            Label("Use Suggested Bio", systemImage: "text.badge.plus")
+              .font(.body.weight(.medium))
+            Text(suggestedBiography)
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .multilineTextAlignment(.leading)
           }
         }
       }
@@ -318,119 +253,72 @@ struct CharacterCreatorView: View {
   }
 
   private var personalitySection: some View {
-    PaperPanel(rotation: .degrees(0.3)) {
-      VStack(alignment: .leading, spacing: 18) {
-        HStack {
-          Label("Personality & Voice", systemImage: "quote.bubble")
-            .font(.title3.weight(.bold))
+    Section {
+      Button {
+        surpriseCharacterDetails()
+      } label: {
+        Label("Surprise Me", systemImage: "dice")
+      }
 
-          Spacer()
-
+      multiSelectMenu(
+        title: "Personality",
+        summary: personalitySummary
+      ) {
+        ForEach(CharacterPersonality.allCases) { personality in
           Button {
-            surpriseCharacterDetails()
+            togglePersonality(personality)
           } label: {
-            Label("Surprise Me", systemImage: "dice")
-              .font(.caption.weight(.semibold))
-          }
-          .buttonStyle(.plain)
-          .foregroundStyle(.blue)
-        }
-
-        VStack(alignment: .leading, spacing: 10) {
-          Text("Choose one or two traits")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 86), spacing: 8)],
-            alignment: .leading,
-            spacing: 8
-          ) {
-            ForEach(CharacterPersonality.allCases) { personality in
-              choiceChip(
-                personality.displayName,
-                isSelected: isPersonalitySelected(personality)
-              ) {
-                togglePersonality(personality)
-              }
+            if isPersonalitySelected(personality) {
+              Label(personality.displayName, systemImage: "checkmark")
+            } else {
+              Text(personality.displayName)
             }
           }
-        }
-
-        VStack(alignment: .leading, spacing: 8) {
-          Text("What do they love?")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
-            alignment: .leading,
-            spacing: 8
-          ) {
-            ForEach(CharacterInterest.allCases) { interest in
-              choiceChip(
-                interest.displayName,
-                isSelected: isInterestSelected(interest)
-              ) {
-                toggleInterest(interest)
-              }
-            }
-          }
-        }
-
-        VStack(alignment: .leading, spacing: 8) {
-          Text("How do they approach adventures?")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          Picker("Adventure Style", selection: $adventureStyle) {
-            ForEach(CharacterAdventureStyle.allCases) { style in
-              Text(style.displayName).tag(style)
-            }
-          }
-          .pickerStyle(.menu)
-
-          Text(adventureStyle.promptDescription.capitalized + ".")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        }
-
-        VStack(alignment: .leading, spacing: 8) {
-          Text("How do they talk?")
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-          Picker("Talking Style", selection: $dialogueStyle) {
-            ForEach(CharacterDialogueStyle.allCases) { style in
-              Text(style.displayName).tag(style)
-            }
-          }
-          .pickerStyle(.menu)
-
-          Text(dialogueStyle.speakingStyle.capitalized + ".")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        }
-
-        VStack(alignment: .leading, spacing: 8) {
-          HStack {
-            Text("Catchphrase")
-            Spacer()
-            Text("Optional")
-              .foregroundStyle(.tertiary)
-          }
-          .font(.caption.weight(.semibold))
-          .foregroundStyle(.secondary)
-
-          TextField(
-            "Adventure awaits!",
-            text: $catchphrase
-          )
-          .textFieldStyle(.plain)
-          .padding(10)
-          .background(.primary.opacity(0.045), in: .rect(cornerRadius: 4))
         }
       }
+
+      multiSelectMenu(
+        title: "Interests",
+        summary: interestSummary
+      ) {
+        ForEach(CharacterInterest.allCases) { interest in
+          Button {
+            toggleInterest(interest)
+          } label: {
+            if isInterestSelected(interest) {
+              Label(interest.displayName, systemImage: "checkmark")
+            } else {
+              Text(interest.displayName)
+            }
+          }
+        }
+      }
+
+      Picker("Adventure Style", selection: $adventureStyle) {
+        ForEach(CharacterAdventureStyle.allCases) { style in
+          Text(style.displayName).tag(style)
+        }
+      }
+    } header: {
+      Text("Story Personality")
+    } footer: {
+      Text(adventureStyle.promptDescription.capitalized + ".")
+    }
+  }
+
+  private var voiceSection: some View {
+    Section {
+      Picker("Talking Style", selection: $dialogueStyle) {
+        ForEach(CharacterDialogueStyle.allCases) { style in
+          Text(style.displayName).tag(style)
+        }
+      }
+
+      TextField("Catchphrase (optional)", text: $catchphrase)
+    } header: {
+      Text("Voice")
+    } footer: {
+      Text(dialogueStyle.speakingStyle.capitalized + ".")
     }
   }
 
@@ -464,53 +352,40 @@ struct CharacterCreatorView: View {
     .padding(.vertical, 12)
   }
 
-  private func linedTextField(
-    _ title: String,
-    text: Binding<String>
-  ) -> some View {
-    VStack(alignment: .leading, spacing: 5) {
-      Text(title)
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-
-      TextField(title, text: text)
-        .textFieldStyle(.plain)
-        .font(.title3)
-        .padding(.vertical, 6)
-        .overlay(alignment: .bottom) {
-          Rectangle()
-            .fill(.primary.opacity(0.28))
-            .frame(height: 1)
-        }
-    }
+  private var personalitySummary: String {
+    [primaryPersonality, secondaryPersonality]
+      .compactMap { $0?.displayName }
+      .joined(separator: ", ")
   }
 
-  private func choiceChip(
-    _ title: String,
-    isSelected: Bool,
-    action: @escaping () -> Void
+  private var interestSummary: String {
+    let summary = [primaryInterest, secondaryInterest]
+      .compactMap { $0?.displayName }
+      .joined(separator: ", ")
+    return summary.isEmpty ? "None selected" : summary
+  }
+
+  private func multiSelectMenu<Content: View>(
+    title: String,
+    summary: String,
+    @ViewBuilder content: @escaping () -> Content
   ) -> some View {
-    Button(action: action) {
-      Text(title)
-        .font(.caption.weight(isSelected ? .bold : .medium))
-        .foregroundStyle(isSelected ? .white : .primary)
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(
-          isSelected ? Color.blue.opacity(0.82) : Color.primary.opacity(0.06),
-          in: .rect(cornerRadius: 4)
-        )
-        .overlay {
-          RoundedRectangle(cornerRadius: 4)
-            .stroke(
-              isSelected ? Color.blue : Color.primary.opacity(0.12),
-              lineWidth: 1
-            )
-        }
+    Menu {
+      content()
+    } label: {
+      HStack {
+        Text(title)
+          .foregroundStyle(.primary)
+        Spacer()
+        Text(summary)
+          .foregroundStyle(.secondary)
+          .lineLimit(1)
+        Image(systemName: "chevron.up.chevron.down")
+          .font(.caption2.weight(.semibold))
+          .foregroundStyle(.tertiary)
+      }
+      .contentShape(.rect)
     }
-    .buttonStyle(.plain)
-    .disabled(isSaving)
   }
 
   private func isPersonalitySelected(

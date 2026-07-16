@@ -29,6 +29,7 @@ struct CreateStoryView: View {
     @State private var generatedBook: Book?
     @State private var showLibraryFullAlert = false
     @State private var showCharacterCreator = false
+    @State private var showCharacterManager = false
 
     // Callback to pass generated book back to parent
     var onBookCreated: ((Book) -> Void)?
@@ -78,11 +79,22 @@ struct CreateStoryView: View {
 
                         // Character Selection
                         VStack(alignment: .leading, spacing: 12) {
-                          Label(
-                            Strings.mainCharacter,
-                            systemImage: "person.fill"
-                          )
-                          .font(.headline)
+                          HStack {
+                            Label(
+                              Strings.mainCharacter,
+                              systemImage: "person.fill"
+                            )
+                            .font(.headline)
+
+                            Spacer()
+
+                            if !customCharacters.isEmpty {
+                              Button("Manage") {
+                                showCharacterManager = true
+                              }
+                              .font(.subheadline)
+                            }
+                          }
 
                           ScrollView(.horizontal, showsIndicators: false) {
                             HStack(alignment: .top, spacing: 12) {
@@ -311,6 +323,18 @@ struct CreateStoryView: View {
             }
       .sheet(isPresented: $showCharacterCreator) {
         CharacterCreatorView()
+      }
+      .sheet(isPresented: $showCharacterManager) {
+        NavigationStack {
+          ManageCharactersView()
+            .toolbar {
+              ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                  showCharacterManager = false
+                }
+              }
+            }
+        }
       }
         }
     }

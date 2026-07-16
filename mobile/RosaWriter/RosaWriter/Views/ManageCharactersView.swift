@@ -9,7 +9,6 @@ import SwiftData
 import SwiftUI
 
 struct ManageCharactersView: View {
-  @Environment(\.colorScheme) private var colorScheme
   @Environment(\.modelContext) private var modelContext
   @Query(sort: \CustomCharacter.createdAt) private var characters:
     [CustomCharacter]
@@ -20,38 +19,19 @@ struct ManageCharactersView: View {
   @State private var errorMessage = ""
   @State private var showError = false
 
-  private var background: some View {
-    LinearGradient(
-      colors: colorScheme == .dark
-        ? [
-          Color(red: 0.08, green: 0.09, blue: 0.11),
-          Color(red: 0.14, green: 0.13, blue: 0.12),
-        ]
-        : [
-          Color(red: 0.80, green: 0.75, blue: 0.65),
-          Color(red: 0.93, green: 0.90, blue: 0.83),
-        ],
-      startPoint: .topLeading,
-      endPoint: .bottomTrailing
-    )
-  }
-
   var body: some View {
-    ZStack {
-      background.ignoresSafeArea()
-
+    Group {
       if characters.isEmpty {
         emptyState
       } else {
-        ScrollView {
-          LazyVStack(spacing: 18) {
+        List {
+          Section {
             ForEach(characters) { character in
               characterCard(character)
             }
           }
-          .padding(20)
-          .padding(.bottom, 80)
         }
+        .listStyle(.insetGrouped)
       }
     }
     .navigationTitle("My Characters")
@@ -99,104 +79,94 @@ struct ManageCharactersView: View {
   }
 
   private var emptyState: some View {
-    PaperPanel(rotation: .degrees(-0.4)) {
-      VStack(spacing: 16) {
-        Image(systemName: "person.crop.rectangle.stack")
-          .font(.system(size: 44))
-          .foregroundStyle(.blue)
-
-        Text("Create Your Cast")
-          .font(.title2.weight(.bold))
-
-        Text(
-          "Add a photo or drawing, then give your character a bio, personality, and voice."
-        )
-        .font(.body)
-        .foregroundStyle(.secondary)
-        .multilineTextAlignment(.center)
-
+    ContentUnavailableView {
+      Label(
+        "No Custom Characters",
+        systemImage: "person.crop.rectangle.stack"
+      )
+    } description: {
+      Text(
+        "Add a photo or drawing, then choose the details Rosa Writer uses in stories."
+      )
+    } actions: {
+      if characters.count < CustomCharacter.maximumCount {
         Button {
           showCreator = true
         } label: {
-          Label("Create a Character", systemImage: "plus")
-            .font(.headline)
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
+          Label("Create Character", systemImage: "plus")
         }
-        .glassEffect(
-          .regular.tint(.blue.opacity(0.82)).interactive(),
-          in: .capsule
-        )
+        .buttonStyle(.borderedProminent)
       }
     }
-    .padding(28)
   }
 
   private func characterCard(
     _ character: CustomCharacter
   ) -> some View {
-    PaperPanel(
-      rotation: .degrees(
-        Int(character.createdAt.timeIntervalSinceReferenceDate)
-          .isMultiple(of: 2) ? -0.25 : 0.25
-      )
-    ) {
+    Button {
+      characterToEdit = character
+    } label: {
       HStack(spacing: 16) {
         CustomCharacterImageView(character: character)
-          .frame(width: 76, height: 92)
-          .background(Color.black.opacity(0.08))
-          .clipShape(.rect(cornerRadius: 3))
+          .frame(width: 54, height: 66)
+          .background(Color.secondary.opacity(0.08))
+          .clipShape(.rect(cornerRadius: 8))
 
         VStack(alignment: .leading, spacing: 6) {
           Text(character.name)
-            .font(.title3.weight(.bold))
+            .font(.body.weight(.semibold))
+            .foregroundStyle(.primary)
 
-          Text(character.kind.displayName)
-            .font(.caption.weight(.semibold))
+          Text(characterSummary(character))
+            .font(.caption)
             .foregroundStyle(.secondary)
-
-          Text(character.biography)
-            .font(.subheadline)
-            .lineLimit(2)
-
-          HStack(spacing: 6) {
-            traitLabel(character.primaryPersonality.displayName)
-            if let secondary = character.secondaryPersonality {
-              traitLabel(secondary.displayName)
-            }
-          }
+            .lineLimit(1)
         }
 
         Spacer(minLength: 0)
 
-        Menu {
-          Button {
-            characterToEdit = character
-          } label: {
-            Label("Edit", systemImage: "pencil")
-          }
+        Image(systemName: "chevron.right")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.tertiary)
+      }
+    }
+    .buttonStyle(.plain)
+    .swipeActions {
+      Button(role: .destructive) {
+        characterToDelete = character
+      } label: {
+        Label("Delete", systemImage: "trash")
+      }
 
-          Button(role: .destructive) {
-            characterToDelete = character
-          } label: {
-            Label("Delete", systemImage: "trash")
-          }
-        } label: {
-          Image(systemName: "ellipsis.circle")
-            .font(.title3)
-            .frame(width: 36, height: 44)
-        }
+      Button {
+        characterToEdit = character
+      } label: {
+        Label("Edit", systemImage: "pencil")
+      }
+      .tint(.blue)
+    }
+    .contextMenu {
+      Button {
+        characterToEdit = character
+      } label: {
+        Label("Edit", systemImage: "pencil")
+      }
+
+      Button(role: .destructive) {
+        characterToDelete = character
+      } label: {
+        Label("Delete", systemImage: "trash")
       }
     }
   }
 
-  private func traitLabel(_ title: String) -> some View {
-    Text(title)
-      .font(.caption2.weight(.semibold))
-      .padding(.horizontal, 7)
-      .padding(.vertical, 4)
-      .background(Color.blue.opacity(0.12), in: .rect(cornerRadius: 3))
+  private func characterSummary(_ character: CustomCharacter) -> String {
+    let traits = [
+      character.primaryPersonality.displayName,
+      character.secondaryPersonality?.displayName,
+    ].compactMap { $0 }
+
+    return ([character.kind.displayName] + traits).joined(separator: " · ")
   }
 
   private func delete(_ character: CustomCharacter) {
