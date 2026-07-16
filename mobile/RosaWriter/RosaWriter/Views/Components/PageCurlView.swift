@@ -323,9 +323,11 @@ struct PageContentView: View {
               Spacer()
 
               if case .single(let imageName) = page.imageLayout {
-                Image(imageName)
-                  .resizable()
-                  .scaledToFit()
+                StoryImage(
+                  storedValue: imageName,
+                  accessibilityLabel: page.text,
+                  presentation: .paper(rotation: .degrees(-1.5))
+                )
                   .frame(maxWidth: imageMaxSize)
                   .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
               }
@@ -376,9 +378,11 @@ struct PageContentView: View {
                 EmptyView()
 
               case .single(let imageName):
-                Image(imageName)
-                  .resizable()
-                  .scaledToFit()
+                StoryImage(
+                  storedValue: imageName,
+                  accessibilityLabel: page.text,
+                  presentation: .paper(rotation: .degrees(1.25))
+                )
                   .frame(maxWidth: imageMaxSize)
                   .shadow(radius: 4)
 
@@ -398,12 +402,14 @@ struct PageContentView: View {
                   // Top image
                   HStack {
                     if !isEvenPage { Spacer() }
-                    Image(topImage)
-                      .resizable()
-                      .scaledToFit()
+                    StoryImage(
+                      storedValue: topImage,
+                      accessibilityLabel: page.text,
+                      presentation: .paper(rotation: .degrees(-1.25)),
+                      horizontalFlip: isEvenPage
+                    )
                       .frame(width: topWidth)
                       .padding(12)
-                      .scaleEffect(x: isEvenPage ? -1 : 1, y: 1, anchor: .center)
                       .shadow(radius: 4)
                     if isEvenPage { Spacer() }
                   }
@@ -412,12 +418,14 @@ struct PageContentView: View {
                   // Bottom image
                   HStack {
                     if isEvenPage { Spacer() }
-                    Image(bottomImage)
-                      .resizable()
-                      .scaledToFit()
+                    StoryImage(
+                      storedValue: bottomImage,
+                      accessibilityLabel: page.text,
+                      presentation: .paper(rotation: .degrees(1.5)),
+                      horizontalFlip: !isEvenPage
+                    )
                       .frame(width: bottomWidth)
                       .padding(12)
-                      .scaleEffect(x: isEvenPage ? 1 : -1, y: 1, anchor: .center)
                       .shadow(radius: 4)
                     if !isEvenPage { Spacer() }
                   }

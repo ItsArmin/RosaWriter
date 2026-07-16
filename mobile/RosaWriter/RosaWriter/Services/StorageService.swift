@@ -209,6 +209,14 @@ class StorageService {
       context.delete(story)
       try context.save()
     }
+
+    do {
+      try StoryImageStorage.deleteBookImages(bookID: id)
+    } catch {
+      // The story is already deleted; leave cleanup retryable instead of
+      // reporting the entire delete operation as failed.
+      print("⚠️ [Storage] Could not delete book images for \(id): \(error)")
+    }
   }
 
   /// Populate database with sample data (call on first launch)

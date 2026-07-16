@@ -10,6 +10,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \CustomCharacter.createdAt) private var customCharacters:
+      [CustomCharacter]
 
     @State private var showResetConfirmation = false
     @State private var showResetSuccess = false
@@ -63,6 +65,53 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(.secondarySystemGroupedBackground))
             .clipShape(.rect(cornerRadius: 12))
+                }
+                .padding(.horizontal)
+
+                // Custom Characters Section
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.crop.rectangle.stack")
+                            .font(.title2)
+                            .foregroundStyle(.blue)
+                        Text("My Characters")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    }
+
+                    NavigationLink {
+                        ManageCharactersView()
+                    } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: "person.badge.plus")
+                                .font(.title2)
+                                .foregroundStyle(.blue)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Manage Characters")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(.primary)
+                                Text(
+                                  "\(customCharacters.count) of \(CustomCharacter.maximumCount) created"
+                                )
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                          Color(.secondarySystemGroupedBackground),
+                          in: .rect(cornerRadius: 12)
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal)
 

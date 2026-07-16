@@ -54,4 +54,27 @@ struct Book: Identifiable, Hashable {
       updatedAt = Date()
     }
   }
+
+  mutating func replaceImageReference(
+    _ source: String,
+    with replacement: String
+  ) {
+    for index in pages.indices {
+      switch pages[index].imageLayout {
+      case .none:
+        continue
+      case .single(let imageName):
+        if imageName == source {
+          pages[index].imageLayout = .single(imageName: replacement)
+        }
+      case .staggered(let topImage, let bottomImage):
+        pages[index].imageLayout = .staggered(
+          topImage: topImage == source ? replacement : topImage,
+          bottomImage: bottomImage == source ? replacement : bottomImage
+        )
+      }
+    }
+
+    updatedAt = Date()
+  }
 }

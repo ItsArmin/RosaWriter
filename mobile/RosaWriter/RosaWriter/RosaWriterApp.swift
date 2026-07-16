@@ -19,7 +19,10 @@ struct RosaWriterApp: App {
   let storageError: Error?
 
   init() {
-    let schema = Schema([StoryData.self])
+    let schema = Schema([
+      StoryData.self,
+      CustomCharacter.self,
+    ])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
     do {
