@@ -434,13 +434,14 @@ final class CustomCharacter {
       .compactMap { $0?.displayName.lowercased() }
       .joined(separator: " and ")
     let subject = pronouns.subjective.capitalized
+    let linkingVerb = pronouns == .theyThem ? "are" : "is"
 
     var sentences = ["\(displayName) is \(traits)."]
     if !interests.isEmpty {
       sentences.append("\(subject) loves \(interests).")
     }
     sentences.append(
-      "\(subject) is \(adventureStyle.promptDescription)."
+      "\(subject) \(linkingVerb) \(adventureStyle.promptDescription)."
     )
     return sentences.joined(separator: " ")
   }

@@ -264,11 +264,13 @@ struct CharacterCreatorView: View {
   }
 
   private var biographySuggestionButton: some View {
-    Button("Use Suggested Bio") {
+    Button {
       biography = suggestedBiography
+    } label: {
+      Text("Use Suggested Bio")
+        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.bordered)
-    .frame(maxWidth: .infinity, alignment: .trailing)
     .listRowInsets(
       EdgeInsets(top: -4, leading: 20, bottom: 4, trailing: 20)
     )
@@ -324,11 +326,13 @@ struct CharacterCreatorView: View {
   }
 
   private var surpriseButton: some View {
-    Button("Surprise Me") {
+    Button {
       surpriseCharacterDetails()
+    } label: {
+      Text("Surprise Me")
+        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.bordered)
-    .frame(maxWidth: .infinity, alignment: .trailing)
     .listRowInsets(
       EdgeInsets(top: -4, leading: 20, bottom: 4, trailing: 20)
     )
