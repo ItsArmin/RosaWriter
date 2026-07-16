@@ -161,7 +161,10 @@ struct CharacterCreatorView: View {
           scale: $cropScale,
           aspect: $photoAspect
         )
-        .frame(maxWidth: 290)
+        .frame(
+          width: 280,
+          height: photoAspect == .square ? 298 : 391
+        )
 
         Picker("Photo shape", selection: $photoAspect) {
           ForEach(CharacterPhotoAspect.allCases) { aspect in
@@ -169,35 +172,57 @@ struct CharacterCreatorView: View {
           }
         }
         .pickerStyle(.segmented)
-        .frame(maxWidth: 290)
+        .frame(width: 280)
+        .onChange(of: photoAspect) { _, _ in
+          resetCrop()
+        }
 
-        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-          Label("Choose a Different Photo", systemImage: "photo.on.rectangle")
-            .font(.subheadline.weight(.semibold))
+        Text("Drag to reposition. Pinch to zoom.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+
+        HStack(spacing: 12) {
+          PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+            Label("Change Photo", systemImage: "photo.on.rectangle")
+          }
+          .buttonStyle(.bordered)
+
+          Button {
+            resetCrop()
+          } label: {
+            Label("Reset Crop", systemImage: "arrow.counterclockwise")
+          }
+          .buttonStyle(.bordered)
         }
         .disabled(isLoadingPhoto || isSaving)
       } else {
-        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-          Group {
+        VStack(spacing: 14) {
+          Image(systemName: "photo.on.rectangle.angled")
+            .font(.system(size: 38))
+            .foregroundStyle(.secondary)
+
+          VStack(spacing: 5) {
+            Text("Add a Photo or Drawing")
+              .font(.headline)
+            Text("You’ll be able to crop and position it.")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+
+          PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
             if isLoadingPhoto {
-              ProgressView("Loading Photo")
+              ProgressView()
+                .frame(minWidth: 120)
             } else {
-              ContentUnavailableView {
-                Label(
-                  "Choose a Photo or Drawing",
-                  systemImage: "photo.badge.plus"
-                )
-              } description: {
-                Text("You can crop and position it next.")
-              }
+              Label("Choose Photo", systemImage: "photo.badge.plus")
+                .frame(minWidth: 120)
             }
           }
-          .frame(maxWidth: .infinity)
-          .frame(height: 180)
-          .foregroundStyle(.primary)
+          .buttonStyle(.borderedProminent)
+          .disabled(isLoadingPhoto || isSaving)
         }
-        .buttonStyle(.plain)
-        .disabled(isLoadingPhoto || isSaving)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 28)
       }
     }
   }
@@ -386,6 +411,7 @@ struct CharacterCreatorView: View {
       }
       .contentShape(.rect)
     }
+    .tint(.primary)
   }
 
   private func isPersonalitySelected(
@@ -456,6 +482,12 @@ struct CharacterCreatorView: View {
     UIImpactFeedbackGenerator(style: .light).impactOccurred()
   }
 
+  private func resetCrop() {
+    cropCenterX = 0.5
+    cropCenterY = 0.5
+    cropScale = 1
+  }
+
   private func loadExistingPhotoIfNeeded() async {
     guard previewImage == nil, let character else { return }
 
@@ -482,9 +514,7 @@ struct CharacterCreatorView: View {
 
       selectedPhotoData = data
       previewImage = image
-      cropCenterX = 0.5
-      cropCenterY = 0.5
-      cropScale = 1
+      resetCrop()
     } catch {
       present(error)
     }

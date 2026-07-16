@@ -33,9 +33,31 @@ struct CharacterPhotoCropView: View {
         viewportSize: viewportSize,
         zoomScale: effectiveScale
       )
-      let storedOffset = CGSize(
-        width: CGFloat(0.5 - centerX) * renderedSize.width,
-        height: CGFloat(0.5 - centerY) * renderedSize.height
+      let horizontalInset = min(
+        0.5,
+        viewportSize.width / max(renderedSize.width * 2, 1)
+      )
+      let verticalInset = min(
+        0.5,
+        viewportSize.height / max(renderedSize.height * 2, 1)
+      )
+      let draggedCenterX = centerX - Double(
+        dragTranslation.width / max(renderedSize.width, 1)
+      )
+      let draggedCenterY = centerY - Double(
+        dragTranslation.height / max(renderedSize.height, 1)
+      )
+      let visibleCenterX = min(
+        max(draggedCenterX, Double(horizontalInset)),
+        1 - Double(horizontalInset)
+      )
+      let visibleCenterY = min(
+        max(draggedCenterY, Double(verticalInset)),
+        1 - Double(verticalInset)
+      )
+      let visibleOffset = CGSize(
+        width: CGFloat(0.5 - visibleCenterX) * renderedSize.width,
+        height: CGFloat(0.5 - visibleCenterY) * renderedSize.height
       )
 
       ZStack {
@@ -45,8 +67,8 @@ struct CharacterPhotoCropView: View {
           .resizable()
           .frame(width: renderedSize.width, height: renderedSize.height)
           .offset(
-            x: storedOffset.width + dragTranslation.width,
-            y: storedOffset.height + dragTranslation.height
+            x: visibleOffset.width,
+            y: visibleOffset.height
           )
 
         cropGrid
