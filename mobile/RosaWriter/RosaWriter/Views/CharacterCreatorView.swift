@@ -108,7 +108,9 @@ struct CharacterCreatorView: View {
 
         basicsSection
         biographySection
+        biographySuggestionButton
         personalitySection
+        surpriseButton
         voiceSection
       }
       .formStyle(.grouped)
@@ -197,10 +199,6 @@ struct CharacterCreatorView: View {
         .disabled(isLoadingPhoto || isSaving)
       } else {
         VStack(spacing: 14) {
-          Image(systemName: "photo.on.rectangle.angled")
-            .font(.system(size: 38))
-            .foregroundStyle(.secondary)
-
           VStack(spacing: 5) {
             Text("Add a Photo or Drawing")
               .font(.headline)
@@ -210,13 +208,14 @@ struct CharacterCreatorView: View {
           }
 
           PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-            if isLoadingPhoto {
+            ZStack {
+              Text("Choose Photo")
+                .opacity(isLoadingPhoto ? 0 : 1)
               ProgressView()
-                .frame(minWidth: 120)
-            } else {
-              Label("Choose Photo", systemImage: "photo.badge.plus")
-                .frame(minWidth: 120)
+                .tint(.white)
+                .opacity(isLoadingPhoto ? 1 : 0)
             }
+            .frame(width: 120)
           }
           .buttonStyle(.borderedProminent)
           .disabled(isLoadingPhoto || isSaving)
@@ -250,41 +249,34 @@ struct CharacterCreatorView: View {
   }
 
   private var biographySection: some View {
-    Section("About") {
+    Section {
       TextField(
         "Short bio (optional)",
         text: $biography,
         axis: .vertical
       )
       .lineLimit(3...5)
-
-      if biography.trimmingCharacters(
-        in: .whitespacesAndNewlines
-      ).isEmpty {
-        Button {
-          biography = suggestedBiography
-        } label: {
-          VStack(alignment: .leading, spacing: 5) {
-            Label("Use Suggested Bio", systemImage: "text.badge.plus")
-              .font(.body.weight(.medium))
-            Text(suggestedBiography)
-              .font(.caption)
-              .foregroundStyle(.secondary)
-              .multilineTextAlignment(.leading)
-          }
-        }
-      }
+    } header: {
+      Text("About")
+    } footer: {
+      Text("Suggested: \(suggestedBiography)")
     }
+  }
+
+  private var biographySuggestionButton: some View {
+    Button("Use Suggested Bio") {
+      biography = suggestedBiography
+    }
+    .buttonStyle(.bordered)
+    .frame(maxWidth: .infinity, alignment: .trailing)
+    .listRowInsets(
+      EdgeInsets(top: -4, leading: 20, bottom: 4, trailing: 20)
+    )
+    .listRowBackground(Color.clear)
   }
 
   private var personalitySection: some View {
     Section {
-      Button {
-        surpriseCharacterDetails()
-      } label: {
-        Label("Surprise Me", systemImage: "dice")
-      }
-
       multiSelectMenu(
         title: "Personality",
         summary: personalitySummary
@@ -329,6 +321,18 @@ struct CharacterCreatorView: View {
     } footer: {
       Text(adventureStyle.promptDescription.capitalized + ".")
     }
+  }
+
+  private var surpriseButton: some View {
+    Button("Surprise Me") {
+      surpriseCharacterDetails()
+    }
+    .buttonStyle(.bordered)
+    .frame(maxWidth: .infinity, alignment: .trailing)
+    .listRowInsets(
+      EdgeInsets(top: -4, leading: 20, bottom: 4, trailing: 20)
+    )
+    .listRowBackground(Color.clear)
   }
 
   private var voiceSection: some View {
