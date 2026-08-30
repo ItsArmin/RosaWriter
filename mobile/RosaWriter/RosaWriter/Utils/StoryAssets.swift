@@ -393,19 +393,9 @@ struct StoryAssets {
         allObjects.first { $0.id == id }
     }
 
-    /// Get a random selection of characters
-    static func randomCharacters(count: Int) -> [StoryCharacter] {
-        Array(allCharacters.shuffled().prefix(count))
-    }
-
     /// Get a random selection of objects
     static func randomObjects(count: Int) -> [StoryObject] {
         Array(allObjects.shuffled().prefix(count))
-    }
-
-    /// Get all asset image names (useful for validation)
-    static var allImageNames: [String] {
-        allCharacters.map { $0.imageName } + allObjects.map { $0.imageName }
     }
 
     /// Get size for a given image name

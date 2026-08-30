@@ -20,48 +20,6 @@ struct StoryPrompts {
 
     // MARK: - Story Generation Prompts
     
-    /// Generates a prompt for creating a story with specific characters and objects
-    static func generateStoryPrompt(
-        characters: [StoryCharacter],
-        objects: [StoryObject],
-        pageCount: Int = 5,
-        theme: String? = nil
-    ) -> String {
-        let characterList = characters.map { simpleCharacterDescription($0) }.joined(separator: "\n")
-    let objectList = objects.map { $0.displayName }.joined(separator: ", ")
-        let mainCharacter = characters.first ?? StoryAssets.allCharacters[0]
-
-        var prompt = """
-            Write a \(pageCount)-page children's story featuring \(mainCharacter.displayName) as the main character.
-
-            CHARACTERS:
-            \(characterList)
-
-            OBJECTS TO INCLUDE: \(objectList)
-            """
-        
-        if let theme = theme {
-            prompt += "\nTHEME: \(theme)"
-        }
-        
-        prompt += """
-
-
-            WRITING STYLE: Short sentences. Simple words. Clear and folksy, like a bedtime story.
-
-            GUIDELINES:
-            - Beginning, middle, and a nice ending
-            - \(mainCharacter.displayName) is the main character (show on page 1)
-            - Each character sounds different based on their personality
-            - Use "straight quotes" for dialogue
-            - Don't write "The End"
-
-            Select up to two available story images for each page.
-            """
-
-        return prompt
-    }
-
     /// Generates a custom story prompt with user-selected options
     static func generateCustomStoryPrompt(
         mainCharacter: StoryCharacter,
@@ -107,35 +65,6 @@ struct StoryPrompts {
             """
 
         return prompt
-    }
-
-    /// Generates a prompt for a random story with random assets
-    static func randomStoryPrompt(pageCount: Int = 5, theme: String? = nil) -> String {
-        let characters = StoryAssets.randomCharacters(count: Int.random(in: 2...3))
-        let objects = StoryAssets.randomObjects(count: Int.random(in: 2...3))
-        return generateStoryPrompt(
-            characters: characters,
-            objects: objects,
-            pageCount: pageCount,
-            theme: theme
-        )
-    }
-
-    /// Generates a prompt for refining a specific page
-    static func refinePagePrompt(originalText: String, instruction: String) -> String {
-        return """
-            Refine the following story page based on this instruction: "\(instruction)"
-
-            Original text:
-            \(originalText)
-
-            Keep it:
-            - Natural and engaging
-            - Age-appropriate (5-10 years old)
-            - Similar length to the original
-
-            Respond with only the refined text.
-            """
     }
 
     // MARK: - Helper Methods

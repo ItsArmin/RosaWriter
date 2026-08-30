@@ -95,3 +95,6 @@ deployment/
 *.doc
 *.xls
 *.ppt
+
+# macOS
+.DS_Store
