@@ -12,7 +12,6 @@ import UIKit
 struct CreateStoryView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var aiService = AIStoryService.shared
     @Query(sort: \CustomCharacter.createdAt) private var customCharacters:
       [CustomCharacter]
 
@@ -26,7 +25,6 @@ struct CreateStoryView: View {
     @State private var isGenerating = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var generatedBook: Book?
     @State private var showLibraryFullAlert = false
     @State private var showCharacterCreator = false
     @State private var showCharacterManager = false
@@ -482,135 +480,49 @@ struct CreateStoryView: View {
     }
 
     private func createStory() {
-        // Check library limit before generating
+      // Check library limit before generating
+      do {
+        let canCreate = try StorageService.shared.canCreateBook(
+          context: modelContext
+        )
+        if !canCreate {
+          showLibraryFullAlert = true
+          return
+        }
+      } catch {
+        errorMessage = "Failed to check library: \(error.localizedDescription)"
+        showError = true
+        return
+      }
+
+      let request = StoryRequest(
+        mainCharacter: selectedCharacter,
+        mood: selectedMood,
+        spark: selectedSpark,
+        coverColor: selectedColor,
+        customPhoto: selectedCustomCharacter.map {
+          CustomCharacterPhoto(fileName: $0.imageFileName, crop: $0.photoCrop)
+        }
+      )
+
+      isGenerating = true
+
+      Task {
         do {
-            let canCreate = try StorageService.shared.canCreateBook(context: modelContext)
-            if !canCreate {
-                showLibraryFullAlert = true
-                return
-            }
+          let book = try await BookService.shared.makeBook(for: request)
+          UINotificationFeedbackGenerator().notificationOccurred(.success)
+          onBookCreated?(book)
+          dismiss()
         } catch {
-            errorMessage = "Failed to check library: \(error.localizedDescription)"
-            showError = true
-            return
+          isGenerating = false
+          errorMessage = "Failed to create story: \(error.localizedDescription)"
+          showError = true
         }
-        
-        let character = selectedCharacter
-        let mood = selectedMood
-        let spark = selectedSpark
-        let color = selectedColor
-        let customPhoto = selectedCustomCharacter.map {
-          (fileName: $0.imageFileName, crop: $0.photoCrop)
-        }
-
-        isGenerating = true
-
-        Task {
-            do {
-        var book: Book
-
-        // Pick a random page count for this story
-        let pageCount = AppConstants.randomAIBookPageCount
-        print("📚 Selected page count: \(pageCount)")
-
-        // Check if Apple Intelligence is available
-        if AIStoryService.isAppleIntelligenceAvailable() {
-          do {
-            print("📚 Using Apple Intelligence for story generation")
-            book = try await AIStoryService.shared.generateCustomStory(
-              mainCharacter: character,
-              mood: mood,
-              spark: spark,
-              pageCount: pageCount,
-              coverColor: color
-            )
-          } catch {
-            print(
-              "⚠️ Apple Intelligence generation failed; using classic stories: \(error)"
-            )
-            book = try await generateFallbackStory(
-              character: character,
-              mood: mood,
-              spark: spark,
-              color: color
-            )
-          }
-        } else {
-          print("📚 Using template-based fallback for story generation")
-          book = try await generateFallbackStory(
-            character: character,
-            mood: mood,
-            spark: spark,
-            color: color
-          )
-        }
-
-        if let customPhoto {
-          let snapshot = try await BookImageSnapshotService.shared
-            .createSnapshot(
-              sourceFileName: customPhoto.fileName,
-              crop: customPhoto.crop,
-              bookID: book.id
-            )
-          book.replaceImageReference(
-            character.imageName,
-            with: snapshot.storedValue
-          )
-        }
-
-                // Success! Pass book back and dismiss
-                await MainActor.run {
-                    #if os(iOS)
-                    UINotificationFeedbackGenerator().notificationOccurred(.success)
-                    #endif
-                    generatedBook = book
-                    onBookCreated?(book)
-                    dismiss()
-                }
-            } catch {
-                await MainActor.run {
-                    isGenerating = false
-                    errorMessage =
-                        "Failed to create story: \(error.localizedDescription)"
-                    showError = true
-                }
-            }
+      }
     }
-  }
-
-  private func generateFallbackStory(
-    character: StoryCharacter,
-    mood: StoryMood,
-    spark: StorySpark,
-    color: CoverColor
-  ) async throws -> Book {
-    try await FallbackStoryService.shared.generateCustomStory(
-      mainCharacter: character,
-      mood: mood,
-      theme: mapSparkToTheme(spark),
-      coverColor: color
-    )
-  }
-
-  /// Map StorySpark to StoryTheme for fallback service
-  private func mapSparkToTheme(_ spark: StorySpark) -> StoryTheme {
-    switch spark {
-    case .birthday:
-      return .birthday
-    case .treasureHunt, .magicalDiscovery, .lostAndFound:
-      return .adventure
-    case .helpingFriend, .buildingSomething:
-      return .friendship
-    case .solvingProblem:
-      return .mystery
-    case .findingFood:
-      return .celebration
-    case .random:
-      return StoryTheme.allCases.randomElement() ?? .adventure
-    }
-  }
 }
 
 #Preview {
     CreateStoryView()
+        .modelContainer(for: [StoryData.self, CustomCharacter.self], inMemory: true)
 }
