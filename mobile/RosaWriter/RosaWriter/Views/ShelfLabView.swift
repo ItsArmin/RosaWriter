@@ -12,25 +12,25 @@ struct ShelfLabView: View {
   @Environment(\.dismiss) private var dismiss
 
   @AppStorage(ShelfLabKey.topDepth)
-  private var topDepth = ShelfLabDefaults.topDepth
+  private var topDepth = ShelfTuning.topDepth
   @AppStorage(ShelfLabKey.faceHeight)
-  private var faceHeight = ShelfLabDefaults.faceHeight
+  private var faceHeight = ShelfTuning.faceHeight
   @AppStorage(ShelfLabKey.backEdgeInset)
-  private var backEdgeInset = ShelfLabDefaults.backEdgeInset
+  private var backEdgeInset = ShelfTuning.backEdgeInset
   @AppStorage(ShelfLabKey.topRearBrightness)
-  private var topRearBrightness = ShelfLabDefaults.topRearBrightness
+  private var topRearBrightness = ShelfTuning.topRearBrightness
   @AppStorage(ShelfLabKey.topFrontBrightness)
-  private var topFrontBrightness = ShelfLabDefaults.topFrontBrightness
+  private var topFrontBrightness = ShelfTuning.topFrontBrightness
   @AppStorage(ShelfLabKey.faceBrightness)
-  private var faceBrightness = ShelfLabDefaults.faceBrightness
+  private var faceBrightness = ShelfTuning.faceBrightness
   @AppStorage(ShelfLabKey.edgeHighlight)
-  private var edgeHighlight = ShelfLabDefaults.edgeHighlight
+  private var edgeHighlight = ShelfTuning.edgeHighlight
   @AppStorage(ShelfLabKey.shadowOpacity)
-  private var shadowOpacity = ShelfLabDefaults.shadowOpacity
+  private var shadowOpacity = ShelfTuning.shadowOpacity
   @AppStorage(ShelfLabKey.shadowRadius)
-  private var shadowRadius = ShelfLabDefaults.shadowRadius
+  private var shadowRadius = ShelfTuning.shadowRadius
   @AppStorage(ShelfLabKey.shadowOffset)
-  private var shadowOffset = ShelfLabDefaults.shadowOffset
+  private var shadowOffset = ShelfTuning.shadowOffset
 
   var body: some View {
     NavigationStack {
@@ -154,16 +154,16 @@ struct ShelfLabView: View {
   }
 
   private func reset() {
-    topDepth = ShelfLabDefaults.topDepth
-    faceHeight = ShelfLabDefaults.faceHeight
-    backEdgeInset = ShelfLabDefaults.backEdgeInset
-    topRearBrightness = ShelfLabDefaults.topRearBrightness
-    topFrontBrightness = ShelfLabDefaults.topFrontBrightness
-    faceBrightness = ShelfLabDefaults.faceBrightness
-    edgeHighlight = ShelfLabDefaults.edgeHighlight
-    shadowOpacity = ShelfLabDefaults.shadowOpacity
-    shadowRadius = ShelfLabDefaults.shadowRadius
-    shadowOffset = ShelfLabDefaults.shadowOffset
+    topDepth = ShelfTuning.topDepth
+    faceHeight = ShelfTuning.faceHeight
+    backEdgeInset = ShelfTuning.backEdgeInset
+    topRearBrightness = ShelfTuning.topRearBrightness
+    topFrontBrightness = ShelfTuning.topFrontBrightness
+    faceBrightness = ShelfTuning.faceBrightness
+    edgeHighlight = ShelfTuning.edgeHighlight
+    shadowOpacity = ShelfTuning.shadowOpacity
+    shadowRadius = ShelfTuning.shadowRadius
+    shadowOffset = ShelfTuning.shadowOffset
   }
 }
 #endif

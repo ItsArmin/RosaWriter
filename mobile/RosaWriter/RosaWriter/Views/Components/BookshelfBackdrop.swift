@@ -7,20 +7,9 @@
 
 import SwiftUI
 
-enum ShelfLabKey {
-  static let topDepth = "shelfLab.dark.topDepth"
-  static let faceHeight = "shelfLab.dark.faceHeight"
-  static let backEdgeInset = "shelfLab.dark.backEdgeInset"
-  static let topRearBrightness = "shelfLab.dark.topRearBrightness"
-  static let topFrontBrightness = "shelfLab.dark.topFrontBrightness"
-  static let faceBrightness = "shelfLab.dark.faceBrightness"
-  static let edgeHighlight = "shelfLab.dark.edgeHighlight"
-  static let shadowOpacity = "shelfLab.dark.shadowOpacity"
-  static let shadowRadius = "shelfLab.dark.shadowRadius"
-  static let shadowOffset = "shelfLab.dark.shadowOffset"
-}
-
-enum ShelfLabDefaults {
+/// The dark-mode shelf values arrived at in Shelf Lab. These ship; the lab only
+/// overrides them in debug builds.
+enum ShelfTuning {
   static let topDepth = 8.0
   static let faceHeight = 6.0
   static let backEdgeInset = 17.0
@@ -31,6 +20,92 @@ enum ShelfLabDefaults {
   static let shadowOpacity = 0.42
   static let shadowRadius = 8.0
   static let shadowOffset = 5.0
+}
+
+#if DEBUG
+  enum ShelfLabKey {
+    static let topDepth = "shelfLab.dark.topDepth"
+    static let faceHeight = "shelfLab.dark.faceHeight"
+    static let backEdgeInset = "shelfLab.dark.backEdgeInset"
+    static let topRearBrightness = "shelfLab.dark.topRearBrightness"
+    static let topFrontBrightness = "shelfLab.dark.topFrontBrightness"
+    static let faceBrightness = "shelfLab.dark.faceBrightness"
+    static let edgeHighlight = "shelfLab.dark.edgeHighlight"
+    static let shadowOpacity = "shelfLab.dark.shadowOpacity"
+    static let shadowRadius = "shelfLab.dark.shadowRadius"
+    static let shadowOffset = "shelfLab.dark.shadowOffset"
+  }
+#endif
+
+/// Every value that differs between the light and dark shelf renderings, so
+/// each one has a single definition.
+struct ShelfAppearance {
+  let topDepth: Double
+  let faceHeight: Double
+  let backEdgeInset: Double
+  let frontOvershoot: Double
+  let topColors: [Color]
+  let faceColors: [Color]
+  let edgeHighlight: Double
+  let shadowOpacity: Double
+  let shadowRadius: Double
+  let shadowOffset: Double
+}
+
+extension ShelfAppearance {
+  static let light = ShelfAppearance(
+    topDepth: 7,
+    faceHeight: 6,
+    backEdgeInset: 0,
+    frontOvershoot: 8,
+    topColors: [
+      .white,
+      Color(red: 0.80, green: 0.81, blue: 0.82),
+    ],
+    faceColors: [
+      Color(red: 0.96, green: 0.965, blue: 0.97),
+      Color(red: 0.84, green: 0.85, blue: 0.87),
+    ],
+    edgeHighlight: 0.50,
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: 8
+  )
+
+  /// Dark shelves are described by brightness rather than literal colors so
+  /// Shelf Lab can drive them from sliders.
+  static func dark(
+    topDepth: Double = ShelfTuning.topDepth,
+    faceHeight: Double = ShelfTuning.faceHeight,
+    backEdgeInset: Double = ShelfTuning.backEdgeInset,
+    topRearBrightness: Double = ShelfTuning.topRearBrightness,
+    topFrontBrightness: Double = ShelfTuning.topFrontBrightness,
+    faceBrightness: Double = ShelfTuning.faceBrightness,
+    edgeHighlight: Double = ShelfTuning.edgeHighlight,
+    shadowOpacity: Double = ShelfTuning.shadowOpacity,
+    shadowRadius: Double = ShelfTuning.shadowRadius,
+    shadowOffset: Double = ShelfTuning.shadowOffset
+  ) -> ShelfAppearance {
+    ShelfAppearance(
+      topDepth: topDepth,
+      faceHeight: faceHeight,
+      backEdgeInset: backEdgeInset,
+      frontOvershoot: 0,
+      topColors: [gray(topRearBrightness), gray(topFrontBrightness)],
+      faceColors: [
+        gray(faceBrightness),
+        gray(max(0, faceBrightness - 0.08)),
+      ],
+      edgeHighlight: edgeHighlight,
+      shadowOpacity: shadowOpacity,
+      shadowRadius: shadowRadius,
+      shadowOffset: shadowOffset
+    )
+  }
+
+  private static func gray(_ brightness: Double) -> Color {
+    Color(red: brightness, green: brightness, blue: brightness + 0.02)
+  }
 }
 
 /// A quiet, warm background that lets the book covers remain the focus.
@@ -98,7 +173,6 @@ private struct ShelfTopPlane: Shape {
 
 enum FloatingShelfLayoutMetrics {
   static let contentTopInset: CGFloat = 12
-  static let shelfDepth: CGFloat = 7
   static let rowSpacing: CGFloat = -14
 
   static var shelfTopOffset: CGFloat {
@@ -117,131 +191,94 @@ enum FloatingShelfLayoutMetrics {
 struct FloatingShelfSurface: View {
   @Environment(\.colorScheme) private var colorScheme
 
-  @AppStorage(ShelfLabKey.topDepth)
-  private var darkTopDepth = ShelfLabDefaults.topDepth
-  @AppStorage(ShelfLabKey.faceHeight)
-  private var darkFaceHeight = ShelfLabDefaults.faceHeight
-  @AppStorage(ShelfLabKey.backEdgeInset)
-  private var darkBackEdgeInset = ShelfLabDefaults.backEdgeInset
-  @AppStorage(ShelfLabKey.topRearBrightness)
-  private var darkTopRearBrightness = ShelfLabDefaults.topRearBrightness
-  @AppStorage(ShelfLabKey.topFrontBrightness)
-  private var darkTopFrontBrightness = ShelfLabDefaults.topFrontBrightness
-  @AppStorage(ShelfLabKey.faceBrightness)
-  private var darkFaceBrightness = ShelfLabDefaults.faceBrightness
-  @AppStorage(ShelfLabKey.edgeHighlight)
-  private var darkEdgeHighlight = ShelfLabDefaults.edgeHighlight
-  @AppStorage(ShelfLabKey.shadowOpacity)
-  private var darkShadowOpacity = ShelfLabDefaults.shadowOpacity
-  @AppStorage(ShelfLabKey.shadowRadius)
-  private var darkShadowRadius = ShelfLabDefaults.shadowRadius
-  @AppStorage(ShelfLabKey.shadowOffset)
-  private var darkShadowOffset = ShelfLabDefaults.shadowOffset
+  #if DEBUG
+    @AppStorage(ShelfLabKey.topDepth)
+    private var labTopDepth = ShelfTuning.topDepth
+    @AppStorage(ShelfLabKey.faceHeight)
+    private var labFaceHeight = ShelfTuning.faceHeight
+    @AppStorage(ShelfLabKey.backEdgeInset)
+    private var labBackEdgeInset = ShelfTuning.backEdgeInset
+    @AppStorage(ShelfLabKey.topRearBrightness)
+    private var labTopRearBrightness = ShelfTuning.topRearBrightness
+    @AppStorage(ShelfLabKey.topFrontBrightness)
+    private var labTopFrontBrightness = ShelfTuning.topFrontBrightness
+    @AppStorage(ShelfLabKey.faceBrightness)
+    private var labFaceBrightness = ShelfTuning.faceBrightness
+    @AppStorage(ShelfLabKey.edgeHighlight)
+    private var labEdgeHighlight = ShelfTuning.edgeHighlight
+    @AppStorage(ShelfLabKey.shadowOpacity)
+    private var labShadowOpacity = ShelfTuning.shadowOpacity
+    @AppStorage(ShelfLabKey.shadowRadius)
+    private var labShadowRadius = ShelfTuning.shadowRadius
+    @AppStorage(ShelfLabKey.shadowOffset)
+    private var labShadowOffset = ShelfTuning.shadowOffset
+  #endif
 
-  private var shelfFaceHeight: CGFloat {
-    colorScheme == .dark ? CGFloat(darkFaceHeight) : 6
-  }
+  private var appearance: ShelfAppearance {
+    guard colorScheme == .dark else { return .light }
 
-  private var visualShelfDepth: CGFloat {
-    colorScheme == .dark
-      ? CGFloat(darkTopDepth)
-      : FloatingShelfLayoutMetrics.shelfDepth
-  }
-
-  private var backEdgeInset: CGFloat {
-    colorScheme == .dark ? CGFloat(darkBackEdgeInset) : 0
-  }
-
-  private var frontOvershoot: CGFloat {
-    colorScheme == .dark ? 0 : 8
-  }
-
-  private func gray(_ brightness: Double) -> Color {
-    Color(red: brightness, green: brightness, blue: brightness + 0.02)
-  }
-
-  private var shelfTopGradient: Gradient {
-    if colorScheme == .dark {
-      return Gradient(colors: [
-        gray(darkTopRearBrightness),
-        gray(darkTopFrontBrightness),
-      ])
-    }
-
-    return Gradient(colors: [
-      .white,
-      Color(red: 0.80, green: 0.81, blue: 0.82),
-    ])
-  }
-
-  private var shelfFaceColors: [Color] {
-    if colorScheme == .dark {
-      return [
-        gray(darkFaceBrightness),
-        gray(max(0, darkFaceBrightness - 0.08)),
-      ]
-    }
-
-    return [
-      Color(red: 0.96, green: 0.965, blue: 0.97),
-      Color(red: 0.84, green: 0.85, blue: 0.87),
-    ]
+    #if DEBUG
+      return .dark(
+        topDepth: labTopDepth,
+        faceHeight: labFaceHeight,
+        backEdgeInset: labBackEdgeInset,
+        topRearBrightness: labTopRearBrightness,
+        topFrontBrightness: labTopFrontBrightness,
+        faceBrightness: labFaceBrightness,
+        edgeHighlight: labEdgeHighlight,
+        shadowOpacity: labShadowOpacity,
+        shadowRadius: labShadowRadius,
+        shadowOffset: labShadowOffset
+      )
+    #else
+      return .dark()
+    #endif
   }
 
   var body: some View {
-    ZStack(alignment: .top) {
+    let shelf = appearance
+
+    return ZStack(alignment: .top) {
       ShelfTopPlane(
-        backEdgeInset: backEdgeInset,
-        frontOvershoot: frontOvershoot
+        backEdgeInset: shelf.backEdgeInset,
+        frontOvershoot: shelf.frontOvershoot
       )
-        .fill(
-          LinearGradient(
-            gradient: shelfTopGradient,
-            startPoint: .top,
-            endPoint: .bottom
-          )
+      .fill(
+        LinearGradient(
+          colors: shelf.topColors,
+          startPoint: .top,
+          endPoint: .bottom
         )
-        .overlay {
-          ShelfTopPlane(
-            backEdgeInset: backEdgeInset,
-            frontOvershoot: frontOvershoot
-          )
-            .stroke(
-              .white.opacity(
-                colorScheme == .dark ? darkEdgeHighlight : 0.50
-              )
-            )
-        }
-        .frame(height: visualShelfDepth)
-        .accessibilityHidden(true)
+      )
+      .overlay {
+        ShelfTopPlane(
+          backEdgeInset: shelf.backEdgeInset,
+          frontOvershoot: shelf.frontOvershoot
+        )
+        .stroke(.white.opacity(shelf.edgeHighlight))
+      }
+      .frame(height: shelf.topDepth)
+      .accessibilityHidden(true)
 
       Rectangle()
         .fill(
           LinearGradient(
-            colors: shelfFaceColors,
+            colors: shelf.faceColors,
             startPoint: .top,
             endPoint: .bottom
           )
         )
-        .frame(height: shelfFaceHeight)
-        .offset(
-          y: visualShelfDepth - 1
-        )
+        .frame(height: shelf.faceHeight)
+        .offset(y: shelf.topDepth - 1)
         .shadow(
-          color: .black.opacity(
-            colorScheme == .dark ? darkShadowOpacity : 0.22
-          ),
-          radius: colorScheme == .dark
-            ? CGFloat(darkShadowRadius) : 8,
-          y: colorScheme == .dark
-            ? CGFloat(darkShadowOffset) : 8
+          color: .black.opacity(shelf.shadowOpacity),
+          radius: shelf.shadowRadius,
+          y: shelf.shadowOffset
         )
         .accessibilityHidden(true)
     }
     .frame(maxWidth: .infinity)
-    .frame(
-      height: visualShelfDepth + shelfFaceHeight
-    )
+    .frame(height: shelf.topDepth + shelf.faceHeight)
   }
 }
 
