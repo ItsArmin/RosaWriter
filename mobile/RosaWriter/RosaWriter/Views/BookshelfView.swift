@@ -43,16 +43,95 @@ struct BookshelfView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var navigateToSettings = false
     @State private var sortOrder: BookSortOrder = .newestFirst
+    @State private var shelfWidth: CGFloat = 0
+    @State private var bookshelfViewportHeight: CGFloat = 0
+    @State private var libraryHeaderHeight: CGFloat = 0
+    #if DEBUG
+        @State private var showShelfLab = false
+    #endif
 
-    let columns = [
-        GridItem(
-            .adaptive(
+    private let shelfHorizontalPadding: CGFloat = 20
+    private let shelfBookSpacing: CGFloat = 20
+
+    private var shelfColumnCount: Int {
+        guard shelfWidth > 0 else { return 2 }
+        let usableWidth = max(0, shelfWidth - shelfHorizontalPadding * 2)
+        let minimumCellWidth =
+            BookCoverConstants.totalWidth + shelfBookSpacing
+        return max(
+            1,
+            Int(
+                (usableWidth + shelfBookSpacing)
+                    / minimumCellWidth
+            )
+        )
+    }
+
+    private var shelfColumns: [GridItem] {
+        Array(
+            repeating: GridItem(
+                .flexible(
                 minimum: BookCoverConstants.totalWidth,
                 maximum: BookCoverConstants.totalWidth + 34
+                ),
+                spacing: shelfBookSpacing
             ),
-            spacing: 20
+            count: shelfColumnCount
         )
-    ]
+    }
+
+    private var shelfRows: [[Book]] {
+        stride(
+            from: 0,
+            to: sortedBooks.count,
+            by: shelfColumnCount
+        ).map { startIndex in
+            let endIndex = min(startIndex + shelfColumnCount, sortedBooks.count)
+            return Array(sortedBooks[startIndex..<endIndex])
+        }
+    }
+
+    private var availableShelfHeight: CGFloat {
+        max(0, bookshelfViewportHeight - libraryHeaderHeight)
+    }
+
+    private var trailingEmptyShelfCount: Int {
+        max(0, targetShelfRowCount - shelfRows.count)
+    }
+
+    private var bottomShelfIsOccupied: Bool {
+        !shelfRows.isEmpty && shelfRows.count >= targetShelfRowCount
+    }
+
+    private var bottomScrollClearance: CGFloat {
+        bottomShelfIsOccupied ? 110 : 0
+    }
+
+    private var targetShelfRowCount: Int {
+        guard availableShelfHeight > 0 else { return 3 }
+
+        let heightBelowFirstShelf = max(
+            0,
+            availableShelfHeight
+                - FloatingShelfLayoutMetrics.shelfTopOffset
+        )
+        let calculatedRowCount = max(
+            1,
+            1 + Int(
+                heightBelowFirstShelf
+                    / FloatingShelfLayoutMetrics.rowPitch
+            )
+        )
+        return shelfColumnCount <= 2
+            ? max(3, calculatedRowCount)
+            : calculatedRowCount
+    }
+
+    private func trailingShelfY(at index: Int) -> CGFloat {
+        FloatingShelfLayoutMetrics.shelfTopOffset
+            + CGFloat(shelfRows.count + index)
+                * FloatingShelfLayoutMetrics.rowPitch
+    }
 
     var sortedBooks: [Book] {
         switch sortOrder {
@@ -75,16 +154,7 @@ struct BookshelfView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(.systemBackground),
-                        Color(.systemGray6),
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                BookshelfBackdrop()
 
                 ScrollView {
                     VStack(spacing: 0) {
@@ -114,17 +184,62 @@ struct BookshelfView: View {
                                 )
                             }
                         )
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { height in
+                            libraryHeaderHeight = height
+                        }
 
-                        if books.isEmpty {
-                            emptyStateContent
-                        } else {
-                            LazyVGrid(columns: columns, spacing: 30) {
-                                ForEach(sortedBooks) { book in
-                                    bookCoverView(for: book)
+                        ZStack(alignment: .top) {
+                            LazyVStack(
+                                spacing: FloatingShelfLayoutMetrics.rowSpacing
+                            ) {
+                                ForEach(
+                                    Array(shelfRows.enumerated()),
+                                    id: \.offset
+                                ) { _, row in
+                                    FloatingShelfRow {
+                                        LazyVGrid(
+                                            columns: shelfColumns,
+                                            spacing: 0
+                                        ) {
+                                            ForEach(row) { book in
+                                                bookCoverView(for: book)
+                                            }
+                                        }
+                                        .padding(
+                                            .horizontal,
+                                            shelfHorizontalPadding
+                                        )
+                                    }
                                 }
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 20)
+
+                            if trailingEmptyShelfCount > 0 {
+                                ForEach(
+                                    0..<trailingEmptyShelfCount,
+                                    id: \.self
+                                ) { index in
+                                    FloatingShelfSurface()
+                                        .offset(y: trailingShelfY(at: index))
+                                }
+                                .allowsHitTesting(false)
+                                .accessibilityHidden(true)
+                            }
+
+                            if books.isEmpty {
+                                emptyStateContent
+                            }
+                        }
+                        .frame(
+                            minHeight: availableShelfHeight,
+                            alignment: .top
+                        )
+                        .padding(.bottom, bottomScrollClearance)
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.width
+                        } action: { width in
+                            shelfWidth = width
                         }
                     }
                 }
@@ -132,6 +247,7 @@ struct BookshelfView: View {
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                     scrollOffset = value
                 }
+                .scrollDisabled(shelfRows.count < targetShelfRowCount)
 
                 // Floating Action Button
                 VStack {
@@ -177,6 +293,11 @@ struct BookshelfView: View {
                         .padding(.bottom, 20)
                     }
                 }
+            }
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height
+            } action: { height in
+                bookshelfViewportHeight = height
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -259,6 +380,20 @@ struct BookshelfView: View {
                         }
                     }
 
+                    #if DEBUG
+                        if DevelopmentFeatures.shelfLabEnabled {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button {
+                                    showShelfLab = true
+                                } label: {
+                                    Image(systemName: "slider.horizontal.3")
+                                        .font(.title3)
+                                }
+                                .accessibilityLabel("Open Shelf Lab")
+                            }
+                        }
+                    #endif
+
                     ToolbarSpacer(placement: .topBarTrailing)
 
                     // 3) Settings (rightmost)
@@ -272,6 +407,13 @@ struct BookshelfView: View {
                     }
                 }
             }
+            #if DEBUG
+                .sheet(isPresented: $showShelfLab) {
+                    ShelfLabView()
+                        .presentationDetents([.medium, .large])
+                        .presentationBackground(.ultraThinMaterial)
+                }
+            #endif
             .sheet(isPresented: $showCreateStory) {
                 CreateStoryView { newBook in
                     do {
@@ -320,46 +462,37 @@ struct BookshelfView: View {
     // MARK: - Views
 
     private var emptyStateContent: some View {
-        VStack(spacing: 20) {
-            Spacer()
-                .frame(height: 40)
-
+        VStack(spacing: 16) {
             Image(systemName: "books.vertical")
-                .font(.system(size: 60))
-        .foregroundStyle(.secondary)
+                .font(.system(size: 44))
+                .foregroundStyle(.secondary)
 
-      Text(Strings.noBooksYet)
+            Text(Strings.noBooksYet)
                 .font(.title2)
                 .fontWeight(.semibold)
 
-      Text(Strings.createFirstStory)
+            Text(Strings.createFirstStory)
                 .font(.subheadline)
-        .foregroundStyle(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button(action: {
+            Button {
                 showCreateStory = true
-            }) {
-        Label(Strings.createStory, systemImage: "sparkles")
+            } label: {
+                Label(Strings.createStory, systemImage: "sparkles")
                     .font(.headline)
-          .foregroundStyle(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.blue, Color.purple],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-          .clipShape(.rect(cornerRadius: 12))
+                    .contentShape(.capsule)
             }
-            .padding(.top, 8)
-
-            Spacer()
+            .glassEffect(
+                .regular.tint(.blue.opacity(0.8)).interactive(),
+                in: .capsule
+            )
         }
-        .padding()
-        .frame(minHeight: 350)
+        .padding(.horizontal, 40)
+        .padding(.top, 30)
     }
 
     private func bookCoverView(for book: Book) -> some View {
