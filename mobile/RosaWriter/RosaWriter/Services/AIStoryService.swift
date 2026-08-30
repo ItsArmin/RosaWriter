@@ -207,91 +207,36 @@ class AIStoryService: ObservableObject {
     mainCharacter: StoryCharacter,
     coverColor: CoverColor
   ) -> Book {
-    var book = Book(title: aiStory.title)
+    let pages = aiStory.pages.map { page in
+      DraftPage(
+        pageNumber: page.pageNumber,
+        text: page.text,
+        assetIDs: assetIDs(for: page, mainCharacter: mainCharacter)
+      )
+    }
 
-    // Create cover page - always use the main character
-    let coverPage = BookPage(
-      text: aiStory.title,
-      pageNumber: 0,
-      imageLayout: .single(imageName: mainCharacter.imageName),
-      isCover: true,
+    return BookBuilder.makeBook(
+      title: aiStory.title,
+      pages: pages,
+      mainCharacter: mainCharacter,
       coverColor: coverColor
     )
-    book.addPage(coverPage)
-
-    // Create content pages
-    for aiPage in aiStory.pages {
-      var suggestedImages = aiPage.suggestedImages.map {
-        $0.assetID(mainCharacterID: mainCharacter.id)
-      }
-      
-      // Ensure page 1 always features the main character
-      if aiPage.pageNumber == 1 && !suggestedImages.contains(mainCharacter.id) {
-        // Insert main character at the beginning of suggested images
-        suggestedImages.insert(mainCharacter.id, at: 0)
-        // Limit to 2 images max
-        if suggestedImages.count > 2 {
-          suggestedImages = Array(suggestedImages.prefix(2))
-        }
-      }
-      
-      let imageLayout = determineImageLayout(
-        from: suggestedImages,
-        mainCharacter: mainCharacter
-      )
-      let page = BookPage(
-        text: aiPage.text,
-        pageNumber: aiPage.pageNumber,
-        imageLayout: imageLayout
-      )
-      book.addPage(page)
-    }
-
-    // MARK: - "The End" Page
-    // Add a closing page to all AI-generated stories
-    do {
-      let endPage = BookPage(
-        text: "The End",
-        pageNumber: book.pages.count,
-        imageLayout: .none,
-        isCover: false,
-      )
-      book.addPage(endPage)
-    }
-
-    return book
   }
 
-
-  private func determineImageLayout(
-    from suggestedImages: [String],
+  /// The model picks its own illustrations, except that page 1 always shows
+  /// the main character.
+  private func assetIDs(
+    for page: AIStoryPage,
     mainCharacter: StoryCharacter
-  )
-    -> PageImageLayout
-  {
-    let validImages = suggestedImages.compactMap { assetId -> String? in
-      if assetId == mainCharacter.id {
-        return mainCharacter.imageName
-      } else if let character = StoryAssets.character(for: assetId) {
-        return character.imageName
-      } else if let object = StoryAssets.object(for: assetId) {
-        return object.imageName
-      }
-      return nil
+  ) -> [String] {
+    let suggested = page.suggestedImages.map {
+      $0.assetID(mainCharacterID: mainCharacter.id)
     }
 
-    switch validImages.count {
-    case 0:
-      return .none
-    case 1:
-      return .single(imageName: validImages[0])
-    case 2...:
-      return .staggered(
-        topImage: validImages[0],
-        bottomImage: validImages[1]
-      )
-    default:
-      return .none
+    guard page.pageNumber == 1, !suggested.contains(mainCharacter.id) else {
+      return suggested
     }
+
+    return Array(([mainCharacter.id] + suggested).prefix(2))
   }
 }

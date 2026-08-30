@@ -152,63 +152,24 @@ class FallbackStoryService: ObservableObject {
 
   // MARK: - Private Helpers
 
-  private func convertToBook(renderedStory: RenderedStory, mainCharacter: StoryCharacter, coverColor: CoverColor) -> Book {
-    var book = Book(title: renderedStory.title)
+  private func convertToBook(
+    renderedStory: RenderedStory,
+    mainCharacter: StoryCharacter,
+    coverColor: CoverColor
+  ) -> Book {
+    let pages = renderedStory.pages.map { page in
+      DraftPage(
+        pageNumber: page.pageNumber,
+        text: page.text,
+        assetIDs: page.suggestedImages
+      )
+    }
 
-    // Create cover page - always use the main character
-    let coverPage = BookPage(
-      text: renderedStory.title,
-      pageNumber: 0,
-      imageLayout: .single(imageName: mainCharacter.imageName),
-      isCover: true,
+    return BookBuilder.makeBook(
+      title: renderedStory.title,
+      pages: pages,
+      mainCharacter: mainCharacter,
       coverColor: coverColor
     )
-    book.addPage(coverPage)
-
-    // Create content pages
-    for renderedPage in renderedStory.pages {
-      let imageLayout = determineImageLayout(
-        from: renderedPage.suggestedImages,
-        mainCharacter: mainCharacter
-      )
-      let bookPage = BookPage(
-        text: renderedPage.text,
-        pageNumber: renderedPage.pageNumber,
-        imageLayout: imageLayout
-      )
-      book.addPage(bookPage)
-    }
-
-    return book
-  }
-
-  private func determineImageLayout(
-    from assetIds: [String],
-    mainCharacter: StoryCharacter
-  ) -> PageImageLayout {
-    let validImages = assetIds.compactMap { assetId -> String? in
-      if assetId == mainCharacter.id {
-        return mainCharacter.imageName
-      } else if let character = StoryAssets.character(for: assetId) {
-        return character.imageName
-      } else if let object = StoryAssets.object(for: assetId) {
-        return object.imageName
-      }
-      return nil
-    }
-
-    switch validImages.count {
-    case 0:
-      return .none
-    case 1:
-      return .single(imageName: validImages[0])
-    case 2...:
-      return .staggered(
-        topImage: validImages[0],
-        bottomImage: validImages[1]
-      )
-    default:
-      return .none
-    }
   }
 }
