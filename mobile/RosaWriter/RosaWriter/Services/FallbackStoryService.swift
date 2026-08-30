@@ -9,6 +9,20 @@ import Combine
 import Foundation
 import SwiftUI
 
+enum FallbackStoryError: LocalizedError {
+  case templatesUnavailable
+  case noMatchingTemplate
+
+  var errorDescription: String? {
+    switch self {
+    case .templatesUnavailable:
+      "Story generation is temporarily unavailable. Please try again later."
+    case .noMatchingTemplate:
+      "Unable to create story. Please try a different combination."
+    }
+  }
+}
+
 /// Template-based story generation service for devices without Apple Intelligence
 @MainActor
 class FallbackStoryService: ObservableObject {
@@ -18,6 +32,10 @@ class FallbackStoryService: ObservableObject {
   @Published var progress: Double = 0.0
 
   private let renderer: TemplateRenderer?
+
+  /// Rendering a template is nearly instant, which makes a story feel pulled
+  /// off a shelf rather than written. A short pause sells the writing.
+  private let writingPause = Duration.seconds(1.5)
 
   private init() {
     do {
@@ -54,10 +72,7 @@ class FallbackStoryService: ObservableObject {
       progress = 0.0
     }
 
-    // Random delay to simulate generation time (3-5 seconds)
-    let delaySeconds = Int.random(in: 3...5)
-    print("📚 [Fallback] Generating template-based story... (simulating \(delaySeconds)s delay)")
-    try await Task.sleep(for: .seconds(delaySeconds))
+    try await Task.sleep(for: writingPause)
 
     print("📚 [Fallback] Template generation starting...")
     print("   Character: \(mainCharacter.displayName)")
@@ -70,15 +85,8 @@ class FallbackStoryService: ObservableObject {
     guard let templateRenderer = renderer else {
       print("❌ [Fallback] Template renderer not available - templates could not be loaded")
       print("   This usually means story_templates.json is missing or malformed")
-      
-      // User-friendly error message
-      throw NSError(
-        domain: "FallbackStoryService",
-        code: -2,
-        userInfo: [
-          NSLocalizedDescriptionKey: "Story generation is temporarily unavailable. Please try again later."
-        ]
-      )
+
+      throw FallbackStoryError.templatesUnavailable
     }
 
     // Find matching template (with fallback logic)
@@ -92,15 +100,7 @@ class FallbackStoryService: ObservableObject {
       print("   Requested: \(mood.rawValue) + \(theme.rawValue)")
       print("   Available combinations: \(availableStr)")
 
-      // User-friendly error message (don't expose internal details)
-      throw NSError(
-        domain: "FallbackStoryService",
-        code: -1,
-        userInfo: [
-          NSLocalizedDescriptionKey:
-            "Unable to create story. Please try a different combination."
-        ]
-      )
+      throw FallbackStoryError.noMatchingTemplate
     }
 
     print("✅ [Fallback] Found template: \(template.id)")

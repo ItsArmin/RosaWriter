@@ -46,6 +46,12 @@ enum Strings {
 
   static let error = "Error"
   static let libraryFull = "Library Full"
+  static let couldNotSaveStory =
+    "Your story couldn't be saved. Please try creating it again."
+  static let couldNotDeleteStories =
+    "Those stories couldn't be deleted. Please try again."
+  static let couldNotLoadLibrary =
+    "Your library couldn't be loaded. Please restart the app."
 
   static func libraryFullMessage(maxBooks: Int) -> String {
     "You've reached the maximum of \(maxBooks) books. Please delete a book to create a new one."

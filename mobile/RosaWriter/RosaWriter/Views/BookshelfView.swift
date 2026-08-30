@@ -40,6 +40,8 @@ struct BookshelfView: View {
     @State private var isSelectionMode = false
     @State private var hasLoadedInitialData = false
     @State private var showDeleteConfirmation = false
+    @State private var showError = false
+    @State private var errorMessage = ""
     @State private var scrollOffset: CGFloat = 0
     @State private var navigateToSettings = false
     @State private var sortOrder: BookSortOrder = .newestFirst
@@ -425,7 +427,7 @@ struct BookshelfView: View {
                         // Reload books
                         loadBooks()
                     } catch {
-                        print("Error saving book: \(error)")
+                        present(Strings.couldNotSaveStory, error)
                     }
                 }
             }
@@ -446,6 +448,11 @@ struct BookshelfView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(deleteConfirmationMessage)
+            }
+            .alert(Strings.error, isPresented: $showError) {
+                Button(Strings.ok, role: .cancel) {}
+            } message: {
+                Text(errorMessage)
             }
             .task {
                 await loadBooksOnAppear()
@@ -557,6 +564,14 @@ struct BookshelfView: View {
 
     // MARK: - Actions
 
+    /// Shows the reader a plain-language message, keeping the underlying error
+    /// in the console for debugging.
+    private func present(_ message: String, _ error: Error) {
+        print("❌ [Bookshelf] \(message) \(error)")
+        errorMessage = message
+        showError = true
+    }
+
     private func toggleSelection(for book: Book) {
         withAnimation {
             if selectedBooks.contains(book.id) {
@@ -586,7 +601,7 @@ struct BookshelfView: View {
                 isSelectionMode = false
             }
         } catch {
-            print("Error deleting books: \(error)")
+            present(Strings.couldNotDeleteStories, error)
         }
     }
 
@@ -612,7 +627,7 @@ struct BookshelfView: View {
             // Load books
             loadBooks()
         } catch {
-            print("Error loading initial data: \(error)")
+            present(Strings.couldNotLoadLibrary, error)
         }
     }
 
@@ -625,7 +640,7 @@ struct BookshelfView: View {
                 books = loadedBooks
             }
         } catch {
-            print("Error loading books: \(error)")
+            present(Strings.couldNotLoadLibrary, error)
         }
     }
 }
