@@ -11,37 +11,57 @@ import UIKit
 /// Displays a saved custom character using the crop chosen in the creator.
 struct CustomCharacterImageView: View {
   let character: CustomCharacter
+  var displayAspect: CharacterPhotoAspect? = nil
 
   @State private var image: UIImage?
 
   private var aspectRatio: CGFloat {
-    character.photoAspect == .square ? 1 : 3 / 4
+    (displayAspect ?? character.photoAspect) == .square ? 1 : 3 / 4
   }
 
   var body: some View {
     GeometryReader { geometry in
-      if let image {
-        let viewportSize = geometry.size
-        let renderedSize = renderedImageSize(
-          image: image,
-          viewportSize: viewportSize
-        )
-        let offset = CGSize(
-          width: CGFloat(0.5 - character.cropCenterX) * renderedSize.width,
-          height: CGFloat(0.5 - character.cropCenterY) * renderedSize.height
-        )
+      ZStack {
+        if let image {
+          let viewportSize = geometry.size
+          let renderedSize = renderedImageSize(
+            image: image,
+            viewportSize: viewportSize
+          )
+          let horizontalInset = min(
+            0.5,
+            viewportSize.width / max(renderedSize.width * 2, 1)
+          )
+          let verticalInset = min(
+            0.5,
+            viewportSize.height / max(renderedSize.height * 2, 1)
+          )
+          let visibleCenterX = min(
+            max(character.cropCenterX, Double(horizontalInset)),
+            1 - Double(horizontalInset)
+          )
+          let visibleCenterY = min(
+            max(character.cropCenterY, Double(verticalInset)),
+            1 - Double(verticalInset)
+          )
+          let offset = CGSize(
+            width: CGFloat(0.5 - visibleCenterX) * renderedSize.width,
+            height: CGFloat(0.5 - visibleCenterY) * renderedSize.height
+          )
 
-        Image(uiImage: image)
-          .resizable()
-          .frame(width: renderedSize.width, height: renderedSize.height)
-          .offset(offset)
-      } else {
-        Image(systemName: "person.crop.square")
-          .resizable()
-          .scaledToFit()
-          .foregroundStyle(.secondary.opacity(0.5))
-          .padding()
+          Image(uiImage: image)
+            .resizable()
+            .frame(width: renderedSize.width, height: renderedSize.height)
+            .offset(offset)
+        } else {
+          Image(systemName: "person.crop.square")
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(.secondary.opacity(0.5))
+            .padding()
+        }
       }
+      .frame(width: geometry.size.width, height: geometry.size.height)
     }
     .aspectRatio(aspectRatio, contentMode: .fit)
     .clipped()
