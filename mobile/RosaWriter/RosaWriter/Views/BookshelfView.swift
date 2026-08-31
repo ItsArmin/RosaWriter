@@ -9,14 +9,6 @@ import Combine
 import SwiftData
 import SwiftUI
 
-// Preference key for tracking scroll offset
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-  static var defaultValue: CGFloat = 0
-  static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-    value = nextValue()
-  }
-}
-
 enum BookSortOrder: String, CaseIterable {
   case newestFirst = "Newest First"
   case oldestFirst = "Oldest First"
@@ -150,10 +142,6 @@ struct BookshelfView: View {
     }
   }
 
-  var isLargeDevice: Bool {
-    UIDevice.current.userInterfaceIdiom == .pad
-  }
-
   var body: some View {
     NavigationStack {
       ZStack {
@@ -178,19 +166,15 @@ struct BookshelfView: View {
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 16)
-            .background(
-              GeometryReader { geometry in
-                Color.clear.preference(
-                  key: ScrollOffsetPreferenceKey.self,
-                  value: geometry.frame(in: .named("scroll"))
-                    .minY
-                )
-              }
-            )
             .onGeometryChange(for: CGFloat.self) { proxy in
               proxy.size.height
             } action: { height in
               libraryHeaderHeight = height
+            }
+            .onGeometryChange(for: CGFloat.self) { proxy in
+              proxy.frame(in: .named("scroll")).minY
+            } action: { offset in
+              scrollOffset = offset
             }
 
             ZStack(alignment: .top) {
@@ -247,9 +231,6 @@ struct BookshelfView: View {
           }
         }
         .coordinateSpace(name: "scroll")
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-          scrollOffset = value
-        }
         .scrollDisabled(shelfRows.count < targetShelfRowCount)
 
         // Floating Action Button
@@ -279,13 +260,6 @@ struct BookshelfView: View {
               }
               .padding(.horizontal, 16)
               .padding(.vertical, 12)
-              //                            .background(
-              //                                Capsule().fill(
-              //                                    Color(.secondarySystemBackground).opacity(
-              //                                        0.6
-              //                                    )
-              //                                )
-              //                            )
               .contentShape(Capsule())
             }
             .glassEffect(
@@ -312,12 +286,9 @@ struct BookshelfView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 24)
-              //                            // Only show text on larger devices (iPad)
-              //                            if isLargeDevice {
               Text(Strings.appName)
                 .font(.headline)
                 .fontWeight(.semibold)
-              //                            }
             }
           } else {
             Text(Strings.myLibrary)

@@ -119,87 +119,25 @@ struct CreateStoryView: View {
               .foregroundStyle(.secondary)
               .padding(.horizontal, 4)
 
-            // Mood Selection
-            VStack(alignment: .leading, spacing: 12) {
-              Label(Strings.storyMood, systemImage: "sparkles")
-                .font(.headline)
+            StoryOptionRow(
+              title: Strings.storyMood,
+              systemImage: "sparkles",
+              options: StoryMood.allCases,
+              tint: selectedColor,
+              selection: $selectedMood,
+              label: { $0.rawValue },
+              caption: { $0.description }
+            )
 
-              ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                  ForEach(StoryMood.allCases) { mood in
-                    Button {
-                      selectedMood = mood
-                      #if os(iOS)
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                      #endif
-                    } label: {
-                      Text(mood.rawValue)
-                        .font(.subheadline)
-                        .fontWeight(selectedMood == mood ? .semibold : .regular)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                          selectedMood == mood ? selectedColor.lightColor : Color(.systemGray6)
-                        )
-                        .foregroundStyle(selectedMood == mood ? .white : .primary)
-                        .clipShape(.capsule)
-                        .shadow(
-                          color: selectedMood == mood
-                            ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
-                    }
-                    .buttonStyle(.plain)
-                  }
-                }
-              }
-              .safeAreaPadding(.horizontal, 16)
-              .padding(.horizontal, -16)  // Edge-to-edge scroll
-
-              Text(selectedMood.description)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 4)
-            }
-
-            // Spark Selection
-            VStack(alignment: .leading, spacing: 12) {
-              Label(Strings.storyIdea, systemImage: "lightbulb.fill")
-                .font(.headline)
-
-              ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                  ForEach(StorySpark.allCases) { spark in
-                    Button {
-                      selectedSpark = spark
-                      #if os(iOS)
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                      #endif
-                    } label: {
-                      Text(spark.rawValue)
-                        .font(.subheadline)
-                        .fontWeight(selectedSpark == spark ? .semibold : .regular)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                          selectedSpark == spark ? selectedColor.lightColor : Color(.systemGray6)
-                        )
-                        .foregroundStyle(selectedSpark == spark ? .white : .primary)
-                        .clipShape(.capsule)
-                        .shadow(
-                          color: selectedSpark == spark
-                            ? selectedColor.darkColor.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
-                    }
-                    .buttonStyle(.plain)
-                  }
-                }
-              }
-              .safeAreaPadding(.horizontal, 16)
-              .padding(.horizontal, -16)  // Edge-to-edge scroll
-
-              Text(selectedSpark.promptText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 4)
-            }
+            StoryOptionRow(
+              title: Strings.storyIdea,
+              systemImage: "lightbulb.fill",
+              options: StorySpark.allCases,
+              tint: selectedColor,
+              selection: $selectedSpark,
+              label: { $0.rawValue },
+              caption: { $0.promptText }
+            )
 
             // Cover Color Selection
             VStack(alignment: .leading, spacing: 12) {
@@ -208,14 +146,12 @@ struct CreateStoryView: View {
                 systemImage: "paintpalette.fill"
               )
               .font(.headline)
-              ScrollView(.horizontal, showsIndicators: false) {
+              ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                   ForEach(CoverColor.allCases, id: \.rawValue) { color in
                     Button {
                       selectedColor = color
-                      #if os(iOS)
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                      #endif
+                      UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     } label: {
                       VStack {
                         Circle()
@@ -257,6 +193,7 @@ struct CreateStoryView: View {
                 }
                 .padding(.vertical, 6)
               }
+              .scrollIndicators(.hidden)
               .safeAreaPadding(.horizontal, 16)
               .padding(.horizontal, -16)  // Edge-to-edge scroll
             }
@@ -288,7 +225,6 @@ struct CreateStoryView: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding()
-            //                        .background(isGenerating ? Color.gray : Color.blue)
             .clipShape(.rect(cornerRadius: 16))
             .shadow(radius: 4)
           }
@@ -299,13 +235,6 @@ struct CreateStoryView: View {
             in: .capsule
           )
           .padding()
-          //                    .background(
-          //                        LinearGradient(
-          //                            colors: [Color.clear, Color(.systemBackground)],
-          //                            startPoint: .top,
-          //                            endPoint: .bottom
-          //                        )
-          //                    )
         }
       }
       .navigationBarTitleDisplayMode(.inline)

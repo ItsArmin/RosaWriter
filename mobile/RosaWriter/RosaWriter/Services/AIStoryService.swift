@@ -5,9 +5,7 @@
 //  Created by Armin on 10/26/25.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
 #if canImport(FoundationModels)
   import FoundationModels
@@ -34,11 +32,8 @@ enum AIStoryError: Error {
 }
 
 @MainActor
-class AIStoryService: ObservableObject {
+class AIStoryService {
   static let shared = AIStoryService()
-
-  @Published var isGenerating = false
-  @Published var progress: Double = 0.0
 
   private init() {}
 
@@ -87,13 +82,6 @@ class AIStoryService: ObservableObject {
     pageCount: Int = 5,
     coverColor: CoverColor? = nil
   ) async throws -> Book {
-    isGenerating = true
-    progress = 0.0
-    defer {
-      isGenerating = false
-      progress = 0.0
-    }
-
     print("🎨 Generating custom story...")
     print("   Character: \(mainCharacter.displayName)")
     print("   Mood: \(mood.rawValue)")
@@ -105,7 +93,6 @@ class AIStoryService: ObservableObject {
       spark: spark,
       pageCount: pageCount
     )
-    progress = 0.1
 
     // Retry logic for AI generation (sometimes first attempts fail)
     var lastError: Error?
@@ -117,15 +104,12 @@ class AIStoryService: ObservableObject {
           prompt: prompt,
           expectedPageCount: pageCount
         )
-        progress = 0.5 + (0.2 * Double(attempt) / 3.0)
 
-        progress = 0.9
-
-        let book = convertToBook(
-          aiStory, mainCharacter: mainCharacter, coverColor: coverColor ?? .blue)
-        progress = 1.0
-
-        return book
+        return convertToBook(
+          aiStory,
+          mainCharacter: mainCharacter,
+          coverColor: coverColor ?? .blue
+        )
       } catch {
         lastError = error
         print("⚠️ Attempt \(attempt) failed: \(error.localizedDescription)")

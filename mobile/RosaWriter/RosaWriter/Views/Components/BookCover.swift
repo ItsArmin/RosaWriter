@@ -234,10 +234,6 @@ struct BookCover: View {
           // Corner badge for sample books
           if book.isSample {
             ZStack {
-              // Circle()
-              //   .fill(Color.white.opacity(0.5))
-              //   .frame(width: 32, height: 32)
-
               Image(systemName: "gift.fill")
                 .font(.system(size: 14))
                 .foregroundStyle(.white.opacity(0.8))

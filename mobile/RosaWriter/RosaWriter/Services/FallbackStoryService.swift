@@ -5,9 +5,7 @@
 //  Created by Armin on 11/15/25.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
 enum FallbackStoryError: LocalizedError {
   case templatesUnavailable
@@ -25,11 +23,8 @@ enum FallbackStoryError: LocalizedError {
 
 /// Template-based story generation service for devices without Apple Intelligence
 @MainActor
-class FallbackStoryService: ObservableObject {
+class FallbackStoryService {
   static let shared = FallbackStoryService()
-
-  @Published var isGenerating = false
-  @Published var progress: Double = 0.0
 
   private let renderer: TemplateRenderer?
 
@@ -65,21 +60,12 @@ class FallbackStoryService: ObservableObject {
     sideCharacter: StoryCharacter? = nil,
     coverColor: CoverColor? = nil
   ) async throws -> Book {
-    isGenerating = true
-    progress = 0.0
-    defer {
-      isGenerating = false
-      progress = 0.0
-    }
-
     try await Task.sleep(for: writingPause)
 
     print("📚 [Fallback] Template generation starting...")
     print("   Character: \(mainCharacter.displayName)")
     print("   Mood: \(mood.rawValue)")
     print("   Theme: \(theme.rawValue)")
-
-    progress = 0.1
 
     // Check if renderer is available
     guard let templateRenderer = renderer else {
@@ -104,7 +90,6 @@ class FallbackStoryService: ObservableObject {
     }
 
     print("✅ [Fallback] Found template: \(template.id)")
-    progress = 0.3
 
     // Select random objects
     let objects = StoryAssets.randomObjects(count: 2)
@@ -115,8 +100,6 @@ class FallbackStoryService: ObservableObject {
     } else {
       print("   Side character will be randomly selected")
     }
-
-    progress = 0.5
 
     // Render the template
     let renderedStory = templateRenderer.render(
@@ -135,8 +118,6 @@ class FallbackStoryService: ObservableObject {
       print("   Page \(page.pageNumber) images: \(page.suggestedImages)")
     }
 
-    progress = 0.8
-
     // Convert to Book format
     let book = convertToBook(
       renderedStory: renderedStory,
@@ -144,7 +125,6 @@ class FallbackStoryService: ObservableObject {
       coverColor: coverColor ?? .blue
     )
 
-    progress = 1.0
     print("✅ [Fallback] Story generation complete!")
 
     return book
