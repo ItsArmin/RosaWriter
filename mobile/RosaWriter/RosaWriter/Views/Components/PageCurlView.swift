@@ -58,26 +58,26 @@ struct PageCurlView: UIViewControllerRepresentable {
 
   class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var parent: PageCurlView
-    
+
     // Cache only a limited number of controllers to reduce memory usage
     // Key: page index, Value: the hosting controller for that page
     private var controllerCache: [Int: UIHostingController<PageContentView>] = [:]
     private let maxCacheSize = 5  // Keep at most 5 controllers in memory
-    
+
     init(_ parent: PageCurlView) {
       self.parent = parent
       super.init()
     }
-    
+
     /// Lazily create or retrieve a controller for a given page index
     func controller(for index: Int) -> UIHostingController<PageContentView>? {
       guard index >= 0 && index < parent.pages.count else { return nil }
-      
+
       // Return cached controller if available
       if let cached = controllerCache[index] {
         return cached
       }
-      
+
       // Create new controller
       let page = parent.pages[index]
       let hostingController = UIHostingController(
@@ -87,25 +87,25 @@ struct PageCurlView: UIViewControllerRepresentable {
           totalPages: parent.pages.count
         )
       )
-      
+
       // Page background: warm cream in light mode, soft dark gray in dark mode
       hostingController.view.backgroundColor = UIColor { traitCollection in
         traitCollection.userInterfaceStyle == .dark
           ? UIColor(red: 0.12, green: 0.12, blue: 0.13, alpha: 1.0)
           : UIColor(red: 0.98, green: 0.95, blue: 0.90, alpha: 1.0)
       }
-      
+
       // Add to cache
       controllerCache[index] = hostingController
-      
+
       // Evict old controllers if cache is too large
       if controllerCache.count > maxCacheSize {
         evictDistantControllers(from: index)
       }
-      
+
       return hostingController
     }
-    
+
     /// Remove controllers that are far from the current page to free memory
     private func evictDistantControllers(from currentIndex: Int) {
       let indicesToKeep = Set((currentIndex - 2)...(currentIndex + 2))
@@ -114,7 +114,7 @@ struct PageCurlView: UIViewControllerRepresentable {
         controllerCache.removeValue(forKey: index)
       }
     }
-    
+
     /// Find the index for a given view controller
     func index(of viewController: UIViewController) -> Int? {
       for (index, controller) in controllerCache where controller === viewController {
@@ -169,26 +169,26 @@ struct FadingScrollText: View {
   let horizontalPadding: CGFloat
   let topPadding: CGFloat
   let backgroundColor: Color
-  
+
   @State private var hasOverflow = false
   @State private var contentHeight: CGFloat = 0
   @State private var containerHeight: CGFloat = 0
   @State private var scrollOffset: CGFloat = 0
-  
+
   private let fadeHeight: CGFloat = 40
   private let scrollThreshold: CGFloat = 10
-  
+
   /// User has scrolled down from the top
   private var isScrolledFromTop: Bool {
     scrollOffset > scrollThreshold
   }
-  
+
   /// User has scrolled to the bottom
   private var isAtBottom: Bool {
     let maxScroll = max(0, contentHeight - containerHeight)
     return scrollOffset >= maxScroll - scrollThreshold
   }
-  
+
   var body: some View {
     GeometryReader { containerGeometry in
       ZStack {
@@ -198,16 +198,18 @@ struct FadingScrollText: View {
             .lineSpacing(lineSpacing)
             .foregroundStyle(.primary)
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity) // Ensure text takes full width for centering
+            .frame(maxWidth: .infinity)  // Ensure text takes full width for centering
             .padding(.horizontal, horizontalPadding)
             .padding(.top, topPadding)
-            .padding(.bottom, 30) // Extra padding so text isn't hidden by fade
-            .frame(minHeight: containerGeometry.size.height) // Allow vertical centering for short text
+            .padding(.bottom, 30)  // Extra padding so text isn't hidden by fade
+            .frame(minHeight: containerGeometry.size.height)  // Allow vertical centering for short text
             .background(
               GeometryReader { textGeometry in
                 Color.clear
                   .preference(key: ContentHeightKey.self, value: textGeometry.size.height)
-                  .preference(key: ScrollOffsetKey.self, value: -textGeometry.frame(in: .named("scroll")).minY + topPadding)
+                  .preference(
+                    key: ScrollOffsetKey.self,
+                    value: -textGeometry.frame(in: .named("scroll")).minY + topPadding)
               }
             )
         }
@@ -219,7 +221,7 @@ struct FadingScrollText: View {
         .onPreferenceChange(ScrollOffsetKey.self) { offset in
           scrollOffset = offset
         }
-        
+
         // Top fade gradient - only show when scrolled down
         if hasOverflow && isScrolledFromTop {
           VStack {
@@ -227,28 +229,28 @@ struct FadingScrollText: View {
               colors: [
                 backgroundColor,
                 backgroundColor.opacity(0.8),
-                backgroundColor.opacity(0)
+                backgroundColor.opacity(0),
               ],
               startPoint: .top,
               endPoint: .bottom
             )
-            .frame(height: fadeHeight * 0.6)    // reduce top fade height for first line
+            .frame(height: fadeHeight * 0.6)  // reduce top fade height for first line
             .allowsHitTesting(false)
-            
+
             Spacer()
           }
         }
-        
+
         // Bottom fade gradient - only show when not at bottom
         if hasOverflow && !isAtBottom {
           VStack {
             Spacer()
-            
+
             LinearGradient(
               colors: [
                 backgroundColor.opacity(0),
                 backgroundColor.opacity(0.8),
-                backgroundColor
+                backgroundColor,
               ],
               startPoint: .top,
               endPoint: .bottom
@@ -287,10 +289,11 @@ struct PageContentView: View {
   let pageNumber: Int
   let totalPages: Int
   @Environment(\.colorScheme) private var colorScheme
-  
+
   /// Page background: warm cream in light mode, soft dark gray in dark mode
   private var pageBackgroundColor: Color {
-    colorScheme == .dark ? Color(red: 0.12, green: 0.12, blue: 0.13) : Color(red: 0.98, green: 0.95, blue: 0.90)
+    colorScheme == .dark
+      ? Color(red: 0.12, green: 0.12, blue: 0.13) : Color(red: 0.98, green: 0.95, blue: 0.90)
   }
 
   var body: some View {
@@ -328,8 +331,8 @@ struct PageContentView: View {
                   accessibilityLabel: page.text,
                   presentation: .paper(rotation: .degrees(-1.5))
                 )
-                  .frame(maxWidth: imageMaxSize)
-                  .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
+                .frame(maxWidth: imageMaxSize)
+                .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
               }
 
               Text(page.text)
@@ -346,7 +349,7 @@ struct PageContentView: View {
           // Text-only page: center the text vertically
           VStack(spacing: 0) {
             Spacer()
-            
+
             FadingScrollText(
               text: page.text,
               fontSize: fontSize,
@@ -356,7 +359,7 @@ struct PageContentView: View {
               backgroundColor: pageBackgroundColor
             )
             .frame(maxHeight: geometry.size.height * 0.7)
-            
+
             Spacer()
 
             // Page number at bottom
@@ -383,16 +386,16 @@ struct PageContentView: View {
                   accessibilityLabel: page.text,
                   presentation: .paper(rotation: .degrees(1.25))
                 )
-                  .frame(maxWidth: imageMaxSize)
-                  .shadow(radius: 4)
+                .frame(maxWidth: imageMaxSize)
+                .shadow(radius: 4)
 
               case .staggered(let topImage, let bottomImage):
                 let isEvenPage = pageNumber % 2 == 0
-                
+
                 // Resolve sizes
                 let topSize = StoryAssets.size(forImageName: topImage)
                 let bottomSize = StoryAssets.size(forImageName: bottomImage)
-                
+
                 // Calculate widths based on imageMaxSize (flexible layout)
                 // Large: 0.7, Small: 0.4
                 let topWidth = imageMaxSize * (topSize == .large ? 0.7 : 0.4)
@@ -408,9 +411,9 @@ struct PageContentView: View {
                       presentation: .paper(rotation: .degrees(-1.25)),
                       horizontalFlip: isEvenPage
                     )
-                      .frame(width: topWidth)
-                      .padding(12)
-                      .shadow(radius: 4)
+                    .frame(width: topWidth)
+                    .padding(12)
+                    .shadow(radius: 4)
                     if isEvenPage { Spacer() }
                   }
                   .padding(.horizontal, 20)
@@ -424,9 +427,9 @@ struct PageContentView: View {
                       presentation: .paper(rotation: .degrees(1.5)),
                       horizontalFlip: !isEvenPage
                     )
-                      .frame(width: bottomWidth)
-                      .padding(12)
-                      .shadow(radius: 4)
+                    .frame(width: bottomWidth)
+                    .padding(12)
+                    .shadow(radius: 4)
                     if !isEvenPage { Spacer() }
                   }
                   .padding(.horizontal, 20)
@@ -435,7 +438,7 @@ struct PageContentView: View {
               Spacer()
             }
             .frame(height: geometry.size.height * 0.60)
-            
+
             // Text Section - Bottom rest with fade indicator
             FadingScrollText(
               text: page.text,
@@ -445,7 +448,7 @@ struct PageContentView: View {
               topPadding: 20,
               backgroundColor: pageBackgroundColor
             )
-            
+
             Spacer(minLength: 10)
 
             // Page number at bottom

@@ -14,7 +14,7 @@ struct Book: Identifiable, Hashable {
   var createdAt: Date
   var updatedAt: Date
   var isSample: Bool
-  
+
   // Hashable conformance
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
@@ -32,9 +32,12 @@ struct Book: Identifiable, Hashable {
     self.updatedAt = Date()
     self.isSample = isSample
   }
-  
+
   // Internal init for deserialization that preserves ID and dates
-  init(id: UUID, title: String, pages: [BookPage], createdAt: Date, updatedAt: Date, isSample: Bool = false) {
+  init(
+    id: UUID, title: String, pages: [BookPage], createdAt: Date, updatedAt: Date,
+    isSample: Bool = false
+  ) {
     self.id = id
     self.title = title
     self.pages = pages
