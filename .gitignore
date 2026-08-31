@@ -98,3 +98,6 @@ deployment/
 
 # macOS
 .DS_Store
+
+# Local working notes
+docs/
