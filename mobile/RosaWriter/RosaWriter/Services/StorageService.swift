@@ -13,7 +13,7 @@ class StorageService {
   static let shared = StorageService()
 
   private init() {}
-  
+
   // MARK: - Sample Book Version Management
 
   /// Current version of sample books - increment this when you update sample content
@@ -30,7 +30,7 @@ class StorageService {
   private func markSampleBooksUpdated() {
     UserDefaults.standard.set(currentSampleBooksVersion, forKey: sampleBooksVersionKey)
   }
-  
+
   /// Fetch all sample books from database
   /// After migration, this primarily uses the isSample field for efficiency
   private func fetchSampleBooks(context: ModelContext) throws -> [StoryData] {
@@ -147,7 +147,7 @@ class StorageService {
 
     return try context.fetch(fetchDescriptor)
   }
-  
+
   /// Load only user-created stories (excludes sample books)
   func loadUserStoryData(context: ModelContext) throws -> [StoryData] {
     let fetchDescriptor = FetchDescriptor<StoryData>(
@@ -159,7 +159,7 @@ class StorageService {
 
     return try context.fetch(fetchDescriptor)
   }
-  
+
   /// Get count of user-created stories (excludes sample books)
   func getUserBookCount(context: ModelContext) throws -> Int {
     let fetchDescriptor = FetchDescriptor<StoryData>(
@@ -169,7 +169,7 @@ class StorageService {
     )
     return try context.fetchCount(fetchDescriptor)
   }
-  
+
   /// Check if user can create more books
   func canCreateBook(context: ModelContext) throws -> Bool {
     let count = try getUserBookCount(context: context)
@@ -226,7 +226,7 @@ class StorageService {
     for book in sampleBooks {
       try saveStoryData(book, context: context)
     }
-    
+
     markSampleBooksUpdated()
   }
 

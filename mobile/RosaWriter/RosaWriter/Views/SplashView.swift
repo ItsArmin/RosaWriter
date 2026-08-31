@@ -43,7 +43,7 @@ struct SplashView: View {
         // Initialize app: migrations, sample books, etc.
         Task {
           await initializeApp()
-          
+
           // Wait for animation to finish, then transition
           try? await Task.sleep(for: .seconds(1.5))
 
@@ -54,7 +54,7 @@ struct SplashView: View {
       }
     }
   }
-  
+
   // MARK: - App Initialization
 
   @MainActor

@@ -6,7 +6,7 @@
 //
 
 #if DEBUG
-enum DevelopmentFeatures {
-  static let shelfLabEnabled = false
-}
+  enum DevelopmentFeatures {
+    static let shelfLabEnabled = false
+  }
 #endif

@@ -10,11 +10,11 @@ import Foundation
 struct AppConstants {
   static let appName = "RosaWriter"
   static let appVersion = "1.1"
-  
+
   // Library Limits
   static let maxBooks = 50
   static let maxPagesPerBook = 10
-  
+
   // AI Story Generation (picks randomly from 5-10 pages)
   static let aiBookPageOptions = [5, 6, 7, 8, 9, 10]
 

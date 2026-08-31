@@ -52,11 +52,11 @@ class AIStoryService: ObservableObject {
       print("🔍 Apple Intelligence availability check: ❌ Forced OFF (debug flag)")
       return false
     }
-    
+
     #if canImport(FoundationModels)
       let model = SystemLanguageModel.default
       let isAvailable = model.isAvailable
-      
+
       #if targetEnvironment(simulator)
         print("🔍 Apple Intelligence availability check: ❌ Not Available (iOS Simulator)")
         print("   Note: Simulator does not support Apple Intelligence - use a physical device")
@@ -65,7 +65,9 @@ class AIStoryService: ObservableObject {
         if isAvailable {
           print("🔍 Apple Intelligence availability check: ✅ Available (Physical Device)")
         } else {
-          print("🔍 Apple Intelligence availability check: ❌ Not Available (Device doesn't support Apple Intelligence)")
+          print(
+            "🔍 Apple Intelligence availability check: ❌ Not Available (Device doesn't support Apple Intelligence)"
+          )
         }
         return isAvailable
       #endif
@@ -119,7 +121,8 @@ class AIStoryService: ObservableObject {
 
         progress = 0.9
 
-        let book = convertToBook(aiStory, mainCharacter: mainCharacter, coverColor: coverColor ?? .blue)
+        let book = convertToBook(
+          aiStory, mainCharacter: mainCharacter, coverColor: coverColor ?? .blue)
         progress = 1.0
 
         return book
@@ -135,7 +138,7 @@ class AIStoryService: ObservableObject {
 
     // All attempts failed
     throw lastError ?? AIStoryError.generationFailed
-    }
+  }
 
   // MARK: - Private Methods
 

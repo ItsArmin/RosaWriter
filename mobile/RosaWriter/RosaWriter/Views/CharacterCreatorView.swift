@@ -13,8 +13,7 @@ import UIKit
 struct CharacterCreatorView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
-  @Query(sort: \CustomCharacter.createdAt) private var customCharacters:
-    [CustomCharacter]
+  @Query(sort: \CustomCharacter.createdAt) private var customCharacters: [CustomCharacter]
 
   let character: CustomCharacter?
 
@@ -565,7 +564,8 @@ struct CharacterCreatorView: View {
           let trimmedCatchphrase = catchphrase.trimmingCharacters(
             in: .whitespacesAndNewlines
           )
-          character.catchphrase = trimmedCatchphrase.isEmpty
+          character.catchphrase =
+            trimmedCatchphrase.isEmpty
             ? nil : trimmedCatchphrase
           character.imageFileName = imageFileName
           character.updateCrop(

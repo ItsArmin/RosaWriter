@@ -82,7 +82,8 @@ struct SampleData {
   // MARK: - Professor Seal's Lesson (Green Cover, no cover image)
 
   static func professorsLesson() -> Book {
-    var book = Book(title: "The Amazingly Clever Lesson from the Wise Mind of Professor Seal", isSample: true)
+    var book = Book(
+      title: "The Amazingly Clever Lesson from the Wise Mind of Professor Seal", isSample: true)
 
     let pages = [
       // Cover (no image, just green color)
@@ -288,4 +289,3 @@ struct SampleData {
     ]
   }
 }
-

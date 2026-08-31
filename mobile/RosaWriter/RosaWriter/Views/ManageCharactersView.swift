@@ -10,8 +10,7 @@ import SwiftUI
 
 struct ManageCharactersView: View {
   @Environment(\.modelContext) private var modelContext
-  @Query(sort: \CustomCharacter.createdAt) private var characters:
-    [CustomCharacter]
+  @Query(sort: \CustomCharacter.createdAt) private var characters: [CustomCharacter]
 
   @State private var characterToEdit: CustomCharacter?
   @State private var characterToDelete: CustomCharacter?
@@ -111,13 +110,13 @@ struct ManageCharactersView: View {
           character: character,
           displayAspect: .square
         )
-          .frame(width: 60, height: 60)
-          .background(Color.secondary.opacity(0.08))
-          .clipShape(.rect(cornerRadius: 8))
-          .overlay {
-            RoundedRectangle(cornerRadius: 8)
-              .stroke(.quaternary, lineWidth: 0.5)
-          }
+        .frame(width: 60, height: 60)
+        .background(Color.secondary.opacity(0.08))
+        .clipShape(.rect(cornerRadius: 8))
+        .overlay {
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(.quaternary, lineWidth: 0.5)
+        }
 
         VStack(alignment: .leading, spacing: 6) {
           Text(character.name)
