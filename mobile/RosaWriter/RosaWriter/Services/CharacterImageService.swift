@@ -122,14 +122,17 @@ enum StoryImageStorage {
   private static func rootDirectory(
     fileManager: FileManager
   ) throws -> URL {
-    guard let applicationSupport = fileManager.urls(
-      for: .applicationSupportDirectory,
-      in: .userDomainMask
-    ).first else {
+    guard
+      let applicationSupport = fileManager.urls(
+        for: .applicationSupportDirectory,
+        in: .userDomainMask
+      ).first
+    else {
       throw CharacterImageError.applicationSupportUnavailable
     }
 
-    let directory = applicationSupport
+    let directory =
+      applicationSupport
       .appendingPathComponent(appFolderName, isDirectory: true)
 
     try createProtectedDirectory(directory, fileManager: fileManager)

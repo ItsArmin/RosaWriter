@@ -41,12 +41,16 @@ struct CharacterPhotoCropView: View {
         0.5,
         viewportSize.height / max(renderedSize.height * 2, 1)
       )
-      let draggedCenterX = centerX - Double(
-        dragTranslation.width / max(renderedSize.width, 1)
-      )
-      let draggedCenterY = centerY - Double(
-        dragTranslation.height / max(renderedSize.height, 1)
-      )
+      let draggedCenterX =
+        centerX
+        - Double(
+          dragTranslation.width / max(renderedSize.width, 1)
+        )
+      let draggedCenterY =
+        centerY
+        - Double(
+          dragTranslation.height / max(renderedSize.height, 1)
+        )
       let visibleCenterX = min(
         max(draggedCenterX, Double(horizontalInset)),
         1 - Double(horizontalInset)

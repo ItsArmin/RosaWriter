@@ -289,7 +289,8 @@ final class CustomCharacter {
     let trimmedCatchphrase = catchphrase?.trimmingCharacters(
       in: .whitespacesAndNewlines
     )
-    self.catchphrase = trimmedCatchphrase?.isEmpty == true
+    self.catchphrase =
+      trimmedCatchphrase?.isEmpty == true
       ? nil : trimmedCatchphrase
     self.imageFileName = imageFileName
     self.photoAspectRawValue = photoAspect.rawValue
@@ -411,7 +412,7 @@ final class CustomCharacter {
       pronounObjective: pronouns.objective,
       speakingStyle:
         "\(dialogueStyle.speakingStyle); \(personalityDescription)"
-          + (catchphrase.map { "; catchphrase: \"\($0)\"" } ?? ""),
+        + (catchphrase.map { "; catchphrase: \"\($0)\"" } ?? ""),
       voice: storyVoice
     )
   }

@@ -95,3 +95,9 @@ deployment/
 *.doc
 *.xls
 *.ppt
+
+# macOS
+.DS_Store
+
+# Local working notes
+docs/

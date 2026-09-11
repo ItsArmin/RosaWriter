@@ -50,7 +50,7 @@ struct TemplatePlaceholders {
   static let mainCharacterPronounSubjective = "{{PRONOUN_SUBJECTIVE}}"
   static let mainCharacterPronounPossessive = "{{PRONOUN_POSSESSIVE}}"
   static let mainCharacterPronounObjective = "{{PRONOUN_OBJECTIVE}}"
-  
+
   // Main character voice/lexicon
   static let mainCharacterGreeting = "{{VOICE_GREETING}}"
   static let mainCharacterFarewell = "{{VOICE_FAREWELL}}"
@@ -64,7 +64,7 @@ struct TemplatePlaceholders {
   static let sideCharacterPronounSubjective = "{{SIDE_PRONOUN_SUBJECTIVE}}"
   static let sideCharacterPronounPossessive = "{{SIDE_PRONOUN_POSSESSIVE}}"
   static let sideCharacterPronounObjective = "{{SIDE_PRONOUN_OBJECTIVE}}"
-  
+
   // Side character voice/lexicon
   static let sideCharacterGreeting = "{{SIDE_VOICE_GREETING}}"
   static let sideCharacterFarewell = "{{SIDE_VOICE_FAREWELL}}"
@@ -77,7 +77,7 @@ struct TemplatePlaceholders {
   static let object1 = "{{OBJECT_1}}"
   static let object2 = "{{OBJECT_2}}"
   static let object3 = "{{OBJECT_3}}"
-  
+
   // Objects with article (e.g., "an apple", "a book")
   static let object1WithArticle = "{{A_OBJECT_1}}"
   static let object2WithArticle = "{{A_OBJECT_2}}"

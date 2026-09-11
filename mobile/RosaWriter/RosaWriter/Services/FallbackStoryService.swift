@@ -5,19 +5,32 @@
 //  Created by Armin on 11/15/25.
 //
 
-import Combine
 import Foundation
-import SwiftUI
+
+enum FallbackStoryError: LocalizedError {
+  case templatesUnavailable
+  case noMatchingTemplate
+
+  var errorDescription: String? {
+    switch self {
+    case .templatesUnavailable:
+      "Story generation is temporarily unavailable. Please try again later."
+    case .noMatchingTemplate:
+      "Unable to create story. Please try a different combination."
+    }
+  }
+}
 
 /// Template-based story generation service for devices without Apple Intelligence
 @MainActor
-class FallbackStoryService: ObservableObject {
+class FallbackStoryService {
   static let shared = FallbackStoryService()
 
-  @Published var isGenerating = false
-  @Published var progress: Double = 0.0
-
   private let renderer: TemplateRenderer?
+
+  /// Rendering a template is nearly instant, which makes a story feel pulled
+  /// off a shelf rather than written. A short pause sells the writing.
+  private let writingPause = Duration.seconds(1.5)
 
   private init() {
     do {
@@ -47,38 +60,19 @@ class FallbackStoryService: ObservableObject {
     sideCharacter: StoryCharacter? = nil,
     coverColor: CoverColor? = nil
   ) async throws -> Book {
-    isGenerating = true
-    progress = 0.0
-    defer {
-      isGenerating = false
-      progress = 0.0
-    }
-
-    // Random delay to simulate generation time (3-5 seconds)
-    let delaySeconds = Int.random(in: 3...5)
-    print("📚 [Fallback] Generating template-based story... (simulating \(delaySeconds)s delay)")
-    try await Task.sleep(for: .seconds(delaySeconds))
+    try await Task.sleep(for: writingPause)
 
     print("📚 [Fallback] Template generation starting...")
     print("   Character: \(mainCharacter.displayName)")
     print("   Mood: \(mood.rawValue)")
     print("   Theme: \(theme.rawValue)")
 
-    progress = 0.1
-
     // Check if renderer is available
     guard let templateRenderer = renderer else {
       print("❌ [Fallback] Template renderer not available - templates could not be loaded")
       print("   This usually means story_templates.json is missing or malformed")
-      
-      // User-friendly error message
-      throw NSError(
-        domain: "FallbackStoryService",
-        code: -2,
-        userInfo: [
-          NSLocalizedDescriptionKey: "Story generation is temporarily unavailable. Please try again later."
-        ]
-      )
+
+      throw FallbackStoryError.templatesUnavailable
     }
 
     // Find matching template (with fallback logic)
@@ -92,19 +86,10 @@ class FallbackStoryService: ObservableObject {
       print("   Requested: \(mood.rawValue) + \(theme.rawValue)")
       print("   Available combinations: \(availableStr)")
 
-      // User-friendly error message (don't expose internal details)
-      throw NSError(
-        domain: "FallbackStoryService",
-        code: -1,
-        userInfo: [
-          NSLocalizedDescriptionKey:
-            "Unable to create story. Please try a different combination."
-        ]
-      )
+      throw FallbackStoryError.noMatchingTemplate
     }
 
     print("✅ [Fallback] Found template: \(template.id)")
-    progress = 0.3
 
     // Select random objects
     let objects = StoryAssets.randomObjects(count: 2)
@@ -115,8 +100,6 @@ class FallbackStoryService: ObservableObject {
     } else {
       print("   Side character will be randomly selected")
     }
-
-    progress = 0.5
 
     // Render the template
     let renderedStory = templateRenderer.render(
@@ -135,8 +118,6 @@ class FallbackStoryService: ObservableObject {
       print("   Page \(page.pageNumber) images: \(page.suggestedImages)")
     }
 
-    progress = 0.8
-
     // Convert to Book format
     let book = convertToBook(
       renderedStory: renderedStory,
@@ -144,7 +125,6 @@ class FallbackStoryService: ObservableObject {
       coverColor: coverColor ?? .blue
     )
 
-    progress = 1.0
     print("✅ [Fallback] Story generation complete!")
 
     return book
@@ -152,63 +132,24 @@ class FallbackStoryService: ObservableObject {
 
   // MARK: - Private Helpers
 
-  private func convertToBook(renderedStory: RenderedStory, mainCharacter: StoryCharacter, coverColor: CoverColor) -> Book {
-    var book = Book(title: renderedStory.title)
+  private func convertToBook(
+    renderedStory: RenderedStory,
+    mainCharacter: StoryCharacter,
+    coverColor: CoverColor
+  ) -> Book {
+    let pages = renderedStory.pages.map { page in
+      DraftPage(
+        pageNumber: page.pageNumber,
+        text: page.text,
+        assetIDs: page.suggestedImages
+      )
+    }
 
-    // Create cover page - always use the main character
-    let coverPage = BookPage(
-      text: renderedStory.title,
-      pageNumber: 0,
-      imageLayout: .single(imageName: mainCharacter.imageName),
-      isCover: true,
+    return BookBuilder.makeBook(
+      title: renderedStory.title,
+      pages: pages,
+      mainCharacter: mainCharacter,
       coverColor: coverColor
     )
-    book.addPage(coverPage)
-
-    // Create content pages
-    for renderedPage in renderedStory.pages {
-      let imageLayout = determineImageLayout(
-        from: renderedPage.suggestedImages,
-        mainCharacter: mainCharacter
-      )
-      let bookPage = BookPage(
-        text: renderedPage.text,
-        pageNumber: renderedPage.pageNumber,
-        imageLayout: imageLayout
-      )
-      book.addPage(bookPage)
-    }
-
-    return book
-  }
-
-  private func determineImageLayout(
-    from assetIds: [String],
-    mainCharacter: StoryCharacter
-  ) -> PageImageLayout {
-    let validImages = assetIds.compactMap { assetId -> String? in
-      if assetId == mainCharacter.id {
-        return mainCharacter.imageName
-      } else if let character = StoryAssets.character(for: assetId) {
-        return character.imageName
-      } else if let object = StoryAssets.object(for: assetId) {
-        return object.imageName
-      }
-      return nil
-    }
-
-    switch validImages.count {
-    case 0:
-      return .none
-    case 1:
-      return .single(imageName: validImages[0])
-    case 2...:
-      return .staggered(
-        topImage: validImages[0],
-        bottomImage: validImages[1]
-      )
-    default:
-      return .none
-    }
   }
 }

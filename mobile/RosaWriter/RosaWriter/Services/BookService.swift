@@ -7,76 +7,80 @@
 
 import Foundation
 
+@MainActor
 class BookService {
   static let shared = BookService()
 
   private init() {}
 
-  func createSampleBook() -> Book {
-    return SampleData.mrDogsAdventure()
-  }
-
   func loadAllSampleBooks() -> [Book] {
     return SampleData.allSampleBooks
   }
 
-  func createEmptyBook(title: String) -> Book {
-    return Book(title: title)
-  }
+  // MARK: - Story Creation
 
-  func addPage(to book: inout Book, text: String) {
-    let pageNumber = book.pages.count + 1
-    let page = BookPage(text: text, pageNumber: pageNumber)
-    book.addPage(page)
-  }
+  /// Writes a book for the given request, preferring Apple Intelligence and
+  /// falling back to the bundled templates when it is unavailable or fails.
+  func makeBook(for request: StoryRequest) async throws -> Book {
+    var book = try await generateStory(for: request)
 
-  /// Generates a new book using AI
-  /// In the future, this will use AI to generate custom stories
-  func createNewBook() async -> Book {
-    // Try to generate with AI
-    do {
-      print("🎨 Starting AI story generation...")
-      let book = try await AIStoryService.shared.generateStory(
-        pageCount: Int.random(in: 4...6),
-        theme: nil,
-        coverColor: CoverColor.allCases.randomElement()
+    // A user-made character can be edited or deleted later, so the book takes
+    // its own copy of the photo rather than pointing at the character's.
+    if let photo = request.customPhoto {
+      let snapshot = try await BookImageSnapshotService.shared.createSnapshot(
+        sourceFileName: photo.fileName,
+        crop: photo.crop,
+        bookID: book.id
       )
-      print("✅ AI story generation successful!")
-      return book
-    } catch let error as AIStoryError {
-      // Fallback to sample data if AI generation fails
-      print("❌ AI generation failed: \(error.localizedDescription)")
-      print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
-    } catch {
-      print("❌ Unexpected error during AI generation: \(error)")
-      print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
+      book.replaceImageReference(
+        request.mainCharacter.imageName,
+        with: snapshot.storedValue
+      )
     }
+
+    return book
   }
 
-  /// Generates a new book with specific parameters
-  func createNewBook(pageCount: Int, theme: String?, coverColor: CoverColor?) async -> Book {
-    do {
-      print("🎨 Starting AI story generation with parameters...")
-      print(
-        "   Pages: \(pageCount), Theme: \(theme ?? "none"), Color: \(coverColor?.rawValue ?? "random")"
-      )
-      let book = try await AIStoryService.shared.generateStory(
-        pageCount: pageCount,
-        theme: theme,
-        coverColor: coverColor
-      )
-      print("✅ AI story generation successful!")
-      return book
-    } catch let error as AIStoryError {
-      print("❌ AI generation failed: \(error.localizedDescription)")
-      print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
-    } catch {
-      print("❌ Unexpected error during AI generation: \(error)")
-      print("📚 Falling back to sample data...")
-      return SampleData.allSampleBooks.randomElement() ?? SampleData.mrDogsAdventure()
+  private func generateStory(for request: StoryRequest) async throws -> Book {
+    let pageCount = AppConstants.randomAIBookPageCount
+
+    if AIStoryService.isAppleIntelligenceAvailable() {
+      do {
+        return try await AIStoryService.shared.generateCustomStory(
+          mainCharacter: request.mainCharacter,
+          mood: request.mood,
+          spark: request.spark,
+          pageCount: pageCount,
+          coverColor: request.coverColor
+        )
+      } catch {
+        print("⚠️ [Books] Apple Intelligence failed, using templates: \(error)")
+      }
+    }
+
+    return try await FallbackStoryService.shared.generateCustomStory(
+      mainCharacter: request.mainCharacter,
+      mood: request.mood,
+      theme: theme(for: request.spark),
+      coverColor: request.coverColor
+    )
+  }
+
+  /// The template library is organized by theme rather than by spark.
+  private func theme(for spark: StorySpark) -> StoryTheme {
+    switch spark {
+    case .birthday:
+      return .birthday
+    case .treasureHunt, .magicalDiscovery, .lostAndFound:
+      return .adventure
+    case .helpingFriend, .buildingSomething:
+      return .friendship
+    case .solvingProblem:
+      return .mystery
+    case .findingFood:
+      return .celebration
+    case .random:
+      return StoryTheme.allCases.randomElement() ?? .adventure
     }
   }
 }

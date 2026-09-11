@@ -16,7 +16,7 @@ final class StoryData {
   var coverImage: String?
   var wordCount: Int?
   var storyJson: String
-  
+
   // MARK: - Future-proofing fields (optional for backward compatibility)
 
   /// Schema version for migration tracking
