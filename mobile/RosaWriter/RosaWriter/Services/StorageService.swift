@@ -17,7 +17,7 @@ class StorageService {
   // MARK: - Sample Book Version Management
 
   /// Current version of sample books - increment this when you update sample content
-  private let currentSampleBooksVersion = 5
+  private let currentSampleBooksVersion = 6
   private let sampleBooksVersionKey = "sampleBooksVersion"
 
   /// Check if sample books need updating

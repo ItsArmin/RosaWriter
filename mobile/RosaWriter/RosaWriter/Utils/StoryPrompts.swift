@@ -116,11 +116,19 @@ enum GeneratedStoryImage {
   case apple
   case balloon
   case basketball
+  case beachBall
   case book
   case burger
   case cake
   case crayon
+  case flower
+  case key
+  case present
   case teddy
+  case toyCar
+  case treasureChest
+  case treasureMap
+  case tree
 
   func assetID(mainCharacterID: String) -> String {
     switch self {
@@ -132,11 +140,19 @@ enum GeneratedStoryImage {
     case .apple: StoryAssets.APPLE.id
     case .balloon: StoryAssets.BALLOON.id
     case .basketball: StoryAssets.BASKETBALL.id
+    case .beachBall: StoryAssets.BEACH_BALL.id
     case .book: StoryAssets.BOOK.id
     case .burger: StoryAssets.BURGER.id
     case .cake: StoryAssets.CAKE.id
     case .crayon: StoryAssets.CRAYON.id
+    case .flower: StoryAssets.FLOWER.id
+    case .key: StoryAssets.KEY.id
+    case .present: StoryAssets.PRESENT.id
     case .teddy: StoryAssets.TEDDY.id
+    case .toyCar: StoryAssets.TOY_CAR.id
+    case .treasureChest: StoryAssets.TREASURE_CHEST.id
+    case .treasureMap: StoryAssets.TREASURE_MAP.id
+    case .tree: StoryAssets.TREE.id
     }
   }
 }
