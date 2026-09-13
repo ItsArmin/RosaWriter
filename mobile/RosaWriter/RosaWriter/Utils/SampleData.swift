@@ -125,7 +125,10 @@ struct SampleData {
           Professor Seal nodded approvingly. "Excellent example, Ms. Cow! When we share, everyone gets to enjoy something wonderful."
           """,
         pageNumber: 4,
-        imageLayout: .staggered(topImage: "professorSeal", bottomImage: "cake")
+        imageLayout: .staggered(
+          topImage: "professorSeal",
+          bottomImage: StoryAssets.CAKE.imageName
+        )
       ),
 
       // Page 5: The lesson learned
@@ -156,7 +159,7 @@ struct SampleData {
       BookPage(
         text: "Ms. Cow's Birthday Party",
         pageNumber: 0,
-        imageLayout: .single(imageName: "cake"),
+        imageLayout: .single(imageName: "msCow"),
         isCover: true,
         coverColor: .brown
       ),
@@ -204,7 +207,7 @@ struct SampleData {
           The End
           """,
         pageNumber: 5,
-        imageLayout: .single(imageName: "cake")
+        imageLayout: .single(imageName: StoryAssets.CAKE.imageName)
       ),
     ]
 
@@ -278,14 +281,95 @@ struct SampleData {
     return book
   }
 
+  // MARK: - Professor Seal and the Golden Key (Yellow Cover)
+
+  static func professorsGoldenKey() -> Book {
+    var book = Book(title: "Professor Seal and the Golden Key", isSample: true)
+
+    let pages = [
+      // Cover
+      BookPage(
+        text: "Professor Seal and the Golden Key",
+        pageNumber: 0,
+        imageLayout: .single(imageName: "professorSeal"),
+        isCover: true,
+        coverColor: .yellow
+      ),
+
+      // Page 1: A curious discovery
+      BookPage(
+        text: """
+          Professor Seal was putting away books one quiet morning when a tiny golden key tumbled from between the pages.
+
+          "Fascinating!" he said. "Every key has a lock, and every mystery deserves a careful look."
+          """,
+        pageNumber: 1,
+        imageLayout: .staggered(
+          topImage: "professorSeal",
+          bottomImage: StoryAssets.KEY.imageName
+        )
+      ),
+
+      // Page 2: A map appears
+      BookPage(
+        text: """
+          Mr. Dog sniffed out a rolled-up treasure map beneath the reading table. A dotted trail curled toward the oldest tree in the meadow.
+
+          "Oh boy, oh boy!" barked Mr. Dog. "A real treasure hunt!"
+          """,
+        pageNumber: 2,
+        imageLayout: .staggered(
+          topImage: "mrDog",
+          bottomImage: StoryAssets.TREASURE_MAP.imageName
+        )
+      ),
+
+      // Page 3: The hidden door
+      BookPage(
+        text: """
+          At the old tree, Sir Whiskers found a little wooden door hidden between the roots. The golden key fit perfectly.
+
+          Behind the door sat a treasure chest. It was not full of jewels. It was full of flower seeds!
+          """,
+        pageNumber: 3,
+        imageLayout: .staggered(
+          topImage: StoryAssets.TREE.imageName,
+          bottomImage: StoryAssets.TREASURE_CHEST.imageName
+        )
+      ),
+
+      // Page 4: Treasure for everyone
+      BookPage(
+        text: """
+          The friends planted every seed around Professor Seal's school. Before long, bright flowers nodded in the sunshine.
+
+          "The finest treasures are the ones we can share," said Professor Seal. His friends agreed.
+
+          The End
+          """,
+        pageNumber: 4,
+        imageLayout: .staggered(
+          topImage: StoryAssets.FLOWER.imageName,
+          bottomImage: "professorSeal"
+        )
+      ),
+    ]
+
+    pages.forEach { book.addPage($0) }
+    return book
+  }
+
   // MARK: - Sample Book Collection
 
   static var allSampleBooks: [Book] {
+    // Books are created oldest to newest so the final entry appears first
+    // under the bookshelf's default "Newest First" sort.
     [
-      mrDogsAdventure(),
       professorsLesson(),
       msCowsBirthday(),
       sirWhiskersPainting(),
+      professorsGoldenKey(),
+      mrDogsAdventure(),
     ]
   }
 }
