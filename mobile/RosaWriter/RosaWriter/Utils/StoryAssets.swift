@@ -336,10 +336,18 @@ struct StoryAssets {
 
   static let BASKETBALL = StoryObject(
     id: "BASKETBALL",
-    imageName: "basketball",
+    imageName: "basketball2",
     displayName: "basketball",
     displayNameWithArticle: "a basketball",
     description: "an orange basketball for playing and bouncing"
+  )
+
+  static let BEACH_BALL = StoryObject(
+    id: "BEACH_BALL",
+    imageName: "beachBall",
+    displayName: "beach ball",
+    displayNameWithArticle: "a beach ball",
+    description: "a bright striped beach ball for sunny days"
   )
 
   static let BOOK = StoryObject(
@@ -360,7 +368,7 @@ struct StoryAssets {
 
   static let CAKE = StoryObject(
     id: "CAKE",
-    imageName: "cake",
+    imageName: "cake2",
     displayName: "cake",
     displayNameWithArticle: "a cake",
     description: "a delicious cake perfect for celebrations"
@@ -374,6 +382,30 @@ struct StoryAssets {
     description: "a colorful crayon for drawing and creating art"
   )
 
+  static let FLOWER = StoryObject(
+    id: "FLOWER",
+    imageName: "flower",
+    displayName: "flower",
+    displayNameWithArticle: "a flower",
+    description: "a cheerful daisy with soft white petals"
+  )
+
+  static let KEY = StoryObject(
+    id: "KEY",
+    imageName: "key",
+    displayName: "key",
+    displayNameWithArticle: "a key",
+    description: "a golden key that might unlock something special"
+  )
+
+  static let PRESENT = StoryObject(
+    id: "PRESENT",
+    imageName: "present",
+    displayName: "present",
+    displayNameWithArticle: "a present",
+    description: "a wrapped present tied with a big bow"
+  )
+
   static let TEDDY = StoryObject(
     id: "TEDDY",
     imageName: "teddy",
@@ -382,15 +414,57 @@ struct StoryAssets {
     description: "a soft and cuddly teddy bear"
   )
 
+  static let TOY_CAR = StoryObject(
+    id: "TOY_CAR",
+    imageName: "toyCar",
+    displayName: "toy car",
+    displayNameWithArticle: "a toy car",
+    description: "a little red toy car ready to zoom around"
+  )
+
+  static let TREASURE_CHEST = StoryObject(
+    id: "TREASURE_CHEST",
+    imageName: "treasureChest",
+    displayName: "treasure chest",
+    displayNameWithArticle: "a treasure chest",
+    description: "a sturdy wooden chest with a golden lock",
+    size: .large
+  )
+
+  static let TREASURE_MAP = StoryObject(
+    id: "TREASURE_MAP",
+    imageName: "treasureMap",
+    displayName: "treasure map",
+    displayNameWithArticle: "a treasure map",
+    description: "an old paper map with a dotted trail and a red X"
+  )
+
+  static let TREE = StoryObject(
+    id: "TREE",
+    imageName: "tree",
+    displayName: "tree",
+    displayNameWithArticle: "a tree",
+    description: "a leafy green tree with a sturdy trunk",
+    size: .large
+  )
+
   static let allObjects: [StoryObject] = [
     APPLE,
     BALLOON,
     BASKETBALL,
+    BEACH_BALL,
     BOOK,
     BURGER,
     CAKE,
     CRAYON,
+    FLOWER,
+    KEY,
+    PRESENT,
     TEDDY,
+    TOY_CAR,
+    TREASURE_CHEST,
+    TREASURE_MAP,
+    TREE,
   ]
 
   // MARK: - Helper Methods
